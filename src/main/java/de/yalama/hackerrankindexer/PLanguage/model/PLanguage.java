@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.PLanguage.model;
 
+import com.sun.istack.NotNull;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Setter
 public class PLanguage extends BaseEntity {
 
+    @NotNull
     private String language;
 
     @OneToMany(mappedBy = "language")

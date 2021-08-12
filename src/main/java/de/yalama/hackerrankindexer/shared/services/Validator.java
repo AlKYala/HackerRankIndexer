@@ -1,9 +1,6 @@
 package de.yalama.hackerrankindexer.shared.services;
 
-import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
-import de.yalama.hackerrankindexer.shared.exceptions.IdInvalidException;
-import de.yalama.hackerrankindexer.shared.exceptions.NotDeletedException;
-import de.yalama.hackerrankindexer.shared.exceptions.NotSavedException;
+import de.yalama.hackerrankindexer.shared.exceptions.*;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,23 +56,35 @@ public class Validator<E extends BaseEntity, T extends JpaRepository> {
 
     /**
      * Throws an Exception if an instance of ID cannot be found
-     * Used in BaseService::save, BaseService::update and BaseService::delete
+     * Used in BaseService::save, BaseService::update and BaseService::delete and BaseService::findById
      *
      * @param id
-     * @param isSave to specify if called in a deletion or save operation
-     * @throws HackerrankIndexerException NotSavedException, NotDeletedException
+     * @param operation 0 for save, 1 for delete, 2 for findById
+     * @throws HackerrankIndexerException NotSavedException, NotDeletedException, NotFoundException
      */
-    public void throwIfNotExistsByID(Long id, boolean isSave) throws HackerrankIndexerException {
+    public void throwIfNotExistsByID(Long id, int operation) throws HackerrankIndexerException {
         if(!this.repository.existsById(id)) {
-            String pre = (isSave) ? "Not Saved!" : "Not Deleted!";
-            String message = String.format("%s! A %s instance with ID %d cannot be found!", pre, this.entityName, id);
-            log.info(message);
-            HackerrankIndexerException exception =
-                    (isSave) ? new NotSavedException(message) : new NotDeletedException(message);
+            String[] messageWrapper = new String[] {"%s! A %s instance with ID %d cannot be found!"};
+            HackerrankIndexerException exception = null;
+
+            switch(operation) {
+                case 0: this.wrapMessage(messageWrapper, "Saving failed!", id);
+                    exception = new NotSavedException(messageWrapper[0]); break;
+                case 1: this.wrapMessage(messageWrapper, "Deletion failed!", id);
+                    exception = new NotDeletedException(messageWrapper[0]); break;
+                default: this.wrapMessage(messageWrapper, "Update failed!", id);
+                    exception = new NotFoundException(messageWrapper[0]);
+            }
+
+            log.info(messageWrapper[0]);
             throw exception;
         }
+
     }
 
+    private void wrapMessage(String[] messageWrapper, String pre, Long id) {
+        messageWrapper[0] = String.format(messageWrapper[0], pre, this.entityName, id);
+    }
     /**
      * Throws an Exception if two IDs do not match
      * Used in BaseService::update

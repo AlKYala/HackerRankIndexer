@@ -15,7 +15,7 @@ import java.util.Set;
 public class Challenge extends BaseEntity {
 
     @OneToMany(mappedBy= "challenge")
-    private Set<Submission> challenge;
+    private Set<Submission> submissions;
 
     private String challengeName;
 }

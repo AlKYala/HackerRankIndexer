@@ -13,9 +13,13 @@ import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@Slf4j
 public class SubmissionServiceImpl extends SubmissionService {
 
     private SubmissionRepository submissionRepository;

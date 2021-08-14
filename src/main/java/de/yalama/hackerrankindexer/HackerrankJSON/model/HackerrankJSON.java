@@ -1,6 +1,5 @@
-package de.yalama.hackerrankindexer.shared.models;
+package de.yalama.hackerrankindexer.HackerrankJSON.model;
 
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,5 +13,5 @@ import lombok.Setter;
 public class HackerrankJSON {
     private String username;
     private String email;
-    private Submission[] submissions;
+    private SubmissionJSON[] submissions;
 }

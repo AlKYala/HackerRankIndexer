@@ -139,7 +139,7 @@ public class HackerrankJSONService {
                                                 User user) {
         Submission submission = new Submission();
         submission.setId(0L);
-        submission.setCode(new String(json.getCode().getBytes(), StandardCharsets.UTF_16));
+        submission.setCode(json.getCode());
         submission.setScore(json.getScore());
         submission.setWriter(user);
         submission.setLanguage(pLanguageMap.get(json.getLanguage()));

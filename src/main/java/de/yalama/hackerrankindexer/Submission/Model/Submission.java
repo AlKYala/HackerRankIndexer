@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -43,6 +44,7 @@ public class Submission extends BaseEntity {
     @JoinColumn
     private Contest contest;
 
+    @Column(columnDefinition = "TEXT")
     private String code;
 
     private double score;

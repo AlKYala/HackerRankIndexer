@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +48,8 @@ public class HackerrankJSONService {
     private UserService userService;
 
     public void parse(HackerrankJSON hackerrankJSON) {
+        //debug
+        System.out.println("start");
         Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
         Map<String, Challenge> foundChallenges = new HashMap<String, Challenge>();
         Map<String, Contest> foundContests = new HashMap<String, Contest>();
@@ -58,6 +61,8 @@ public class HackerrankJSONService {
     }
 
     private User persistUser(String email, String username) {
+        //debug
+        System.out.println(email);
         User user = new User();
         user.setId(0L);
         user.setSubmittedEntries(Collections.EMPTY_SET);
@@ -75,6 +80,9 @@ public class HackerrankJSONService {
     private void createMapData(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
                                Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
         for(SubmissionJSON submission: submissionJSONS) {
+            //debug
+            System.out.println(submission.getLanguage());
+            System.out.println(pLanguageMap.toString());
             this.addLanguageIfNeeded(submission.getLanguage(), pLanguageMap);
             this.addChallengeIfNeeded(submission.getLanguage(), challengeMap);
             this.addContestIfNeeded(submission.getContest(), contestMap);
@@ -82,6 +90,7 @@ public class HackerrankJSONService {
     }
 
     private void addLanguageIfNeeded(String language, Map<String, PLanguage> pLanguageMap) {
+        System.out.println(language);
         if(!pLanguageMap.containsKey(language)) {
             PLanguage found = new PLanguage();
             found.setId(0L);
@@ -130,7 +139,7 @@ public class HackerrankJSONService {
                                                 User user) {
         Submission submission = new Submission();
         submission.setId(0L);
-        submission.setCode(json.getCode());
+        submission.setCode(new String(json.getCode().getBytes(), StandardCharsets.UTF_16));
         submission.setScore(json.getScore());
         submission.setWriter(user);
         submission.setLanguage(pLanguageMap.get(json.getLanguage()));

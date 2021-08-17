@@ -32,7 +32,7 @@ public class ServiceHandler<E extends BaseEntity,  G extends JpaRepository<E, Lo
 
     public E save(E instance) {
         E saved = this.repository.save(instance);
-        this.validator.throwIfNotExistsByID(instance.getId(), 0);
+        this.validator.throwIfExistsByID(instance.getId());
         return saved;
     }
 

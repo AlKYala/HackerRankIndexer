@@ -47,7 +47,7 @@ public class HackerrankJSONService {
     @Autowired
     private UserService userService;
 
-    public void parse(HackerrankJSON hackerrankJSON) {
+    public String parse(HackerrankJSON hackerrankJSON) {
         //debug
         System.out.println("start");
         Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
@@ -58,6 +58,8 @@ public class HackerrankJSONService {
         this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
                 user);
+        log.info("Parsing complete");
+        return "Success";
     }
 
     private User persistUser(String email, String username) {

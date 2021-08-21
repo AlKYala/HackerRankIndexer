@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.Challenge.Controller;
 
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
+import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import lombok.RequiredArgsConstructor;

@@ -2,12 +2,14 @@ package de.yalama.hackerrankindexer.Challenge.Service;
 
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Repository.ChallengeRepository;
+import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,5 +52,11 @@ public class ChallengeServiceImpl extends ChallengeService {
         this.validator.throwIfNotExistsByID(id, 1);
         this.findById(id).getSubmissions().forEach(submission -> submission.setChallenge(null));
         return this.serviceHandler.deleteById(id);
+    }
+
+    @Override
+    public List<Submission> getSubmissionsByChallengeId(Long challengeId) {
+        Challenge challenge = this.findById(challengeId);
+        return new ArrayList<Submission>(challenge.getSubmissions());
     }
 }

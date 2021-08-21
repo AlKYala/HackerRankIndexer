@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.Submission.Service;
 
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Repository.ChallengeRepository;
+import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
@@ -16,7 +17,10 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,12 +31,13 @@ public class SubmissionServiceImpl extends SubmissionService {
     private ServiceHandler<Submission, SubmissionRepository> serviceHandler;
     private ContestRepository contestRepository;
     private ChallengeRepository challengeRepository;
+    private ChallengeService challengeService;
     private PLanguageRepository pLanguageRepository;
     private UserRepository userRepository;
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, ContestRepository contestRepository,
                                  ChallengeRepository challengeRepository, PLanguageRepository pLanguageRepository,
-                                 UserRepository userRepository) {
+                                 UserRepository userRepository, ChallengeService challengeService) {
         this.submissionRepository = submissionRepository;
         this.validator =
                 new Validator<Submission, SubmissionRepository>("Submission", this.submissionRepository);
@@ -42,6 +47,7 @@ public class SubmissionServiceImpl extends SubmissionService {
         this.pLanguageRepository = pLanguageRepository;
         this.challengeRepository = challengeRepository;
         this.contestRepository = contestRepository;
+        this.challengeService = challengeService;
     }
 
     @Override
@@ -95,5 +101,13 @@ public class SubmissionServiceImpl extends SubmissionService {
     private void removeSubmissionFromUser(Submission toDelete) {
         User user = this.userRepository.getById(toDelete.getId());
         user.getSubmittedEntries().removeIf(submission -> submission.getId() == toDelete.getId());
+    }
+
+    @Override
+    public List<Submission> findSubmissionsOfSameChallenge(Long challengeId) {
+        return this.findAll()
+                .stream()
+                .filter(submission -> submission.getChallenge().getId().longValue() == challengeId.longValue())
+                .collect(Collectors.toList());
     }
 }

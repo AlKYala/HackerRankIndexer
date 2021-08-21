@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RequestMapping("/submission")
 @RestController
@@ -43,5 +44,10 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @Override
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.submissionService.deleteById(id);
+    }
+
+    @GetMapping("/byChallenge/{challengeId}")
+    public List<Submission> getOtherSubmissionsOfSubmission(@PathVariable Long challengeId) {
+        return this.submissionService.findSubmissionsOfSameChallenge(challengeId);
     }
 }

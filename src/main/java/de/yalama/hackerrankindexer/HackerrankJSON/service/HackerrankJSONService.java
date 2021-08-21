@@ -61,8 +61,6 @@ public class HackerrankJSONService {
     }
 
     private User persistUser(String email, String username) {
-        //debug
-        System.out.println(email);
         User user = new User();
         user.setId(0L);
         user.setSubmittedEntries(Collections.EMPTY_SET);
@@ -80,17 +78,13 @@ public class HackerrankJSONService {
     private void createMapData(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
                                Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
         for(SubmissionJSON submission: submissionJSONS) {
-            //debug
-            System.out.println(submission.getLanguage());
-            System.out.println(pLanguageMap.toString());
             this.addLanguageIfNeeded(submission.getLanguage(), pLanguageMap);
-            this.addChallengeIfNeeded(submission.getLanguage(), challengeMap);
+            this.addChallengeIfNeeded(submission.getChallenge(), challengeMap);
             this.addContestIfNeeded(submission.getContest(), contestMap);
         }
     }
 
     private void addLanguageIfNeeded(String language, Map<String, PLanguage> pLanguageMap) {
-        System.out.println(language);
         if(!pLanguageMap.containsKey(language)) {
             PLanguage found = new PLanguage();
             found.setId(0L);

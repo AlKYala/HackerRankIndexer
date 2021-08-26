@@ -23,7 +23,7 @@ public class ServiceHandler<E extends BaseEntity,  G extends JpaRepository<E, Lo
 
     public E findById(Long id) {
         this.validator.throwIfNotExistsByID(id, 2);
-        return this.repository.getById(id);
+        return this.repository.findById(id).get();
     }
 
     public List<E> findAll() {

@@ -9,8 +9,8 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -55,8 +55,7 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public List<Submission> getSubmissionsByChallengeId(Long challengeId) {
-        Challenge challenge = this.findById(challengeId);
-        return new ArrayList<Submission>(challenge.getSubmissions());
+    public Set<Submission> getSubmissionsByChallengeId(Long challengeId) {
+        return this.findById(challengeId).getSubmissions();
     }
 }

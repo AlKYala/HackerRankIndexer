@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.PLanguage.Controller;
 
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/planguage")
@@ -46,5 +48,10 @@ public class PLanguageController implements BaseController<PLanguage, Long> {
     @DeleteMapping("/{id}")
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.pLanguageService.deleteById(id);
+    }
+
+    @GetMapping("/{id}/submissions")
+    public Set<Submission> getSubmissionsByLanguage(@PathVariable Long id) {
+        return this.pLanguageService.findSubmissionsOfLanguage(id);
     }
 }

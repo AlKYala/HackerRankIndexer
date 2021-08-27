@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.PLanguage.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -51,5 +53,11 @@ public class PLanguageServiceImpl extends PLanguageService {
         this.validator.throwIfNotExistsByID(id, 1);
         this.findById(id).getSubmissions().forEach(submission -> submission.setLanguage(null));
         return this.serviceHandler.deleteById(id);
+    }
+
+    @Override
+    public Set<Submission> findSubmissionsOfLanguage(Long id) {
+        PLanguage pLanguage = this.findById(id);
+        return pLanguage.getSubmissions();
     }
 }

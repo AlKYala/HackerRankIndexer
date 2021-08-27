@@ -102,12 +102,4 @@ public class SubmissionServiceImpl extends SubmissionService {
         User user = this.userRepository.getById(toDelete.getId());
         user.getSubmittedEntries().removeIf(submission -> submission.getId() == toDelete.getId());
     }
-
-    @Override
-    public List<Submission> findSubmissionsOfSameChallenge(Long challengeId) {
-        return this.findAll()
-                .stream()
-                .filter(submission -> submission.getChallenge().getId().longValue() == challengeId.longValue())
-                .collect(Collectors.toList());
-    }
 }

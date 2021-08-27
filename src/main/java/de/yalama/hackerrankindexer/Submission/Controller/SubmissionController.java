@@ -17,6 +17,7 @@ import java.util.Set;
 public class SubmissionController implements BaseController<Submission, Long> {
 
     @Autowired
+
     private SubmissionService submissionService;
 
     @Override
@@ -32,16 +33,19 @@ public class SubmissionController implements BaseController<Submission, Long> {
     }
 
     @Override
+    @PostMapping
     public Submission create(@RequestBody Submission submission) throws HackerrankIndexerException {
         return this.submissionService.save(submission);
     }
 
     @Override
+    @PutMapping("/{id}")
     public Submission update(@PathVariable Long id, @RequestBody Submission submission) throws HackerrankIndexerException {
         return this.submissionService.update(id, submission);
     }
 
     @Override
+    @DeleteMapping("/{id}")
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.submissionService.deleteById(id);
     }

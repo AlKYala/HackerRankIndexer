@@ -54,4 +54,9 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id) {
         return this.challengeService.getSubmissionsByChallengeId(id);
     }
+
+    @GetMapping("/{id}/ispassed")
+    public Boolean checkIsSubmissionPassed(@PathVariable Long id) {
+        return this.challengeService.checkIsChallengePassed(id);
+    }
 }

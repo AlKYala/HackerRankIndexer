@@ -58,4 +58,14 @@ public class ChallengeServiceImpl extends ChallengeService {
     public Set<Submission> getSubmissionsByChallengeId(Long challengeId) {
         return this.findById(challengeId).getSubmissions();
     }
+
+    @Override
+    public Boolean checkIsChallengePassed(Long challengeId) {
+        for(Submission submission : this.findById(challengeId).getSubmissions()) {
+            if(submission.getScore() == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

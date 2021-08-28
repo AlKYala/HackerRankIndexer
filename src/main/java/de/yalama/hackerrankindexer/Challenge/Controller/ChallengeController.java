@@ -51,7 +51,7 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     }
 
     @GetMapping("/{id}/submissions")
-    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long challengeId) {
-        return this.challengeService.getSubmissionsByChallengeId(challengeId);
+    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id) {
+        return this.challengeService.getSubmissionsByChallengeId(id);
     }
 }

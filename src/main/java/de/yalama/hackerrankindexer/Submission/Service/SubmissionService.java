@@ -7,4 +7,5 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class SubmissionService implements BaseService<Submission> {
+    public abstract List<Submission> getAllPassed();
 }

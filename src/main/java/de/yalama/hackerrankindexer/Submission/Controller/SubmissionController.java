@@ -49,4 +49,9 @@ public class SubmissionController implements BaseController<Submission, Long> {
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.submissionService.deleteById(id);
     }
+
+    @GetMapping("/passed")
+    public List<Submission> getPassedSubmissions() {
+        return this.submissionService.getAllPassed();
+    }
 }

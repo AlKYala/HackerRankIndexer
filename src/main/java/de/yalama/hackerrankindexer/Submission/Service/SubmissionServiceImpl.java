@@ -102,4 +102,11 @@ public class SubmissionServiceImpl extends SubmissionService {
         User user = this.userRepository.getById(toDelete.getId());
         user.getSubmittedEntries().removeIf(submission -> submission.getId() == toDelete.getId());
     }
+
+    @Override
+    public List<Submission> getAllPassed() {
+        return this.findAll().stream()
+                .filter(submission -> submission.getScore() == 1)
+                .collect(Collectors.toList());
+    }
 }

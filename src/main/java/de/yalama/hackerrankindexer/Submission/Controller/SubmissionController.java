@@ -54,4 +54,14 @@ public class SubmissionController implements BaseController<Submission, Long> {
     public List<Submission> getPassedSubmissions() {
         return this.submissionService.getAllPassed();
     }
+
+    /**
+     * Returns the latest passed submission of each challenge
+     * @return a List of Submission instances where only the latest passed Submission
+     * of each challenge is
+     */
+    @GetMapping("/passed/latest")
+    public List<Submission> getLatestPassedSubmissions() {
+        return this.submissionService.getLastPassedFromAll();
+    }
 }

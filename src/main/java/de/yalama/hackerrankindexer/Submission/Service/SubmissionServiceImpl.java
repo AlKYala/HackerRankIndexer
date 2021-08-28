@@ -17,9 +17,7 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +32,7 @@ public class SubmissionServiceImpl extends SubmissionService {
     private ChallengeService challengeService;
     private PLanguageRepository pLanguageRepository;
     private UserRepository userRepository;
+    private Comparator<Submission> submissionIdComparator;
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, ContestRepository contestRepository,
                                  ChallengeRepository challengeRepository, PLanguageRepository pLanguageRepository,
@@ -48,6 +47,7 @@ public class SubmissionServiceImpl extends SubmissionService {
         this.challengeRepository = challengeRepository;
         this.contestRepository = contestRepository;
         this.challengeService = challengeService;
+        this.submissionIdComparator = Comparator.comparing(Submission::getId);
     }
 
     @Override
@@ -108,5 +108,23 @@ public class SubmissionServiceImpl extends SubmissionService {
         return this.findAll().stream()
                 .filter(submission -> submission.getScore() == 1)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Submission> getLastPassedFromAll() {
+        List<Submission> passedSubmissions = this.getAllPassed();
+        List<Submission> passedLatest = new ArrayList<Submission>();
+        Set<Long> idOfTakenChallenges = new HashSet<Long>();
+
+        for(int i = passedSubmissions.size()-1; i > -1; i--) {
+            if(idOfTakenChallenges.contains(passedSubmissions.get(i).getChallenge().getId())) {
+                continue;
+            }
+            idOfTakenChallenges.add(passedSubmissions.get(i).getChallenge().getId());
+            passedLatest.add(passedSubmissions.get(i));
+        }
+
+        passedLatest.sort(this.submissionIdComparator);
+        return passedLatest;
     }
 }

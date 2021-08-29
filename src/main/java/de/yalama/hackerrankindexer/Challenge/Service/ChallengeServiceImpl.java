@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -67,5 +68,21 @@ public class ChallengeServiceImpl extends ChallengeService {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<Challenge> getAllPassedChallenges() {
+        return this.findAll()
+                .stream()
+                .filter(challenge -> this.checkIsChallengePassed(challenge.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Challenge> getAllFailedChallenges() {
+        return this.findAll()
+                .stream()
+                .filter(challenge -> !this.checkIsChallengePassed(challenge.getId()))
+                .collect(Collectors.toList());
     }
 }

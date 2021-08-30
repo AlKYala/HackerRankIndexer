@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -27,8 +28,18 @@ public class AnalyticsController {
         return this.analyticsService.getPercentagePassedSubmissions();
     }
 
-    @GetMapping("/challenges/passed")
+    @GetMapping("/challenge/passed")
     public Double getPercentagePassedChallenges() {
         return this.analyticsService.getPercentagePassedChallenges();
+    }
+
+    @GetMapping("/pLanguage/{languageId}/passed")
+    public Double getPercentageOfPassedByLanguageId(@PathVariable Long languageId) {
+        return this.analyticsService.getPercentagePassedByLanguage(languageId);
+    }
+
+    @GetMapping("/challenge({challengeId}/passed")
+    public Double getPercentageOfPassedByChallengeId(@PathVariable Long challengeId) {
+        return this.analyticsService.getPercentagePassedByChallenge(challengeId);
     }
 }

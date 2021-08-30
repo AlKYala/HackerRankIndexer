@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Map;
+
 @Controller
 @RequestMapping("analytics")
 @RequiredArgsConstructor
@@ -41,5 +43,10 @@ public class AnalyticsController {
     @GetMapping("/challenge({challengeId}/passed")
     public Double getPercentageOfPassedByChallengeId(@PathVariable Long challengeId) {
         return this.analyticsService.getPercentagePassedByChallenge(challengeId);
+    }
+
+    @GetMapping("/pLanguage/percentages")
+    public Map<Long, Double> getPercentagesOfPLanguages() {
+        return this.getPercentagesOfPLanguages();
     }
 }

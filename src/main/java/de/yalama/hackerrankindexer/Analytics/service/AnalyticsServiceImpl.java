@@ -23,6 +23,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private Map<Long, Double> percentageByLanguageId;
     private Map<Long,Double> percentageByChallengeId;
+    private Map<Long, Double> pLanguageShare;
 
     public AnalyticsServiceImpl(SubmissionService submissionService, ChallengeService challengeService,
                                 PLanguageService pLanguageService) {
@@ -31,6 +32,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.challengeService = challengeService;
         this.percentageByLanguageId = new HashMap<Long, Double>();
         this.percentageByChallengeId = new HashMap<Long, Double>();
+        this.pLanguageShare = new HashMap<Long, Double>();
     }
 
     @Override
@@ -79,6 +81,23 @@ public class AnalyticsServiceImpl extends AnalyticsService {
             this.addPercentage(challengeId, passed.get(), total, this.percentageByChallengeId);
         }
         return this.percentageByChallengeId.get(challengeId);
+    }
+
+    @Override
+    public Map<Long, Double> getUsagePercentages() {
+        if(this.pLanguageShare.size() == 0) {
+            int total = this.submissionService.findAll().size();
+            this.pLanguageService
+                    .findAll()
+                    .forEach(pLanguage ->
+                            this.pLanguageShare.put(pLanguage.getId(),
+                                    this.findPercentageForPLanguage(pLanguage.getId(), total)));
+        }
+        return this.pLanguageShare;
+    }
+
+    private double findPercentageForPLanguage(Long id, int total) {
+        return ((double) this.pLanguageService.findById(id).getSubmissions().size()) / ((double) total);
     }
 
     @Override

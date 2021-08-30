@@ -7,24 +7,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Slf4j
 public class AnalyticsServiceImpl extends AnalyticsService {
 
-    @Autowired
     private SubmissionService submissionService;
-
-    @Autowired
     private ChallengeService challengeService;
-
-    @Autowired
     private PLanguageService pLanguageService;
 
     private Double percentageSubmissions;
-
     private Double percentageChallenges;
+
+    private Map<Long, Double> percentageByLanguageId;
+    private Map<Long,Double> percentageByChallengeId;
+
+    public AnalyticsServiceImpl(SubmissionService submissionService, ChallengeService challengeService,
+                                PLanguageService pLanguageService) {
+        this.pLanguageService = pLanguageService;
+        this.submissionService = submissionService;
+        this.challengeService = challengeService;
+        this.percentageByLanguageId = new HashMap<Long, Double>();
+        this.percentageByChallengeId = new HashMap<Long, Double>();
+    }
 
     @Override
     public Double getPercentagePassedSubmissions() {
@@ -48,33 +57,50 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public Double getPercentagePassedByLanguage(Long languageId) {
-        AtomicLong passed = new AtomicLong(0);
-        this.pLanguageService.findById(languageId)
-                .getSubmissions()
-                .forEach(submission
-                        -> this.incrementBySubmissionScore(submission.getScore(), passed));
-        return ((double) passed.get()) / ((double) pLanguageService.findById(languageId).getSubmissions().size());
+        if(!this.percentageByLanguageId.containsKey(languageId)) {
+            AtomicInteger passed = new AtomicInteger(0);
+            int total = this.pLanguageService.findById(languageId).getSubmissions().size();
+            this.pLanguageService.findById(languageId)
+                    .getSubmissions()
+                    .forEach(submission
+                            -> this.incrementBySubmissionScore(submission.getScore(), passed));
+            this.addPercentage(languageId, passed.get(), total, this.percentageByLanguageId);
+        }
+        return this.percentageByLanguageId.get(languageId);
     }
 
     @Override
     public Double getPercentagePassedByChallenge(Long challengeId) {
-        AtomicLong passed = new AtomicLong(0);
-        this.challengeService.findById(challengeId)
-                .getSubmissions()
-                .forEach(submission ->
-                        this.incrementBySubmissionScore(submission.getScore(), passed));
-        return ((double) passed.get()) / ((double) challengeService.findById(challengeId).getSubmissions().size());
+        if(!this.percentageByChallengeId.containsKey(challengeId)) {
+            AtomicInteger passed = new AtomicInteger(0);
+            int total = this.challengeService.findById(challengeId).getSubmissions().size();
+            this.challengeService.findById(challengeId)
+                    .getSubmissions()
+                    .forEach(submission ->
+                            this.incrementBySubmissionScore(submission.getScore(), passed));
+            this.addPercentage(challengeId, passed.get(), total, this.percentageByChallengeId);
+        }
+        return this.percentageByChallengeId.get(challengeId);
     }
 
     @Override
     public void clear() {
         this.percentageSubmissions = null;
         this.percentageChallenges = null;
+        this.percentageByChallengeId.clear();
+        this.percentageByLanguageId.clear();
     }
 
-    private void incrementBySubmissionScore(double score, AtomicLong passed) {
+    //side effects
+    private void incrementBySubmissionScore(double score, AtomicInteger passed) {
         if(score == 1.0) {
             passed.incrementAndGet();
         }
+    }
+
+    //side effects
+    private void addPercentage(long id, int passed, int total, Map<Long, Double> map) {
+        double percentage = ((double) passed) / ((double) total);
+        map.put(id, percentage);
     }
 }

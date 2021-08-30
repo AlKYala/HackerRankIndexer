@@ -17,6 +17,20 @@ public abstract class AnalyticsService {
     public abstract Double getPercentagePassedChallenges();
 
     /**
+     * Returns the percentage of passed submissions by language
+     * @param languageId the ID of the language in question
+     * @return the percentage of passed submissions of language with ID languageId
+     */
+    public abstract Double getPercentagePassedByLanguage(Long languageId);
+
+    /**
+     * Returns the percentage of passed submissions per challenge
+     * @param challengeId
+     * @return the percentage of passed submissions per challenge with ID challengeId
+     */
+    public abstract Double getPercentagePassedByChallenge(Long challengeId);
+
+    /**
      * A method to clear all cached statistics
      * Fired when Dataset is manipulated
      */

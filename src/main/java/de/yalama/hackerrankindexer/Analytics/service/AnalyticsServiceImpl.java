@@ -80,6 +80,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
                             this.incrementBySubmissionScore(submission.getScore(), passed));
             this.addPercentage(challengeId, passed.get(), total, this.percentageByChallengeId);
         }
+        log.info("%f", this.percentageByChallengeId.get(challengeId));
         return this.percentageByChallengeId.get(challengeId);
     }
 

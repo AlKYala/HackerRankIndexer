@@ -4,15 +4,11 @@ package de.yalama.hackerrankindexer.Analytics.controller;
 import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("analytics")
 @RequiredArgsConstructor
 public class AnalyticsController {
@@ -26,27 +22,30 @@ public class AnalyticsController {
     }
 
     @GetMapping("/submissions/passed")
-    public Double getPercentagePassedSubmissions() {
+    public double getPercentagePassedSubmissions() {
         return this.analyticsService.getPercentagePassedSubmissions();
     }
 
     @GetMapping("/challenge/passed")
-    public Double getPercentagePassedChallenges() {
+    public double getPercentagePassedChallenges() {
         return this.analyticsService.getPercentagePassedChallenges();
     }
 
     @GetMapping("/pLanguage/{languageId}/passed")
-    public Double getPercentageOfPassedByLanguageId(@PathVariable Long languageId) {
+    public double getPercentageOfPassedByLanguageId(@PathVariable Long languageId) {
         return this.analyticsService.getPercentagePassedByLanguage(languageId);
     }
 
-    @GetMapping("/challenge({challengeId}/passed")
-    public Double getPercentageOfPassedByChallengeId(@PathVariable Long challengeId) {
+    /* TODO find out why this is not working
+    @GetMapping("/challenge/({challengeId}/percentages")
+
+    public double getPercentageOfPassedByChallengeId(@PathVariable Long challengeId) {
+        System.out.println("pinging");
         return this.analyticsService.getPercentagePassedByChallenge(challengeId);
-    }
+    }*/
 
     @GetMapping("/pLanguage/percentages")
     public Map<Long, Double> getPercentagesOfPLanguages() {
-        return this.getPercentagesOfPLanguages();
+        return this.analyticsService.getUsagePercentages();
     }
 }

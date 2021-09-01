@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
+import de.yalama.hackerrankindexer.Analytics.UsagePercentages;
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public abstract class AnalyticsService {
      * From all submissions give the share of submissions of each language in percent
      * @return A Map with the percentage of submissions (total) for each language
      */
-    public abstract Map<Long, Double> getUsagePercentages();
+    public abstract UsagePercentages getUsagePercentages();
 
     /**
      * A method to clear all cached statistics

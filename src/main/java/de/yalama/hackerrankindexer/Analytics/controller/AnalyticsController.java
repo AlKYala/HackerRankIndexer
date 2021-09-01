@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Analytics.controller;
 
 
+import de.yalama.hackerrankindexer.Analytics.UsagePercentages;
 import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class AnalyticsController {
         return this.analyticsService.getPercentagePassedSubmissions();
     }
 
-    @GetMapping("/challenge/passed")
+    @GetMapping("/challenges/passed")
     public double getPercentagePassedChallenges() {
         return this.analyticsService.getPercentagePassedChallenges();
     }
@@ -45,7 +46,7 @@ public class AnalyticsController {
     }*/
 
     @GetMapping("/pLanguage/percentages")
-    public Map<Long, Double> getPercentagesOfPLanguages() {
+    public UsagePercentages getPercentagesOfPLanguages() {
         return this.analyticsService.getUsagePercentages();
     }
 }

@@ -1,7 +1,9 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
+import de.yalama.hackerrankindexer.Analytics.UsagePercentages;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
+import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private Map<Long, Double> percentageByLanguageId;
     private Map<Long,Double> percentageByChallengeId;
-    private Map<Long, Double> pLanguageShare;
+    private UsagePercentages usagePercentages;
 
     public AnalyticsServiceImpl(SubmissionService submissionService, ChallengeService challengeService,
                                 PLanguageService pLanguageService) {
@@ -32,7 +34,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.challengeService = challengeService;
         this.percentageByLanguageId = new HashMap<Long, Double>();
         this.percentageByChallengeId = new HashMap<Long, Double>();
-        this.pLanguageShare = new HashMap<Long, Double>();
+        this.usagePercentages = new UsagePercentages();
     }
 
     @Override
@@ -85,20 +87,28 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public Map<Long, Double> getUsagePercentages() {
-        if(this.pLanguageShare.size() == 0) {
+    public UsagePercentages getUsagePercentages() {
+        if(this.usagePercentages.size() == 0) {
+            this.usagePercentages = new UsagePercentages();
             int total = this.submissionService.findAll().size();
             this.pLanguageService
                     .findAll()
-                    .forEach(pLanguage ->
-                            this.pLanguageShare.put(pLanguage.getId(),
-                                    this.findPercentageForPLanguage(pLanguage.getId(), total)));
+                    .forEach(pLanguage -> this.addPLanguageStatisticsToUsages(pLanguage, total));
         }
-        return this.pLanguageShare;
+        return this.usagePercentages;
+    }
+
+    private void addPLanguageStatisticsToUsages(PLanguage pLanguage, int total) {
+        this.usagePercentages.getPLanguages().add(pLanguage);
+        this.usagePercentages.getUsagePercentages().add(this.findPercentageForPLanguage(pLanguage, total));
+    }
+
+    private double findPercentageForPLanguage(PLanguage pLanguage, int total) {
+        return ((double) pLanguage.getSubmissions().size()) /((double) total);
     }
 
     private double findPercentageForPLanguage(Long id, int total) {
-        return ((double) this.pLanguageService.findById(id).getSubmissions().size()) / ((double) total);
+        return this.findPercentageForPLanguage(this.pLanguageService.findById(id), total);
     }
 
     @Override

@@ -8,6 +8,8 @@ import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -129,6 +131,12 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     //side effects
     private void addPercentage(long id, int passed, int total, Map<Long, Double> map) {
         double percentage = ((double) passed) / ((double) total);
+        percentage = this.roundToDecimal(percentage, 2);
         map.put(id, percentage);
+    }
+
+    private Double roundToDecimal(double value, int places) {
+        BigDecimal rounder = BigDecimal.valueOf(value).setScale(places, RoundingMode.HALF_UP);
+        return rounder.doubleValue();
     }
 }

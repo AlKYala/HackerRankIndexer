@@ -114,7 +114,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     private void addPassPercentageAndLanguage(PLanguage pLanguage) {
-        double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId()), 2);
+        double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId()), 4);
         this.passPercentages.getPLanguages().add(pLanguage);
         this.passPercentages.getPercentages().add(percentage);
     }
@@ -151,7 +151,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     private double findPercentageForPLanguage(PLanguage pLanguage, int total) {
-        return this.roundToDecimal(((double) pLanguage.getSubmissions().size()) / ((double) total), 2);
+        return this.roundToDecimal(((double) pLanguage.getSubmissions().size()) / ((double) total), 4);
     }
 
     private double findPercentageForPLanguage(Long id, int total) {

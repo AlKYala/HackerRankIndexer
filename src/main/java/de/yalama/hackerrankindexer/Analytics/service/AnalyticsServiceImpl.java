@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
-import de.yalama.hackerrankindexer.Analytics.UsagePercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.UsagePercentages;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
@@ -26,8 +27,11 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     private Double percentageChallenges;
 
     private Map<Long, Double> percentageByLanguageId;
-    private Map<Long,Double> percentageByChallengeId;
+    private Map<Long, Double> percentageByChallengeId;
     private UsagePercentages usagePercentages;
+    private PassPercentages passPercentages;
+
+    private PLanguage favourite;
 
     public AnalyticsServiceImpl(SubmissionService submissionService, ChallengeService challengeService,
                                 PLanguageService pLanguageService) {
@@ -37,11 +41,12 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.percentageByLanguageId = new HashMap<Long, Double>();
         this.percentageByChallengeId = new HashMap<Long, Double>();
         this.usagePercentages = new UsagePercentages();
+        this.passPercentages = new PassPercentages();
     }
 
     @Override
     public Double getPercentagePassedSubmissions() {
-        if(percentageSubmissions == null) {
+        if (percentageSubmissions == null) {
             int passed = this.submissionService.getAllPassed().size();
             int total = this.submissionService.findAll().size();
             percentageSubmissions = ((double) passed) / ((double) total);
@@ -51,7 +56,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public Double getPercentagePassedChallenges() {
-        if(percentageChallenges == null) {
+        if (percentageChallenges == null) {
             int passed = this.challengeService.getAllPassedChallenges().size();
             int total = this.challengeService.findAll().size();
             percentageChallenges = ((double) passed) / ((double) total);
@@ -61,7 +66,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public Double getPercentagePassedByLanguage(Long languageId) {
-        if(!this.percentageByLanguageId.containsKey(languageId)) {
+        if (!this.percentageByLanguageId.containsKey(languageId)) {
             AtomicInteger passed = new AtomicInteger(0);
             int total = this.pLanguageService.findById(languageId).getSubmissions().size();
             this.pLanguageService.findById(languageId)
@@ -75,7 +80,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public Double getPercentagePassedByChallenge(Long challengeId) {
-        if(!this.percentageByChallengeId.containsKey(challengeId)) {
+        if (!this.percentageByChallengeId.containsKey(challengeId)) {
             AtomicInteger passed = new AtomicInteger(0);
             int total = this.challengeService.findById(challengeId).getSubmissions().size();
             this.challengeService.findById(challengeId)
@@ -90,8 +95,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public UsagePercentages getUsagePercentages() {
-        if(this.usagePercentages.size() == 0) {
-            this.usagePercentages = new UsagePercentages();
+        if (this.usagePercentages.size() == 0) {
             int total = this.submissionService.findAll().size();
             this.pLanguageService
                     .findAll()
@@ -100,13 +104,54 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         return this.usagePercentages;
     }
 
+    @Override
+    public PassPercentages getPassPercentages() {
+        if (this.passPercentages.size() == 0) {
+            int total = this.submissionService.findAll().size();
+            this.pLanguageService.findAll().forEach(pLanguage -> this.addPassPercentageAndLanguage(pLanguage));
+        }
+        return this.passPercentages;
+    }
+
+    private void addPassPercentageAndLanguage(PLanguage pLanguage) {
+        double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId()), 2);
+        this.passPercentages.getPLanguages().add(pLanguage);
+        this.passPercentages.getPercentages().add(percentage);
+    }
+
+    @Override
+    public PLanguage getFavouriteLanguage() {
+        if (this.favourite == null) {
+            if (this.usagePercentages == null || this.usagePercentages.size() < 1) {
+                this.usagePercentages = this.getUsagePercentages();
+            }
+            this.favourite = this.findFavouriteLanguageFromUsagePercentages();
+            System.out.println(this.favourite.getLanguage());
+        }
+        return this.favourite;
+    }
+
+    private PLanguage findFavouriteLanguageFromUsagePercentages() {
+        PLanguage favourite = null;
+        double maxFavPercentage = 0f;
+
+        for (int i = 0; i < this.usagePercentages.getUsagePercentages().size(); i++) {
+            double tempPercentage = this.usagePercentages.getUsagePercentages().get(i);
+            if (maxFavPercentage < tempPercentage) {
+                maxFavPercentage = tempPercentage;
+                favourite = this.usagePercentages.getPLanguages().get(i);
+            }
+        }
+        return favourite;
+    }
+
     private void addPLanguageStatisticsToUsages(PLanguage pLanguage, int total) {
         this.usagePercentages.getPLanguages().add(pLanguage);
         this.usagePercentages.getUsagePercentages().add(this.findPercentageForPLanguage(pLanguage, total));
     }
 
     private double findPercentageForPLanguage(PLanguage pLanguage, int total) {
-        return ((double) pLanguage.getSubmissions().size()) /((double) total);
+        return this.roundToDecimal(((double) pLanguage.getSubmissions().size()) / ((double) total), 2);
     }
 
     private double findPercentageForPLanguage(Long id, int total) {
@@ -123,7 +168,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     //side effects
     private void incrementBySubmissionScore(double score, AtomicInteger passed) {
-        if(score == 1.0) {
+        if (score == 1.0) {
             passed.incrementAndGet();
         }
     }

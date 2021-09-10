@@ -1,10 +1,8 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
-import de.yalama.hackerrankindexer.Analytics.UsagePercentages;
-import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
-
-import java.util.List;
-import java.util.Map;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.UsagePercentages;
+import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 
 public abstract class AnalyticsService {
     /**
@@ -37,6 +35,14 @@ public abstract class AnalyticsService {
      * @return A Map with the percentage of submissions (total) for each language
      */
     public abstract UsagePercentages getUsagePercentages();
+
+    public abstract PassPercentages getPassPercentages();
+
+    /**
+     * returns the most used Language
+     * @return
+     */
+    public abstract PLanguage getFavouriteLanguage();
 
     /**
      * A method to clear all cached statistics

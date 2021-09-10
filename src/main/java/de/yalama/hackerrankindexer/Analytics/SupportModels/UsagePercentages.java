@@ -1,4 +1,4 @@
-package de.yalama.hackerrankindexer.Analytics;
+package de.yalama.hackerrankindexer.Analytics.SupportModels;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import lombok.Getter;

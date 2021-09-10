@@ -1,13 +1,13 @@
 package de.yalama.hackerrankindexer.Analytics.controller;
 
 
-import de.yalama.hackerrankindexer.Analytics.UsagePercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.UsagePercentages;
 import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
+import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("analytics")
@@ -45,8 +45,18 @@ public class AnalyticsController {
         return this.analyticsService.getPercentagePassedByChallenge(challengeId);
     }*/
 
-    @GetMapping("/pLanguage/percentages")
-    public UsagePercentages getPercentagesOfPLanguages() {
+    @GetMapping("/pLanguage/percentages/usage")
+    public UsagePercentages getUsagePercentagesOfPLanguages() {
         return this.analyticsService.getUsagePercentages();
+    }
+
+    @GetMapping("/pLanguages/percentages/passed")
+    public PassPercentages getPassPercentagesOfLanguages() {
+        return this.analyticsService.getPassPercentages();
+    }
+
+    @GetMapping("/pLanguage/favourite")
+    public PLanguage getFavouriteLanguage(){
+        return this.analyticsService.getFavouriteLanguage();
     }
 }

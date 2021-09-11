@@ -50,7 +50,7 @@ public class AnalyticsController {
         return this.analyticsService.getUsagePercentages();
     }
 
-    @GetMapping("/pLanguages/percentages/passed")
+    @GetMapping("/pLanguage/percentages/passed")
     public PassPercentages getPassPercentagesOfLanguages() {
         return this.analyticsService.getPassPercentages();
     }

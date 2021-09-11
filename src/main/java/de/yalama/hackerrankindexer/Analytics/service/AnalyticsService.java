@@ -32,10 +32,14 @@ public abstract class AnalyticsService {
 
     /**
      * From all submissions give the share of submissions of each language in percent
-     * @return A Map with the percentage of submissions (total) for each language
+     * @return two arrays with the percentage of submissions (total) for each language (Indices match)
      */
     public abstract UsagePercentages getUsagePercentages();
 
+    /**
+     * From all submissions give the suuccess rate of submissions of each language in percent
+     * @return two arrays with the percentage of submissions (total) for each language (Indices match)
+     */
     public abstract PassPercentages getPassPercentages();
 
     /**

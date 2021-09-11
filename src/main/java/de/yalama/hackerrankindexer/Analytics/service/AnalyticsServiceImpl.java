@@ -107,7 +107,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     @Override
     public PassPercentages getPassPercentages() {
         if (this.passPercentages.size() == 0) {
-            int total = this.submissionService.findAll().size();
             this.pLanguageService.findAll().forEach(pLanguage -> this.addPassPercentageAndLanguage(pLanguage));
         }
         return this.passPercentages;
@@ -115,6 +114,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private void addPassPercentageAndLanguage(PLanguage pLanguage) {
         double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId()), 4);
+        log.info(String.format("%s - %f", pLanguage.getLanguage(), percentage));
         this.passPercentages.getPLanguages().add(pLanguage);
         this.passPercentages.getPercentages().add(percentage);
     }
@@ -126,7 +126,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
                 this.usagePercentages = this.getUsagePercentages();
             }
             this.favourite = this.findFavouriteLanguageFromUsagePercentages();
-            System.out.println(this.favourite.getLanguage());
         }
         return this.favourite;
     }

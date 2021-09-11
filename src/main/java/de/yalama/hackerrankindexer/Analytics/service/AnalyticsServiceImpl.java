@@ -98,8 +98,9 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         if (this.usagePercentages.size() == 0) {
             int total = this.submissionService.findAll().size();
             this.pLanguageService
-                    .findAll()
-                    .forEach(pLanguage -> this.addPLanguageStatisticsToUsages(pLanguage, total));
+                    .findAll()//DONT REMOVE BLOCK BELOW
+                    .forEach(pLanguage -> {this.addPLanguageToUsageStatistics(pLanguage, total);});
+
         }
         return this.usagePercentages;
     }
@@ -114,7 +115,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private void addPassPercentageAndLanguage(PLanguage pLanguage) {
         double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId()), 4);
-        log.info(String.format("%s - %f", pLanguage.getLanguage(), percentage));
         this.passPercentages.getPLanguages().add(pLanguage);
         this.passPercentages.getPercentages().add(percentage);
     }
@@ -132,21 +132,22 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private PLanguage findFavouriteLanguageFromUsagePercentages() {
         PLanguage favourite = null;
-        double maxFavPercentage = 0f;
+        double maxFavSize = 0;
 
-        for (int i = 0; i < this.usagePercentages.getUsagePercentages().size(); i++) {
-            double tempPercentage = this.usagePercentages.getUsagePercentages().get(i);
-            if (maxFavPercentage < tempPercentage) {
-                maxFavPercentage = tempPercentage;
+        for (int i = 0; i < this.usagePercentages.getNumberSubmissions().size(); i++) {
+            double tempSize = this.usagePercentages.getNumberSubmissions().get(i);
+            if (maxFavSize < tempSize) {
+                maxFavSize = tempSize;
                 favourite = this.usagePercentages.getPLanguages().get(i);
             }
         }
         return favourite;
     }
 
-    private void addPLanguageStatisticsToUsages(PLanguage pLanguage, int total) {
+    private void addPLanguageToUsageStatistics(PLanguage pLanguage, int total) {
+        log.info(pLanguage.getLanguage());
         this.usagePercentages.getPLanguages().add(pLanguage);
-        this.usagePercentages.getUsagePercentages().add(this.findPercentageForPLanguage(pLanguage, total));
+        this.usagePercentages.getNumberSubmissions().add(pLanguage.getSubmissions().size());
     }
 
     private double findPercentageForPLanguage(PLanguage pLanguage, int total) {

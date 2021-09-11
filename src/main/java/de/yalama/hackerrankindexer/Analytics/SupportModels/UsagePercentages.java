@@ -14,11 +14,11 @@ import java.util.List;
  */
 public class UsagePercentages {
     private List<PLanguage> pLanguages;
-    private List<Double> usagePercentages;
+    private List<Integer> numberSubmissions;
 
     public UsagePercentages() {
         this.pLanguages = new ArrayList<PLanguage>();
-        this.usagePercentages = new ArrayList<Double>();
+        this.numberSubmissions = new ArrayList<Integer>();
     }
 
     public int size() {

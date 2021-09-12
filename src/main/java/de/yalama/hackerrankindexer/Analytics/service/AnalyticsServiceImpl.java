@@ -89,20 +89,21 @@ public class AnalyticsServiceImpl extends AnalyticsService {
                             this.incrementBySubmissionScore(submission.getScore(), passed));
             this.addPercentage(challengeId, passed.get(), total, this.percentageByChallengeId);
         }
-        log.info("%f", this.percentageByChallengeId.get(challengeId));
         return this.percentageByChallengeId.get(challengeId);
     }
 
     @Override
     public UsagePercentages getUsagePercentages() {
         if (this.usagePercentages.size() == 0) {
-            int total = this.submissionService.findAll().size();
-            this.pLanguageService
-                    .findAll()//DONT REMOVE BLOCK BELOW
-                    .forEach(pLanguage -> {this.addPLanguageToUsageStatistics(pLanguage, total);});
-
+            this.createUsagePercentages();
         }
         return this.usagePercentages;
+    }
+
+    private void createUsagePercentages() {
+        this.pLanguageService
+                .findAll()
+                .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage));
     }
 
     @Override
@@ -144,10 +145,11 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         return favourite;
     }
 
-    private void addPLanguageToUsageStatistics(PLanguage pLanguage, int total) {
+    private void addPLanguageToUsageStatistics(PLanguage pLanguage) {
         log.info(pLanguage.getLanguage());
+        int numSubmission = pLanguage.getSubmissions().size();
         this.usagePercentages.getPLanguages().add(pLanguage);
-        this.usagePercentages.getNumberSubmissions().add(pLanguage.getSubmissions().size());
+        this.usagePercentages.getNumberSubmissions().add(numSubmission);
     }
 
     private double findPercentageForPLanguage(PLanguage pLanguage, int total) {

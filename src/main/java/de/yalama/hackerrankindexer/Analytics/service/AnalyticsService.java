@@ -1,7 +1,7 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
-import de.yalama.hackerrankindexer.Analytics.SupportModels.UsagePercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 
 public abstract class AnalyticsService {
@@ -34,7 +34,7 @@ public abstract class AnalyticsService {
      * From all submissions give the share of submissions of each language in percent
      * @return two arrays with the percentage of submissions (total) for each language (Indices match)
      */
-    public abstract UsagePercentages getUsagePercentages();
+    public abstract UsageStatistics getUsagePercentages();
 
     /**
      * From all submissions give the suuccess rate of submissions of each language in percent
@@ -53,4 +53,9 @@ public abstract class AnalyticsService {
      * Fired when Dataset is manipulated
      */
     public abstract void clear();
+
+    /**
+     * A method to check if submissions exist
+     */
+    public abstract boolean checkSubmissionsExist();
 }

@@ -12,16 +12,22 @@ import java.util.List;
 /**
  * Maps in java and maps in typescript dont have good compatibility. This is a workaround
  */
-public class UsagePercentages {
+public class UsageStatistics extends AbstractStatisticModel{
     private List<PLanguage> pLanguages;
     private List<Integer> numberSubmissions;
 
-    public UsagePercentages() {
+    public UsageStatistics() {
         this.pLanguages = new ArrayList<PLanguage>();
         this.numberSubmissions = new ArrayList<Integer>();
     }
 
     public int size() {
         return this.pLanguages.size();
+    }
+
+    @Override
+    public void clear() {
+        this.pLanguages.clear();
+        this.numberSubmissions.clear();
     }
 }

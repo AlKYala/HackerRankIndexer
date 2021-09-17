@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PassPercentages {
+public class PassPercentages extends AbstractStatisticModel {
     private List<PLanguage> pLanguages;
     private List<Double> percentages;
 
@@ -20,5 +20,11 @@ public class PassPercentages {
 
     public int size() {
         return this.pLanguages.size();
+    }
+
+    @Override
+    public void clear() {
+        this.pLanguages.clear();
+        this.percentages.clear();
     }
 }

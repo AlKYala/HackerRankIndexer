@@ -1,7 +1,7 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
-import de.yalama.hackerrankindexer.Analytics.SupportModels.UsagePercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
@@ -28,7 +28,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private Map<Long, Double> percentageByLanguageId;
     private Map<Long, Double> percentageByChallengeId;
-    private UsagePercentages usagePercentages;
+    private UsageStatistics usageStatistics;
     private PassPercentages passPercentages;
 
     private PLanguage favourite;
@@ -40,7 +40,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.challengeService = challengeService;
         this.percentageByLanguageId = new HashMap<Long, Double>();
         this.percentageByChallengeId = new HashMap<Long, Double>();
-        this.usagePercentages = new UsagePercentages();
+        this.usageStatistics = new UsageStatistics();
         this.passPercentages = new PassPercentages();
     }
 
@@ -93,11 +93,11 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public UsagePercentages getUsagePercentages() {
-        if (this.usagePercentages.size() == 0) {
+    public UsageStatistics getUsagePercentages() {
+        if (this.usageStatistics.size() == 0) {
             this.createUsagePercentages();
         }
-        return this.usagePercentages;
+        return this.usageStatistics;
     }
 
     private void createUsagePercentages() {
@@ -123,8 +123,8 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     @Override
     public PLanguage getFavouriteLanguage() {
         if (this.favourite == null) {
-            if (this.usagePercentages == null || this.usagePercentages.size() < 1) {
-                this.usagePercentages = this.getUsagePercentages();
+            if (this.usageStatistics == null || this.usageStatistics.size() < 1) {
+                this.usageStatistics = this.getUsagePercentages();
             }
             this.favourite = this.findFavouriteLanguageFromUsagePercentages();
         }
@@ -135,11 +135,11 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         PLanguage favourite = null;
         double maxFavSize = 0;
 
-        for (int i = 0; i < this.usagePercentages.getNumberSubmissions().size(); i++) {
-            double tempSize = this.usagePercentages.getNumberSubmissions().get(i);
+        for (int i = 0; i < this.usageStatistics.getNumberSubmissions().size(); i++) {
+            double tempSize = this.usageStatistics.getNumberSubmissions().get(i);
             if (maxFavSize < tempSize) {
                 maxFavSize = tempSize;
-                favourite = this.usagePercentages.getPLanguages().get(i);
+                favourite = this.usageStatistics.getPLanguages().get(i);
             }
         }
         return favourite;
@@ -148,8 +148,8 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     private void addPLanguageToUsageStatistics(PLanguage pLanguage) {
         log.info(pLanguage.getLanguage());
         int numSubmission = pLanguage.getSubmissions().size();
-        this.usagePercentages.getPLanguages().add(pLanguage);
-        this.usagePercentages.getNumberSubmissions().add(numSubmission);
+        this.usageStatistics.getPLanguages().add(pLanguage);
+        this.usageStatistics.getNumberSubmissions().add(numSubmission);
     }
 
     private double findPercentageForPLanguage(PLanguage pLanguage, int total) {
@@ -164,8 +164,16 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     public void clear() {
         this.percentageSubmissions = null;
         this.percentageChallenges = null;
+        this.favourite = null;
+        this.usageStatistics.clear();
+        this.passPercentages.clear();
         this.percentageByChallengeId.clear();
         this.percentageByLanguageId.clear();
+    }
+
+    @Override
+    public boolean checkSubmissionsExist() {
+        return !this.submissionService.findAll().isEmpty();
     }
 
     //side effects

@@ -2,7 +2,7 @@ package de.yalama.hackerrankindexer.Analytics.controller;
 
 
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
-import de.yalama.hackerrankindexer.Analytics.SupportModels.UsagePercentages;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import lombok.RequiredArgsConstructor;
@@ -37,16 +37,8 @@ public class AnalyticsController {
         return this.analyticsService.getPercentagePassedByLanguage(languageId);
     }
 
-    /* TODO find out why this is not working
-    @GetMapping("/challenge/({challengeId}/percentages")
-
-    public double getPercentageOfPassedByChallengeId(@PathVariable Long challengeId) {
-        System.out.println("pinging");
-        return this.analyticsService.getPercentagePassedByChallenge(challengeId);
-    }*/
-
     @GetMapping("/pLanguage/percentages/usage")
-    public UsagePercentages getUsagePercentagesOfPLanguages() {
+    public UsageStatistics getUsagePercentagesOfPLanguages() {
         return this.analyticsService.getUsagePercentages();
     }
 
@@ -58,5 +50,10 @@ public class AnalyticsController {
     @GetMapping("/pLanguage/favourite")
     public PLanguage getFavouriteLanguage(){
         return this.analyticsService.getFavouriteLanguage();
+    }
+
+    @GetMapping("/exists")
+    public boolean checkSubmissionsExist() {
+        return this.analyticsService.checkSubmissionsExist();
     }
 }

@@ -40,6 +40,9 @@ public class PLanguageServiceImpl extends PLanguageService {
 
     @Override
     public PLanguage save(PLanguage instance) throws HackerrankIndexerException {
+        int colorValue = ((int) (16777215f * Math.random()));
+        String color = String.format("#%s", Integer.toHexString((colorValue)));
+        instance.setColor(color);
         return this.serviceHandler.save(instance);
     }
 

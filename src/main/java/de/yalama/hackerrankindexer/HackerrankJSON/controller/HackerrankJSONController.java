@@ -19,7 +19,7 @@ public class HackerrankJSONController {
     private HackerrankJSONService hackerrankJSONService;
 
     @PostMapping
-    public String persistData(@RequestBody HackerrankJSON hackerrankJSON) {
+    public Integer persistData(@RequestBody HackerrankJSON hackerrankJSON) {
         return this.hackerrankJSONService.parse(hackerrankJSON);
     }
 }

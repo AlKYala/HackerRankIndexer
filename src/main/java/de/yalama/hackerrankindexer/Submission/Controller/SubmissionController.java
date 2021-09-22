@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RequestMapping("/submission")
 @RestController
@@ -30,6 +29,11 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @GetMapping("/{id}")
     public Submission findById(@PathVariable Long id) throws HackerrankIndexerException {
         return this.submissionService.findById(id);
+    }
+
+    @GetMapping("/user/{id}")
+    public List<Submission> findByUserId(@PathVariable Long id) throws HackerrankIndexerException {
+        return this.submissionService.findAllByUserId(id);
     }
 
     @Override

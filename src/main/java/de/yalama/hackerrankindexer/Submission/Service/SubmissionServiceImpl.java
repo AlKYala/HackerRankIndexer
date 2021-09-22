@@ -62,6 +62,7 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     @Override
     public Submission save(Submission instance) throws HackerrankIndexerException {
+        //TODO mit nutzerdaten - hoechstwahrscheinlich im FE
         return this.serviceHandler.save(instance);
     }
 
@@ -126,5 +127,12 @@ public class SubmissionServiceImpl extends SubmissionService {
 
         passedLatest.sort(this.submissionIdComparator);
         return passedLatest;
+    }
+
+    @Override
+    public List<Submission> findAllByUserId(Long userId) {
+        return this.findAll().stream()
+                .filter(submission -> submission.getWriter().getId() == userId)
+                .collect(Collectors.toList());
     }
 }

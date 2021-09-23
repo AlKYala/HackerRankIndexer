@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Submission.Controller;
 
+import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RequestMapping("/submission")
@@ -16,13 +18,21 @@ import java.util.List;
 public class SubmissionController implements BaseController<Submission, Long> {
 
     @Autowired
-
     private SubmissionService submissionService;
+
+    @Autowired
+    private SessionService sessionService;
 
     @Override
     @GetMapping
     public List<Submission> findAll() {
         return this.submissionService.findAll();
+    }
+
+    @GetMapping("bySessionId")
+    public List<Submission> findAllBySubmissionId(HttpServletRequest httpServletRequest) {
+        long sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+        return this.submissionService.findAllBySessionId(sessionId);
     }
 
     @Override
@@ -55,8 +65,8 @@ public class SubmissionController implements BaseController<Submission, Long> {
     }
 
     @GetMapping("/passed")
-    public List<Submission> getPassedSubmissions() {
-        return this.submissionService.getAllPassed();
+    public List<Submission> getPassedSubmissions(long sessionId) {
+        return this.submissionService.getAllPassed(sessionId);
     }
 
     /**
@@ -65,7 +75,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
      * of each challenge is
      */
     @GetMapping("/passed/latest")
-    public List<Submission> getLatestPassedSubmissions() {
-        return this.submissionService.getLastPassedFromAll();
+    public List<Submission> getLatestPassedSubmissions(long sessionId) {
+        return this.submissionService.getLastPassedFromAll(sessionId);
     }
 }

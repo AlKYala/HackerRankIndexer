@@ -48,4 +48,6 @@ public class Submission extends BaseEntity {
     private String code;
 
     private double score;
+
+    private long sessionId;
 }

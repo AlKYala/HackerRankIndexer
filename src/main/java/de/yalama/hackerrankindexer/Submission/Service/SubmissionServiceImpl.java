@@ -62,7 +62,6 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     @Override
     public Submission save(Submission instance) throws HackerrankIndexerException {
-        //TODO mit nutzerdaten - hoechstwahrscheinlich im FE
         return this.serviceHandler.save(instance);
     }
 
@@ -105,15 +104,15 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public List<Submission> getAllPassed() {
+    public List<Submission> getAllPassed(long sessionId) {
         return this.findAll().stream()
-                .filter(submission -> submission.getScore() == 1)
+                .filter(submission -> submission.getScore() == 1 && sessionId == submission.getSessionId())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Submission> getLastPassedFromAll() {
-        List<Submission> passedSubmissions = this.getAllPassed();
+    public List<Submission> getLastPassedFromAll(long sessionId) {
+        List<Submission> passedSubmissions = this.getAllPassed(sessionId);
         List<Submission> passedLatest = new ArrayList<Submission>();
         Set<Long> idOfTakenChallenges = new HashSet<Long>();
 
@@ -126,7 +125,23 @@ public class SubmissionServiceImpl extends SubmissionService {
         }
 
         passedLatest.sort(this.submissionIdComparator);
-        return passedLatest;
+        return this.filterBySessionId(passedSubmissions, sessionId);
+    }
+
+    @Override
+    public List<Submission> findAllBySessionId(long sessionId) {
+        return this.findAll()
+                .stream()
+                .filter(submission -> submission.getSessionId() == sessionId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Submission> filterBySessionId(List<Submission> submissions, long sessionId) {
+        return submissions
+                .stream()
+                .filter(submission -> submission.getSessionId() == sessionId)
+                .collect(Collectors.toList());
     }
 
     @Override

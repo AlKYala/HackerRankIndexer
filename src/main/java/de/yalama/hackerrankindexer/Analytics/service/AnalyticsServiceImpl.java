@@ -45,9 +45,9 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public Double getPercentagePassedSubmissions() {
+    public Double getPercentagePassedSubmissions(long sessionId) {
         if (percentageSubmissions == null) {
-            int passed = this.submissionService.getAllPassed().size();
+            int passed = this.submissionService.getAllPassed(sessionId).size();
             int total = this.submissionService.findAll().size();
             percentageSubmissions = ((double) passed) / ((double) total);
         }

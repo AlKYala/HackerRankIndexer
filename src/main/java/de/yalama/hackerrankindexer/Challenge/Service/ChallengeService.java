@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class ChallengeService implements BaseService<Challenge> {
-    public abstract Set<Submission> getSubmissionsByChallengeId(Long challengeId);
-    public abstract Boolean checkIsChallengePassed(Long challengeId);
-    public abstract List<Challenge> getAllPassedChallenges();
-    public abstract List<Challenge> getAllFailedChallenges();
+    public abstract Set<Submission> getSubmissionsByChallengeId(Long challengeId, long sesionId);
+    public abstract Boolean checkIsChallengePassed(Long challengeId, long sessionId);
+    public abstract List<Challenge> getAllPassedChallenges(long sessionId);
+    public abstract List<Challenge> getAllFailedChallenges(long sessionId);
 }

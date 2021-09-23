@@ -5,6 +5,7 @@ import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,15 +26,17 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     private ChallengeService challengeService;
     private PLanguageService pLanguageService;
 
-    private Double percentageSubmissions;
-    private Double percentageChallenges;
+    //TODO: MAP THESE!
 
-    private Map<Long, Double> percentageByLanguageId;
-    private Map<Long, Double> percentageByChallengeId;
-    private UsageStatistics usageStatistics;
-    private PassPercentages passPercentages;
+    //private Double percentageSubmissions;
+    //private Double percentageChallenges;
 
-    private PLanguage favourite;
+    //private Map<Long, Double> percentageByLanguageId;
+    //private Map<Long, Double> percentageByChallengeId;
+    //private UsageStatistics usageStatistics;
+    //private PassPercentages passPercentages;
+
+    //private PLanguage favourite;
 
     public AnalyticsServiceImpl(SubmissionService submissionService, ChallengeService challengeService,
                                 PLanguageService pLanguageService) {
@@ -48,16 +53,16 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     public Double getPercentagePassedSubmissions(long sessionId) {
         if (percentageSubmissions == null) {
             int passed = this.submissionService.getAllPassed(sessionId).size();
-            int total = this.submissionService.findAll().size();
+            int total = this.submissionService.findAllBySessionId(sessionId).size();
             percentageSubmissions = ((double) passed) / ((double) total);
         }
         return percentageSubmissions;
     }
 
     @Override
-    public Double getPercentagePassedChallenges() {
+    public Double getPercentagePassedChallenges(long sessionId) {
         if (percentageChallenges == null) {
-            int passed = this.challengeService.getAllPassedChallenges().size();
+            int passed = this.challengeService.getAllPassedChallenges(sessionId).size();
             int total = this.challengeService.findAll().size();
             percentageChallenges = ((double) passed) / ((double) total);
         }
@@ -65,14 +70,21 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public Double getPercentagePassedByLanguage(Long languageId) {
+    public Double getPercentagePassedByLanguage(Long languageId, long sessionId) {
         if (!this.percentageByLanguageId.containsKey(languageId)) {
             AtomicInteger passed = new AtomicInteger(0);
-            int total = this.pLanguageService.findById(languageId).getSubmissions().size();
-            this.pLanguageService.findById(languageId)
-                    .getSubmissions()
-                    .forEach(submission
-                            -> this.incrementBySubmissionScore(submission.getScore(), passed));
+
+            List<Submission> submissionsBySessionIdWithLanguage =
+                    this.pLanguageService.findById(languageId)
+                            .getSubmissions().stream()
+                            .filter(submission -> submission.getSessionId() == sessionId)
+                            .collect(Collectors.toList());
+
+            int total = submissionsBySessionIdWithLanguage.size();
+
+            submissionsBySessionIdWithLanguage
+                    .forEach(submission -> this.incrementBySubmissionScore(submission.getScore(), passed));
+
             this.addPercentage(languageId, passed.get(), total, this.percentageByLanguageId);
         }
         return this.percentageByLanguageId.get(languageId);

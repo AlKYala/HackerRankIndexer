@@ -14,7 +14,7 @@ public abstract class AnalyticsService {
      *
      * @return The percentage of (passed challenges) / (all attempted challenges)
      */
-    public abstract Double getPercentagePassedChallenges();
+    public abstract Double getPercentagePassedChallenges(long sessionId);
 
     /**
      * Returns the percentage of passed submissions by language

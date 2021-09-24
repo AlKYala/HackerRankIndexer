@@ -56,13 +56,16 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public Set<Submission> getSubmissionsByChallengeId(Long challengeId) {
-        return this.findById(challengeId).getSubmissions();
+    public Set<Submission> getSubmissionsByChallengeIdAndSessionId(long challengeId, long sessionId) {
+        return this.findById(challengeId).getSubmissions()
+                .stream()
+                .filter(submission -> submission.getSessionId() == sessionId)
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public Boolean checkIsChallengePassed(Long challengeId) {
-        for(Submission submission : this.findById(challengeId).getSubmissions()) {
+    public Boolean checkIsChallengePassedBySessionId(long challengeId, long sessionId) {
+        for(Submission submission : this.getSubmissionsByChallengeIdAndSessionId(challengeId, sessionId)) {
             if(submission.getScore() == 1) {
                 return true;
             }
@@ -71,18 +74,26 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public List<Challenge> getAllPassedChallenges() {
-        return this.findAll()
-                .stream()
-                .filter(challenge -> this.checkIsChallengePassed(challenge.getId()))
+    public List<Challenge> getAllChallengesBySessionId(long sessionId) {
+        return this.findAll().stream()
+                .filter(challenge -> this.checkHasSubmissionBySessionId(challenge, sessionId))
                 .collect(Collectors.toList());
     }
 
+    private boolean checkHasSubmissionBySessionId(Challenge challenge, long sessionId) {
+        for(Submission submission : challenge.getSubmissions()) {
+            if(submission.getSessionId() == sessionId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
-    public List<Challenge> getAllFailedChallenges() {
+    public List<Challenge> getAllPassedChallengesBySessionId(long sessionId) {
         return this.findAll()
                 .stream()
-                .filter(challenge -> !this.checkIsChallengePassed(challenge.getId()))
+                .filter(challenge -> this.checkIsChallengePassedBySessionId(challenge.getId(), sessionId))
                 .collect(Collectors.toList());
     }
 }

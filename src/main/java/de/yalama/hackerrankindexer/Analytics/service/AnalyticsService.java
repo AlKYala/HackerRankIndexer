@@ -49,13 +49,9 @@ public abstract class AnalyticsService {
     public abstract PLanguage getFavouriteLanguage(long sessionId);
 
     /**
-     * A method to clear all cached statistics
-     * Fired when Dataset is manipulated
-     */
-    public abstract void clear(long sessionId);
-
-    /**
      * A method to check if submissions exist
      */
     public abstract boolean checkSubmissionsExist(long sessionId);
+
+    public abstract void clearEverythingBySessionId(long sessionId);
 }

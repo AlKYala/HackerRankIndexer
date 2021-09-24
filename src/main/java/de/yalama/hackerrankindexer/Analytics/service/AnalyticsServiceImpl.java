@@ -26,42 +26,48 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     private ChallengeService challengeService;
     private PLanguageService pLanguageService;
 
-    //TODO: MAP THESE!
+    private Map<Long, Double> percentageSubmissionsBySessionId;
 
-    //private Double percentageSubmissions;
-    //private Double percentageChallenges;
+    private Map<Long, Double> percentageChallengesbySessionId;
 
-    //private Map<Long, Double> percentageByLanguageId;
-    //private Map<Long, Double> percentageByChallengeId;
-    //private UsageStatistics usageStatistics;
-    //private PassPercentages passPercentages;
+    private Map<Long, Map<Long, Double>> percentageByLanguageIdBySessionId; //SessionId is outer dimension
 
-    //private PLanguage favourite;
+    private Map<Long, Map<Long, Double>> percentageByChallengeIdBySessionId;
+
+    private Map<Long, UsageStatistics> usageStatisticsBySessionId;
+
+    private Map<Long, PassPercentages> passPercentagesBySessionId;
+
+    private Map<Long, PLanguage> favouriteBySessionId;
 
     public AnalyticsServiceImpl(SubmissionService submissionService, ChallengeService challengeService,
                                 PLanguageService pLanguageService) {
         this.pLanguageService = pLanguageService;
         this.submissionService = submissionService;
         this.challengeService = challengeService;
-        this.percentageByLanguageId = new HashMap<Long, Double>();
-        this.percentageByChallengeId = new HashMap<Long, Double>();
-        this.usageStatistics = new UsageStatistics();
-        this.passPercentages = new PassPercentages();
+        this.percentageSubmissionsBySessionId = new HashMap<Long, Double>();
+        this.percentageChallengesbySessionId = new HashMap<Long, Double>();
+        this.percentageByLanguageIdBySessionId = new HashMap<Long, Map<Long, Double>>();
+        this.percentageByChallengeIdBySessionId = new HashMap<Long, Map<Long, Double>>();
+        this.usageStatisticsBySessionId = new HashMap<Long, UsageStatistics>();
+        this.passPercentagesBySessionId = new HashMap<Long, PassPercentages>();
+        this.favouriteBySessionId = new HashMap<Long, PLanguage>();
     }
 
     @Override
     public Double getPercentagePassedSubmissions(long sessionId) {
-        if (percentageSubmissions == null) {
+        if (!percentageSubmissionsBySessionId.containsKey(sessionId)) {
             int passed = this.submissionService.getAllPassed(sessionId).size();
             int total = this.submissionService.findAllBySessionId(sessionId).size();
-            percentageSubmissions = ((double) passed) / ((double) total);
+            double percentageForSubmissionId = ((double) passed) / ((double) total);
+            this.percentageSubmissionsBySessionId.put(sessionId, percentageForSubmissionId);
         }
-        return percentageSubmissions;
+        return this.percentageSubmissionsBySessionId.get(sessionId);
     }
 
     @Override
     public Double getPercentagePassedChallenges(long sessionId) {
-        if (percentageChallenges == null) {
+        if (!percentageChallengesbySessionId.containsKey(sessionId)) {
             int passed = this.challengeService.getAllPassedChallenges(sessionId).size();
             int total = this.challengeService.findAll().size();
             percentageChallenges = ((double) passed) / ((double) total);
@@ -88,6 +94,22 @@ public class AnalyticsServiceImpl extends AnalyticsService {
             this.addPercentage(languageId, passed.get(), total, this.percentageByLanguageId);
         }
         return this.percentageByLanguageId.get(languageId);
+    }
+
+    @Override
+    public Double getPercentagePassedByChallenge(Long challengeId, long SessionId) {
+        return null;
+    }
+
+    @Override
+    public void clearEverythingBySessionId(long sessionId) {
+        this.percentageSubmissionsBySessionId.remove(sessionId);
+        this.percentageChallengesbySessionId.remove(sessionId);
+        this.percentageByLanguageIdBySessionId.remove(sessionId);
+        this.percentageByChallengeIdBySessionId.remove(sessionId);
+        this.usageStatisticsBySessionId.remove(sessionId);
+        this.passPercentagesBySessionId.remove(sessionId);
+        this.favouriteBySessionId.remove(sessionId);
     }
 
     @Override
@@ -170,17 +192,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private double findPercentageForPLanguage(Long id, int total) {
         return this.findPercentageForPLanguage(this.pLanguageService.findById(id), total);
-    }
-
-    @Override
-    public void clear() {
-        this.percentageSubmissions = null;
-        this.percentageChallenges = null;
-        this.favourite = null;
-        this.usageStatistics.clear();
-        this.passPercentages.clear();
-        this.percentageByChallengeId.clear();
-        this.percentageByLanguageId.clear();
     }
 
     @Override

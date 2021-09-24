@@ -24,17 +24,10 @@ public abstract class AnalyticsService {
     public abstract Double getPercentagePassedByLanguage(Long languageId, long sessionId);
 
     /**
-     * Returns the percentage of passed submissions per challenge
-     * @param challengeId
-     * @return the percentage of passed submissions per challenge with ID challengeId
-     */
-    public abstract Double getPercentagePassedByChallenge(Long challengeId, long SessionId);
-
-    /**
      * From all submissions give the share of submissions of each language in percent
      * @return two arrays with the percentage of submissions (total) for each language (Indices match)
      */
-    public abstract UsageStatistics getUsagePercentages(long sessionId);
+    public abstract UsageStatistics getUsagePercentagesBySessionId(long sessionId);
 
     /**
      * From all submissions give the suuccess rate of submissions of each language in percent

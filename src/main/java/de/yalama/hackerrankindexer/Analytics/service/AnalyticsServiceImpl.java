@@ -59,8 +59,8 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         if (!percentageSubmissionsBySessionId.containsKey(sessionId)) {
             int passed = this.submissionService.getAllPassed(sessionId).size();
             int total = this.submissionService.findAllBySessionId(sessionId).size();
-            double percentageForSubmissionId = ((double) passed) / ((double) total);
-            this.percentageSubmissionsBySessionId.put(sessionId, percentageForSubmissionId);
+            double percentageForSessionId = ((double) passed) / ((double) total);
+            this.percentageSubmissionsBySessionId.put(sessionId, percentageForSessionId);
         }
         return this.percentageSubmissionsBySessionId.get(sessionId);
     }
@@ -68,16 +68,17 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     @Override
     public Double getPercentagePassedChallenges(long sessionId) {
         if (!percentageChallengesbySessionId.containsKey(sessionId)) {
-            int passed = this.challengeService.getAllPassedChallenges(sessionId).size();
-            int total = this.challengeService.findAll().size();
-            percentageChallenges = ((double) passed) / ((double) total);
+            int passed = this.challengeService.getAllPassedChallengesBySessionId(sessionId).size();
+            int total = this.challengeService.getAllChallengesBySessionId(sessionId).size();
+            double percentageChallengesForSessionId = ((double) passed) / ((double) total);
+            this.percentageChallengesbySessionId.put(sessionId, percentageChallengesForSessionId);
         }
-        return percentageChallenges;
+        return this.percentageChallengesbySessionId.get(sessionId);
     }
 
     @Override
     public Double getPercentagePassedByLanguage(Long languageId, long sessionId) {
-        if (!this.percentageByLanguageId.containsKey(languageId)) {
+        if (this.checkLanguagePercentageForSessionIdExists(sessionId, languageId)) {
             AtomicInteger passed = new AtomicInteger(0);
 
             List<Submission> submissionsBySessionIdWithLanguage =
@@ -91,14 +92,18 @@ public class AnalyticsServiceImpl extends AnalyticsService {
             submissionsBySessionIdWithLanguage
                     .forEach(submission -> this.incrementBySubmissionScore(submission.getScore(), passed));
 
-            this.addPercentage(languageId, passed.get(), total, this.percentageByLanguageId);
+            this.addPercentage(languageId, sessionId passed.get(), total, this.percentageByLanguageIdBySessionId);
         }
-        return this.percentageByLanguageId.get(languageId);
+        return this.percentageByLanguageIdBySessionId.get(sessionId).get(languageId)
     }
 
-    @Override
-    public Double getPercentagePassedByChallenge(Long challengeId, long SessionId) {
-        return null;
+    private boolean checkLanguagePercentageForSessionIdExists(long sessionId, long languageId) {
+        if(this.percentageByLanguageIdBySessionId.containsKey(sessionId)) {
+            if(this.percentageByLanguageIdBySessionId.get(sessionId).containsKey(languageId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -113,59 +118,54 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public Double getPercentagePassedByChallenge(Long challengeId) {
-        if (!this.percentageByChallengeId.containsKey(challengeId)) {
-            AtomicInteger passed = new AtomicInteger(0);
-            int total = this.challengeService.findById(challengeId).getSubmissions().size();
-            this.challengeService.findById(challengeId)
-                    .getSubmissions()
-                    .forEach(submission ->
-                            this.incrementBySubmissionScore(submission.getScore(), passed));
-            this.addPercentage(challengeId, passed.get(), total, this.percentageByChallengeId);
+    public UsageStatistics getUsagePercentagesBySessionId(long sessionId) {
+        if (this.usageStatisticsBySessionId.containsKey(sessionId)) {
+            this.createUsagePercentages(sessionId);
         }
-        return this.percentageByChallengeId.get(challengeId);
+        return this.usageStatisticsBySessionId.get(sessionId);
     }
 
-    @Override
-    public UsageStatistics getUsagePercentages() {
-        if (this.usageStatistics.size() == 0) {
-            this.createUsagePercentages();
-        }
-        return this.usageStatistics;
-    }
 
-    private void createUsagePercentages() {
+    private void createUsagePercentages(long sessionId) {
+        /* TODO rework
         this.pLanguageService
                 .findAll()
-                .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage));
+                .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage));*/
     }
-
+    //TODO remodel parameter
     @Override
     public PassPercentages getPassPercentages() {
+        /* TODO rework
         if (this.passPercentages.size() == 0) {
+
             this.pLanguageService.findAll().forEach(pLanguage -> this.addPassPercentageAndLanguage(pLanguage));
         }
-        return this.passPercentages;
+        return this.passPercentages; */
     }
-
+    //TODO remodel parameter
     private void addPassPercentageAndLanguage(PLanguage pLanguage) {
+        /* TODO rework
         double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId()), 4);
         this.passPercentages.getPLanguages().add(pLanguage);
-        this.passPercentages.getPercentages().add(percentage);
+        this.passPercentages.getPercentages().add(percentage);*/
     }
 
+    //TODO remodel parameter
     @Override
     public PLanguage getFavouriteLanguage() {
+        /* TODO rework
         if (this.favourite == null) {
             if (this.usageStatistics == null || this.usageStatistics.size() < 1) {
                 this.usageStatistics = this.getUsagePercentages();
             }
             this.favourite = this.findFavouriteLanguageFromUsagePercentages();
         }
-        return this.favourite;
+        return this.favourite;*/
     }
 
+    //TODO remodel parameter
     private PLanguage findFavouriteLanguageFromUsagePercentages() {
+        /* TODO rework
         PLanguage favourite = null;
         double maxFavSize = 0;
 
@@ -176,27 +176,34 @@ public class AnalyticsServiceImpl extends AnalyticsService {
                 favourite = this.usageStatistics.getPLanguages().get(i);
             }
         }
-        return favourite;
+        return favourite;*/
     }
 
+    //TODO remodel parameter
     private void addPLanguageToUsageStatistics(PLanguage pLanguage) {
+        /* TODO rework
         log.info(pLanguage.getLanguage());
         int numSubmission = pLanguage.getSubmissions().size();
         this.usageStatistics.getPLanguages().add(pLanguage);
-        this.usageStatistics.getNumberSubmissions().add(numSubmission);
+        this.usageStatistics.getNumberSubmissions().add(numSubmission);*/
     }
 
+    //TODO remodel parameter
     private double findPercentageForPLanguage(PLanguage pLanguage, int total) {
-        return this.roundToDecimal(((double) pLanguage.getSubmissions().size()) / ((double) total), 4);
+        /* TODO rework
+        return this.roundToDecimal(((double) pLanguage.getSubmissions().size()) / ((double) total), 4); */
     }
 
     private double findPercentageForPLanguage(Long id, int total) {
-        return this.findPercentageForPLanguage(this.pLanguageService.findById(id), total);
+        /* TODO rework
+        return this.findPercentageForPLanguage(this.pLanguageService.findById(id), total);*/
     }
 
+    //TODO remodel parameter
     @Override
     public boolean checkSubmissionsExist() {
-        return !this.submissionService.findAll().isEmpty();
+        /* TODO rework
+        return !this.submissionService.findAll().isEmpty();*/
     }
 
     //side effects
@@ -207,10 +214,10 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     //side effects
-    private void addPercentage(long id, int passed, int total, Map<Long, Double> map) {
+    private void addPercentage(long id, long sessionId, int passed, int total, Map<Long, Map<Long, Double>> map) {
         double percentage = ((double) passed) / ((double) total);
         percentage = this.roundToDecimal(percentage, 2);
-        map.put(id, percentage);
+        map.get(sessionId).put(id, percentage);
     }
 
     private Double roundToDecimal(double value, int places) {

@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.Challenge.Controller;
 
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
+import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +21,9 @@ public class ChallengeController implements BaseController<Challenge, Long> {
 
     @Autowired
     private ChallengeService challengeService;
+
+    @Autowired
+    private SessionService sessionService;
 
     @Override
     @GetMapping
@@ -49,24 +54,29 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.challengeService.deleteById(id);
     }
-
+    //TODO
     @GetMapping("/{id}/submissions")
     public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id) {
         return this.challengeService.getSubmissionsByChallengeId(id);
     }
-
+    //TODO
     @GetMapping("/{id}/ispassed")
     public Boolean checkIsSubmissionPassed(@PathVariable Long id) {
         return this.challengeService.checkIsChallengePassed(id);
     }
-
+    //TODO
     @GetMapping("/passed")
     public List<Challenge> getPassedChallenges() {
         return this.challengeService.getAllPassedChallenges();
     }
-
+    //TODO
     @GetMapping("/failed")
     public List<Challenge> getFailedChallenges() {
         return this.challengeService.getAllFailedChallenges();
     }
+
+    private long getSessionId(HttpServletRequest httpServletRequest) {
+        return this.sessionService.getCurrentSessionId(httpServletRequest);
+    }
+
 }

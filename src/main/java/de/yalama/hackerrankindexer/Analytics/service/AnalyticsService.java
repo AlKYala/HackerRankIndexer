@@ -42,9 +42,9 @@ public abstract class AnalyticsService {
     public abstract PLanguage getFavouriteLanguage(long sessionId);
 
     /**
-     * A method to check if submissions exist
+     * A method to check if submissions exist by SessionId
      */
-    public abstract boolean checkSubmissionsExist(long sessionId);
+    public abstract boolean checkSubmissionsExistBySessionId(long sessionId);
 
     public abstract void clearEverythingBySessionId(long sessionId);
 }

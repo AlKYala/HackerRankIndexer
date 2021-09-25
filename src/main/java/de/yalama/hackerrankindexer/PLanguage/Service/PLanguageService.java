@@ -9,4 +9,5 @@ import java.util.Set;
 
 public abstract class PLanguageService implements BaseService<PLanguage> {
     public abstract Set<Submission> findSubmissionsOfLanguage(Long id);
+    public abstract List<PLanguage> findPLanguagesUsedBySessionId(long sessionId);
 }

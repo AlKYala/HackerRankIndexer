@@ -92,9 +92,9 @@ public class AnalyticsServiceImpl extends AnalyticsService {
             submissionsBySessionIdWithLanguage
                     .forEach(submission -> this.incrementBySubmissionScore(submission.getScore(), passed));
 
-            this.addPercentage(languageId, sessionId passed.get(), total, this.percentageByLanguageIdBySessionId);
+            this.addPercentage(languageId, sessionId, passed.get(), total, this.percentageByLanguageIdBySessionId);
         }
-        return this.percentageByLanguageIdBySessionId.get(sessionId).get(languageId)
+        return this.percentageByLanguageIdBySessionId.get(sessionId).get(languageId);
     }
 
     private boolean checkLanguagePercentageForSessionIdExists(long sessionId, long languageId) {
@@ -127,83 +127,77 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
 
     private void createUsagePercentages(long sessionId) {
-        /* TODO rework
         this.pLanguageService
-                .findAll()
-                .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage));*/
+                .findPLanguagesUsedBySessionId(sessionId)
+                .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage, sessionId));
     }
-    //TODO remodel parameter
-    @Override
-    public PassPercentages getPassPercentages() {
-        /* TODO rework
-        if (this.passPercentages.size() == 0) {
 
-            this.pLanguageService.findAll().forEach(pLanguage -> this.addPassPercentageAndLanguage(pLanguage));
-        }
-        return this.passPercentages; */
-    }
-    //TODO remodel parameter
-    private void addPassPercentageAndLanguage(PLanguage pLanguage) {
-        /* TODO rework
-        double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId()), 4);
-        this.passPercentages.getPLanguages().add(pLanguage);
-        this.passPercentages.getPercentages().add(percentage);*/
+    private void addPLanguageToUsageStatistics(PLanguage pLanguage, long sessionId) {
+        int numSubmission = (int) pLanguage.getSubmissions()
+                .stream()
+                .filter(submission -> submission.getSessionId() == sessionId).count();
+        this.usageStatisticsBySessionId.get(sessionId).getPLanguages().add(pLanguage);
+        this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().add(numSubmission);
     }
 
     //TODO remodel parameter
     @Override
-    public PLanguage getFavouriteLanguage() {
-        /* TODO rework
-        if (this.favourite == null) {
-            if (this.usageStatistics == null || this.usageStatistics.size() < 1) {
-                this.usageStatistics = this.getUsagePercentages();
-            }
-            this.favourite = this.findFavouriteLanguageFromUsagePercentages();
+    public PassPercentages getPassPercentages(long sessionId) {
+        if (!this.passPercentagesBySessionId.containsKey(sessionId)) {
+            this.pLanguageService
+                    .findPLanguagesUsedBySessionId(sessionId)
+                    .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage, sessionId));
         }
-        return this.favourite;*/
+        return this.passPercentagesBySessionId.get(sessionId);
     }
 
-    //TODO remodel parameter
-    private PLanguage findFavouriteLanguageFromUsagePercentages() {
-        /* TODO rework
+    private void addPLanguageToPassPercentages(PLanguage pLanguage, long sessionId) {
+        double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId(), sessionId), 4);
+        this.passPercentagesBySessionId.get(sessionId).getPLanguages().add(pLanguage);
+        this.passPercentagesBySessionId.get(sessionId).getPercentages().add(percentage);
+    }
+
+    @Override
+    public PLanguage getFavouriteLanguage(long sessionId) {
+        if (!this.favouriteBySessionId.containsKey(sessionId)) {
+            PLanguage favoriteBySessionId = this.findFavouriteLanguageFromUsagePercentages(sessionId);
+            this.favouriteBySessionId.put(sessionId, favoriteBySessionId);
+        }
+        return this.favouriteBySessionId.get(sessionId);
+    }
+
+    private PLanguage findFavouriteLanguageFromUsagePercentages(long sessionId) {
+
         PLanguage favourite = null;
         double maxFavSize = 0;
 
-        for (int i = 0; i < this.usageStatistics.getNumberSubmissions().size(); i++) {
-            double tempSize = this.usageStatistics.getNumberSubmissions().get(i);
-            if (maxFavSize < tempSize) {
+        for(int i = 0; i < this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().size(); i++) {
+            double tempSize = this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().get(i);
+            if(maxFavSize < tempSize) {
                 maxFavSize = tempSize;
-                favourite = this.usageStatistics.getPLanguages().get(i);
+                favourite = this.usageStatisticsBySessionId.get(sessionId).getPLanguages().get(i);
             }
         }
-        return favourite;*/
+
+        return favourite;
     }
 
-    //TODO remodel parameter
-    private void addPLanguageToUsageStatistics(PLanguage pLanguage) {
-        /* TODO rework
-        log.info(pLanguage.getLanguage());
-        int numSubmission = pLanguage.getSubmissions().size();
-        this.usageStatistics.getPLanguages().add(pLanguage);
-        this.usageStatistics.getNumberSubmissions().add(numSubmission);*/
+    private double findPercentageForPLanguage(PLanguage pLanguage, long sessionId, int total) {
+        long numSubmissionsByLanguageAndSessionId = pLanguage.getSubmissions()
+                .stream()
+                .filter(submission -> submission.getSessionId() == sessionId)
+                .count();
+        return this.roundToDecimal(((double) numSubmissionsByLanguageAndSessionId) / ((double) total), 4);
     }
 
-    //TODO remodel parameter
-    private double findPercentageForPLanguage(PLanguage pLanguage, int total) {
-        /* TODO rework
-        return this.roundToDecimal(((double) pLanguage.getSubmissions().size()) / ((double) total), 4); */
-    }
-
-    private double findPercentageForPLanguage(Long id, int total) {
-        /* TODO rework
-        return this.findPercentageForPLanguage(this.pLanguageService.findById(id), total);*/
+    private double findPercentageForPLanguage(Long pLanguageId, long sessionId, int total) {
+        return this.findPercentageForPLanguage(this.pLanguageService.findById(pLanguageId), sessionId, total);
     }
 
     //TODO remodel parameter
     @Override
-    public boolean checkSubmissionsExist() {
-        /* TODO rework
-        return !this.submissionService.findAll().isEmpty();*/
+    public boolean checkSubmissionsExistBySessionId(long sessionId) {
+        return this.submissionService.findAllBySessionId(sessionId).size() > 0;
     }
 
     //side effects

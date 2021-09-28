@@ -78,7 +78,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public Double getPercentagePassedByLanguage(Long languageId, long sessionId) {
-        if (this.checkLanguagePercentageForSessionIdExists(sessionId, languageId)) {
+        if (!this.checkLanguagePercentageForSessionIdExists(sessionId, languageId)) {
             AtomicInteger passed = new AtomicInteger(0);
 
             List<Submission> submissionsBySessionIdWithLanguage =
@@ -147,8 +147,9 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         if (!this.passPercentagesBySessionId.containsKey(sessionId)) {
             this.pLanguageService
                     .findPLanguagesUsedBySessionId(sessionId)
-                    .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage, sessionId));
+                    .forEach(pLanguage -> this.addPLanguageToPassPercentages(pLanguage, sessionId));
         }
+        log.info(this.passPercentagesBySessionId.toString());
         return this.passPercentagesBySessionId.get(sessionId);
     }
 

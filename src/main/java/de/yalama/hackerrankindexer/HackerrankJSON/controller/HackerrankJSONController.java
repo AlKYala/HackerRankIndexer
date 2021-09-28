@@ -17,12 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class HackerrankJSONController {
 
-
     @Autowired
     private HackerrankJSONService hackerrankJSONService;
 
     @Autowired
-    SessionService sessionService;
+    private SessionService sessionService;
 
     @PostMapping
     public Integer persistData(@RequestBody HackerrankJSON hackerrankJSON, HttpServletRequest httpServletRequest) {

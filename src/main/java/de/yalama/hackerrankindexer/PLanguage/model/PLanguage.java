@@ -21,6 +21,8 @@ public class PLanguage extends BaseEntity {
 
     private String color;
 
+    private String displayName;
+
     @OneToMany(mappedBy = "language")
     @JsonIgnore
     private Set<Submission> submissions;

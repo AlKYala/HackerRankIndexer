@@ -58,6 +58,8 @@ public class AnalyticsController {
 
     @GetMapping("/pLanguage/favourite")
     public PLanguage getFavouriteLanguage(HttpServletRequest httpServletRequest){
+        //debug
+        System.out.println(this.getSessionId(httpServletRequest));
         return this.analyticsService.getFavouriteLanguage(this.getSessionId(httpServletRequest));
     }
 

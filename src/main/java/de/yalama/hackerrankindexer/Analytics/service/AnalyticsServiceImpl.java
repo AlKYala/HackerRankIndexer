@@ -119,7 +119,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public UsageStatistics getUsagePercentagesBySessionId(long sessionId) {
-        if (this.usageStatisticsBySessionId.containsKey(sessionId)) {
+        if (!this.usageStatisticsBySessionId.containsKey(sessionId)) {
             this.createUsagePercentages(sessionId);
         }
         return this.usageStatisticsBySessionId.get(sessionId);
@@ -127,6 +127,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
 
     private void createUsagePercentages(long sessionId) {
+        this.usageStatisticsBySessionId.put(sessionId, new UsageStatistics());
         this.pLanguageService
                 .findPLanguagesUsedBySessionId(sessionId)
                 .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage, sessionId));
@@ -167,11 +168,12 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     private PLanguage findFavouriteLanguageFromUsagePercentages(long sessionId) {
-
         PLanguage favourite = null;
         double maxFavSize = 0;
 
-        for(int i = 0; i < this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().size(); i++) {
+        UsageStatistics usageStatisticsForId = this.getUsagePercentagesBySessionId(sessionId);
+
+        for(int i = 0; i < usageStatisticsForId.getNumberSubmissions().size(); i++) {
             double tempSize = this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().get(i);
             if(maxFavSize < tempSize) {
                 maxFavSize = tempSize;

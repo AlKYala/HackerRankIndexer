@@ -145,6 +145,14 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
+    public List<Submission> filterBySessionIdAndLanguageId(long pLanguageId, long sessionId) {
+        return this.findAllBySessionId(sessionId)
+                .stream()
+                .filter(submission -> submission.getLanguage().getId() == pLanguageId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Submission> findAllByUserId(Long userId) {
         return this.findAll().stream()
                 .filter(submission -> submission.getWriter().getId() == userId)

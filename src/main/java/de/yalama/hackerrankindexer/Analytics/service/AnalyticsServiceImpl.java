@@ -141,7 +141,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().add(numSubmission);
     }
 
-    //TODO remodel parameter
     @Override
     public PassPercentages getPassPercentages(long sessionId) {
         if (!this.passPercentagesBySessionId.containsKey(sessionId)) {
@@ -154,9 +153,26 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     private void addPLanguageToPassPercentages(PLanguage pLanguage, long sessionId) {
-        double percentage = this.roundToDecimal(this.getPercentagePassedByLanguage(pLanguage.getId(), sessionId), 4);
-        this.passPercentagesBySessionId.get(sessionId).getPLanguages().add(pLanguage);
-        this.passPercentagesBySessionId.get(sessionId).getPercentages().add(percentage);
+        System.out.println(this.passPercentagesBySessionId);
+        if (!this.passPercentagesBySessionId.containsKey(sessionId)) {
+            this.createPassPercentageData(pLanguage, sessionId);
+        }
+        log.info("{}\n{}", this.passPercentagesBySessionId.get(sessionId).getPercentages()
+            ,this.passPercentagesBySessionId.get(sessionId).getPLanguages());
+    }
+
+
+    private void createPassPercentageData(PLanguage pLanguage, long sessionId) {
+        PassPercentages toAdd = new PassPercentages();
+        toAdd.getPLanguages().add(pLanguage);
+        int total = this.submissionService.filterBySessionIdAndLanguageId(pLanguage.getId(), sessionId).size();
+        int passed = (int) this.submissionService
+                .filterBySessionIdAndLanguageId(pLanguage.getId(), sessionId)
+                .stream()
+                .filter(submission -> submission.getScore() == 1.0).count();
+        this.addPassPercentage(pLanguage, sessionId, passed, total);
+        this.passPercentagesBySessionId.put(sessionId, toAdd);
+
     }
 
     @Override
@@ -211,10 +227,19 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     //side effects
+    //TODO: make it so only usagePercentages uses this
     private void addPercentage(long id, long sessionId, int passed, int total, Map<Long, Map<Long, Double>> map) {
         double percentage = ((double) passed) / ((double) total);
         percentage = this.roundToDecimal(percentage, 2);
         map.get(sessionId).put(id, percentage);
+    }
+
+    private void addPassPercentage(PLanguage pLanguage, long sessionId, int passed, int total) {
+        this.passPercentagesBySessionId.put(sessionId, new PassPercentages());
+        this.passPercentagesBySessionId.get(sessionId).getPLanguages().add(pLanguage);
+        double percentage = ((double) passed) / ((double) total);
+        System.out.printf("amogus %f\n", percentage);
+        this.passPercentagesBySessionId.get(sessionId).getPercentages().add(this.roundToDecimal(percentage, 4));
     }
 
     private Double roundToDecimal(double value, int places) {

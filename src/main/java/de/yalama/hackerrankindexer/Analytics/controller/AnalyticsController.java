@@ -46,6 +46,11 @@ public class AnalyticsController {
         return this.analyticsService.getPercentagePassedByLanguage(languageId, this.getSessionId(httpServletRequest));
     }
 
+    @GetMapping("/passPercentages")
+    public PassPercentages getPassPercentagesBySessionId(HttpServletRequest httpServletRequest) {
+        return this.analyticsService.getPassPercentageBySessionId(this.getSessionId(httpServletRequest));
+    }
+
     @GetMapping("/pLanguage/percentages/usage")
     public UsageStatistics getUsagePercentagesOfPLanguages(HttpServletRequest httpServletRequest) {
         return this.analyticsService.getUsagePercentagesBySessionId(this.getSessionId(httpServletRequest));

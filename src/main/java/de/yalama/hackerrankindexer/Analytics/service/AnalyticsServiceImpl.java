@@ -118,6 +118,11 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
+    public PassPercentages getPassPercentageBySessionId(long sessionId) {
+        return this.getPassPercentages(sessionId);
+    }
+
+    @Override
     public UsageStatistics getUsagePercentagesBySessionId(long sessionId) {
         if (!this.usageStatisticsBySessionId.containsKey(sessionId)) {
             this.createUsagePercentages(sessionId);
@@ -143,20 +148,27 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public PassPercentages getPassPercentages(long sessionId) {
+
+        //debug
+        log.info("languages used by SessionId: {}", this.pLanguageService.findPLanguagesUsedBySessionId(sessionId));
+
         if (!this.passPercentagesBySessionId.containsKey(sessionId)) {
+            //er findet alle Sprachen die von der Session ID genutzt werden
             this.pLanguageService
                     .findPLanguagesUsedBySessionId(sessionId)
                     .forEach(pLanguage -> this.addPLanguageToPassPercentages(pLanguage, sessionId));
         }
-        log.info(this.passPercentagesBySessionId.toString());
+        log.info("Pass percentages done: {}", this.passPercentagesBySessionId.get(sessionId));
         return this.passPercentagesBySessionId.get(sessionId);
     }
 
     private void addPLanguageToPassPercentages(PLanguage pLanguage, long sessionId) {
-        System.out.println(this.passPercentagesBySessionId);
+        log.info("Adding: {} to passPercentages", pLanguage);
+        //TODO irgendwie gibts hier ein problem
         if (!this.passPercentagesBySessionId.containsKey(sessionId)) {
-            this.createPassPercentageData(pLanguage, sessionId);
+            this.passPercentagesBySessionId = new HashMap<Long, PassPercentages>();
         }
+        this.createPassPercentageData(pLanguage, sessionId);
         log.info("{}\n{}", this.passPercentagesBySessionId.get(sessionId).getPercentages()
             ,this.passPercentagesBySessionId.get(sessionId).getPLanguages());
     }
@@ -170,10 +182,13 @@ public class AnalyticsServiceImpl extends AnalyticsService {
                 .filterBySessionIdAndLanguageId(pLanguage.getId(), sessionId)
                 .stream()
                 .filter(submission -> submission.getScore() == 1.0).count();
-        this.addPassPercentage(pLanguage, sessionId, passed, total);
         this.passPercentagesBySessionId.put(sessionId, toAdd);
+        this.addPassPercentage(pLanguage, sessionId, passed, total);
 
+        log.info("{}", toAdd.toString());
     }
+
+
 
     @Override
     public PLanguage getFavouriteLanguage(long sessionId) {

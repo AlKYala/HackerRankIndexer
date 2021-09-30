@@ -26,4 +26,8 @@ public class PLanguage extends BaseEntity {
     @OneToMany(mappedBy = "language")
     @JsonIgnore
     private Set<Submission> submissions;
+
+    public String toString() {
+        return String.format("Language: %s, numSubmissions: %d", this.language, submissions.size());
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -62,5 +63,17 @@ public class PLanguageServiceImpl extends PLanguageService {
     public Set<Submission> findSubmissionsOfLanguage(Long id) {
         PLanguage pLanguage = this.findById(id);
         return pLanguage.getSubmissions();
+    }
+
+    @Override
+    public List<PLanguage> findPLanguagesUsedBySessionId(long sessionId) {
+        return this.findAll()
+                .stream()
+                .filter(pLanguage -> this.checkPLanguageHasSubmissionBySessionId(pLanguage, sessionId))
+                .collect(Collectors.toList());
+    }
+
+    private boolean checkPLanguageHasSubmissionBySessionId(PLanguage pLanguage, long sessionId) {
+        return pLanguage.getSubmissions().stream().anyMatch(submission -> submission.getSessionId() == sessionId);
     }
 }

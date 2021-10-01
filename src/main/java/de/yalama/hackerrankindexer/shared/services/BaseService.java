@@ -27,8 +27,9 @@ public interface BaseService<T extends BaseEntity> {
   */
      List<T> findAll() throws HackerrankIndexerException;
 
- /**
-  * Persists an instance into DB
+
+    /**
+     * Persists an instance into DB
   * @param instance The instance to persist
   * @return param instance when successful
   * @throws HackerrankIndexerException NotSavedException

@@ -8,54 +8,43 @@ public abstract class AnalyticsService {
     /**
      * @return The percentage of (passed submissions) / (all submissions)
      */
-    public abstract Double getPercentagePassedSubmissions();
+    public abstract Double getPercentagePassedSubmissions(long sessionId);
 
     /**
      *
      * @return The percentage of (passed challenges) / (all attempted challenges)
      */
-    public abstract Double getPercentagePassedChallenges();
+    public abstract Double getPercentagePassedChallenges(long sessionId);
 
     /**
      * Returns the percentage of passed submissions by language
      * @param languageId the ID of the language in question
      * @return the percentage of passed submissions of language with ID languageId
      */
-    public abstract Double getPercentagePassedByLanguage(Long languageId);
-
-    /**
-     * Returns the percentage of passed submissions per challenge
-     * @param challengeId
-     * @return the percentage of passed submissions per challenge with ID challengeId
-     */
-    public abstract Double getPercentagePassedByChallenge(Long challengeId);
+    public abstract Double getPercentagePassedByLanguage(Long languageId, long sessionId);
 
     /**
      * From all submissions give the share of submissions of each language in percent
      * @return two arrays with the percentage of submissions (total) for each language (Indices match)
      */
-    public abstract UsageStatistics getUsagePercentages();
+    public abstract UsageStatistics getUsagePercentagesBySessionId(long sessionId);
 
     /**
      * From all submissions give the suuccess rate of submissions of each language in percent
      * @return two arrays with the percentage of submissions (total) for each language (Indices match)
      */
-    public abstract PassPercentages getPassPercentages();
+    public abstract PassPercentages getPassPercentages(long sessionId);
 
     /**
      * returns the most used Language
      * @return
      */
-    public abstract PLanguage getFavouriteLanguage();
+    public abstract PLanguage getFavouriteLanguage(long sessionId);
 
     /**
-     * A method to clear all cached statistics
-     * Fired when Dataset is manipulated
+     * A method to check if submissions exist by SessionId
      */
-    public abstract void clear();
+    public abstract boolean checkSubmissionsExistBySessionId(long sessionId);
 
-    /**
-     * A method to check if submissions exist
-     */
-    public abstract boolean checkSubmissionsExist();
+    public abstract void clearEverythingBySessionId(long sessionId);
 }

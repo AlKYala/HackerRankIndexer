@@ -27,4 +27,8 @@ public class PassPercentages extends AbstractStatisticModel {
         this.pLanguages.clear();
         this.percentages.clear();
     }
+
+    public String toString() {
+        return String.format("%s\n%s", this.percentages.toString(), this.pLanguages.toString());
+    }
 }

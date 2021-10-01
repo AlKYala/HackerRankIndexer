@@ -47,7 +47,7 @@ public class HackerrankJSONService {
     @Autowired
     private UserService userService;
 
-    public Integer parse(HackerrankJSON hackerrankJSON) {
+    public Integer parse(HackerrankJSON hackerrankJSON, long sessionId) {
         //debug
         System.out.println("start");
         Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
@@ -57,7 +57,7 @@ public class HackerrankJSONService {
         User user = this.persistUser(hackerrankJSON.getEmail(), hackerrankJSON.getUsername());
         this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
-                user);
+                user, sessionId);
         log.info("Parsing complete");
         return 1;
     }
@@ -121,18 +121,18 @@ public class HackerrankJSONService {
 
     private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, Map<String, Challenge> challengeMap,
                                                    Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                                   User user) {
+                                                   User user, long sessionId) {
         Submission[] submissions = new Submission[submissionJSONS.length];
         for(int i = 0; i < submissions.length; i++) {
             Submission submission =
-                    this.createSubmissionFromJSON(submissionJSONS[i], challengeMap, pLanguageMap, contestMap, user);
+                    this.createSubmissionFromJSON(submissionJSONS[i], challengeMap, pLanguageMap, contestMap, user, sessionId);
             this.submissionService.save(submission);
         }
     }
 
     private Submission createSubmissionFromJSON(SubmissionJSON json, Map<String, Challenge> challengeMap,
                                                 Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                                User user) {
+                                                User user, long sessionId) {
         Submission submission = new Submission();
         submission.setId(0L);
         submission.setCode(json.getCode());
@@ -141,6 +141,7 @@ public class HackerrankJSONService {
         submission.setLanguage(pLanguageMap.get(json.getLanguage()));
         submission.setChallenge(challengeMap.get(json.getChallenge()));
         submission.setContest(contestMap.get(json.getContest()));
+        submission.setSessionId(sessionId);
         return submission;
     }
 }

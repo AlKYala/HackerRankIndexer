@@ -9,8 +9,6 @@ import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
-import de.yalama.hackerrankindexer.User.Model.User;
-import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
@@ -31,18 +29,16 @@ public class SubmissionServiceImpl extends SubmissionService {
     private ChallengeRepository challengeRepository;
     private ChallengeService challengeService;
     private PLanguageRepository pLanguageRepository;
-    private UserRepository userRepository;
     private Comparator<Submission> submissionIdComparator;
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, ContestRepository contestRepository,
                                  ChallengeRepository challengeRepository, PLanguageRepository pLanguageRepository,
-                                 UserRepository userRepository, ChallengeService challengeService) {
+                                 ChallengeService challengeService) {
         this.submissionRepository = submissionRepository;
         this.validator =
                 new Validator<Submission, SubmissionRepository>("Submission", this.submissionRepository);
         this.serviceHandler =
                 new ServiceHandler<Submission, SubmissionRepository>(this.submissionRepository, this.validator);
-        this.userRepository = userRepository;
         this.pLanguageRepository = pLanguageRepository;
         this.challengeRepository = challengeRepository;
         this.contestRepository = contestRepository;
@@ -75,7 +71,6 @@ public class SubmissionServiceImpl extends SubmissionService {
         this.validator.throwIfNotExistsByID(id, 1);
         Submission toDelete = this.submissionRepository.getById(id);
         this.removeSubmissionFromChallenge(toDelete);
-        this.removeSubmissionFromUser(toDelete);
         this.removeSubmissionFromPLanguage(toDelete);
         this.removeSubmissionFromContest(toDelete);
         return this.serviceHandler.deleteById(id);
@@ -96,11 +91,6 @@ public class SubmissionServiceImpl extends SubmissionService {
         Challenge challenge = this.challengeRepository.getById(toDelete.getChallenge().getId());
         challenge.getSubmissions()
                 .removeIf(submission -> submission.getId() == toDelete.getId());
-    }
-
-    private void removeSubmissionFromUser(Submission toDelete) {
-        User user = this.userRepository.getById(toDelete.getId());
-        user.getSubmittedEntries().removeIf(submission -> submission.getId() == toDelete.getId());
     }
 
     @Override
@@ -149,13 +139,6 @@ public class SubmissionServiceImpl extends SubmissionService {
         return this.findAllBySessionId(sessionId)
                 .stream()
                 .filter(submission -> submission.getLanguage().getId() == pLanguageId)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Submission> findAllByUserId(Long userId) {
-        return this.findAll().stream()
-                .filter(submission -> submission.getWriter().getId() == userId)
                 .collect(Collectors.toList());
     }
 }

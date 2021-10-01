@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.ColorPickerUtil;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +42,10 @@ public class PLanguageServiceImpl extends PLanguageService {
 
     @Override
     public PLanguage save(PLanguage instance) throws HackerrankIndexerException {
-        int colorValue = ((int) (16777215f * Math.random()));
+        /*int colorValue = ((int) (16777215f * Math.random()));
         String color = String.format("#%s", Integer.toHexString((colorValue)));
-        instance.setColor(color);
+        instance.setColor(color);*/
+        instance.setColor(ColorPickerUtil.getNextColor());
         return this.serviceHandler.save(instance);
     }
 

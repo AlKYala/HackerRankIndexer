@@ -41,10 +41,11 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.findById(id);
     }
 
+    /* TODO change to sessionId
     @GetMapping("/user/{id}")
     public List<Submission> findByUserId(@PathVariable Long id) throws HackerrankIndexerException {
         return this.submissionService.findAllByUserId(id);
-    }
+    }*/
 
     @Override
     @PostMapping

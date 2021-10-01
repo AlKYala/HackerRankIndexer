@@ -47,6 +47,4 @@ public abstract class AnalyticsService {
     public abstract boolean checkSubmissionsExistBySessionId(long sessionId);
 
     public abstract void clearEverythingBySessionId(long sessionId);
-
-    public abstract PassPercentages getPassPercentageBySessionId(long sessionId);
 }

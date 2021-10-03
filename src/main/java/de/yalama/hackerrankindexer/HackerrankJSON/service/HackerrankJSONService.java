@@ -10,6 +10,7 @@ import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.shared.services.DummyService;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class HackerrankJSONService {
     @Autowired
     private ContestService contestService;
 
+    @Autowired
+    private DummyService dummyService;
+
     private Map<String, PLanguage> foundPLanguages;
 
     private Map<String, Challenge> foundChallenges;
@@ -59,84 +63,65 @@ public class HackerrankJSONService {
             this.foundContests = new HashMap<String, Contest>();
             this.foundPLanguages = new HashMap<String, PLanguage>();
         }
-        this.createMapData(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
-        this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
-        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
+        this.createMapData(hackerrankJSON.getSubmissions());
+        this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions());
+        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(),
                 sessionId);
         //log.info("Parsing complete");
         return 1;
     }
 
-    private void gatherInfoFromSubmissions(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
-                                           Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
-        this.createMapData(submissionJSONS, pLanguageMap, challengeMap, contestMap);
+    private void gatherInfoFromSubmissions(SubmissionJSON[] submissionJSONS) {
+        this.createMapData(submissionJSONS);
 
     }
 
-    private void createMapData(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
-                               Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
+    private void createMapData(SubmissionJSON[] submissionJSONS) {
         for(SubmissionJSON submission: submissionJSONS) {
-            this.addLanguageIfNeeded(submission.getLanguage(), pLanguageMap);
-            this.addChallengeIfNeeded(submission.getChallenge(), challengeMap);
-            this.addContestIfNeeded(submission.getContest(), contestMap);
+            this.addLanguageIfNeeded(submission.getLanguage());
+            this.addChallengeIfNeeded(submission.getChallenge());
+            this.addContestIfNeeded(submission.getContest());
         }
     }
 
-    //TODO ueberarbeiten - irgendwie ist die Map nicht ok so
     private void addLanguageIfNeeded(String language) {
-        if(!pLanguageMap.containsKey(language)) {
-            PLanguage found = new PLanguage();
-            found.setId(0L);
-            found.setLanguage(language);
-            found.setSubmissions(Collections.emptySet());
-            found = this.pLanguageService.persist(found);
-            pLanguageMap.put(language, found);
-        }
-    }
-    //TODO moeglicherweise ueberarbeiten
-    private void addChallengeIfNeeded(String challenge, Map<String, Challenge> challengeMap) {
-        if(!challengeMap.containsKey(challenge)) {
-            Challenge found = new Challenge();
-            found.setChallengeName(challenge);
-            found.setId(0L);
-            found.setSubmissions(Collections.emptySet());
-            found = this.challengeService.persist(found);
-            challengeMap.put(challenge, found);
-        }
-    }
-    //TODO moeglicherweise ueberarbeiten
-    private void addContestIfNeeded(String contest, Map<String, Contest> contestMap) {
-        if(!contestMap.containsKey(contest)) {
-            Contest found = new Contest();
-            found.setName(contest);
-            found.setId(0L);
-            found.setSubmissions(Collections.emptySet());
-            found = this.contestService.save(found);
-            contestMap.put(contest, found);
+        if(!this.foundPLanguages.containsKey(language)) {
+            PLanguage dummy = this.dummyService.getDummyPLanguage(language);
+            this.foundPLanguages.put(language, this.pLanguageService.persist(dummy));
         }
     }
 
-    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, Map<String, Challenge> challengeMap,
-                                           Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                           long sessionId) {
+    private void addChallengeIfNeeded(String challenge) {
+        if(!this.foundChallenges.containsKey(challenge)) {
+            Challenge dummy = this.dummyService.getDummyChallenge(challenge);
+            this.foundChallenges.put(challenge, this.challengeService.persist(dummy));
+        }
+    }
+
+    private void addContestIfNeeded(String contest) {
+        if(!this.foundContests.containsKey(contest)) {
+            Contest dummy = this.dummyService.getDummyContest(contest);
+            this.foundContests.put(contest, this.contestService.persist(dummy));
+        }
+    }
+
+    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, long sessionId) {
         Submission[] submissions = new Submission[submissionJSONS.length];
         for(int i = 0; i < submissions.length; i++) {
             Submission submission =
-                    this.createSubmissionFromJSON(submissionJSONS[i], challengeMap, pLanguageMap, contestMap, sessionId);
+                    this.createSubmissionFromJSON(submissionJSONS[i], sessionId);
             this.submissionService.save(submission);
         }
     }
 
-    private Submission createSubmissionFromJSON(SubmissionJSON json, Map<String, Challenge> challengeMap,
-                                                Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                                long sessionId) {
+    private Submission createSubmissionFromJSON(SubmissionJSON json, long sessionId) {
         Submission submission = new Submission();
         submission.setId(0L);
         submission.setCode(json.getCode());
         submission.setScore(json.getScore());
-        submission.setLanguage(pLanguageMap.get(json.getLanguage()));
-        submission.setChallenge(challengeMap.get(json.getChallenge()));
-        submission.setContest(contestMap.get(json.getContest()));
+        submission.setLanguage(this.foundPLanguages.get(json.getLanguage()));
+        submission.setChallenge(this.foundChallenges.get(json.getChallenge()));
+        submission.setContest(this.foundContests.get(json.getContest()));
         submission.setSessionId(sessionId);
         return submission;
     }

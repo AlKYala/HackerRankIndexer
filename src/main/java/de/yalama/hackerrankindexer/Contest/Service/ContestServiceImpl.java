@@ -50,4 +50,26 @@ public class ContestServiceImpl extends ContestService {
         this.findById(id).getSubmissions().forEach(submission -> submission.setContest(null));
         return this.serviceHandler.deleteById(id);
     }
+
+    @Override
+    public Contest persist(Contest contest) {
+        Contest foundContest = this.findByName(contest.getName());
+        if(foundContest != null) {
+            return foundContest;
+        }
+        return this.save(contest);
+    }
+
+    @Override
+    public Contest findByName(String contestName) {
+        for(Contest contest: this.findAll()) {
+            return contest;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean checkExistsByName(String contestName) {
+        return this.findByName(contestName) != null;
+    }
 }

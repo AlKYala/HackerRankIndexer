@@ -42,13 +42,23 @@ public class HackerrankJSONService {
     @Autowired
     private ContestService contestService;
 
+    private Map<String, PLanguage> foundPLanguages;
+
+    private Map<String, Challenge> foundChallenges;
+
+    private Map<String, Contest> foundContests;
+
+    private boolean mapsCreated = false;
+
 
     public Integer parse(HackerrankJSON hackerrankJSON, long sessionId) {
         //debug
         System.out.println("start");
-        Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
-        Map<String, Challenge> foundChallenges = new HashMap<String, Challenge>();
-        Map<String, Contest> foundContests = new HashMap<String, Contest>();
+        if(!mapsCreated) {
+            this.foundChallenges = new HashMap<String, Challenge>();
+            this.foundContests = new HashMap<String, Contest>();
+            this.foundPLanguages = new HashMap<String, PLanguage>();
+        }
         this.createMapData(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
@@ -72,7 +82,8 @@ public class HackerrankJSONService {
         }
     }
 
-    private void addLanguageIfNeeded(String language, Map<String, PLanguage> pLanguageMap) {
+    //TODO ueberarbeiten - irgendwie ist die Map nicht ok so
+    private void addLanguageIfNeeded(String language) {
         if(!pLanguageMap.containsKey(language)) {
             PLanguage found = new PLanguage();
             found.setId(0L);
@@ -82,7 +93,7 @@ public class HackerrankJSONService {
             pLanguageMap.put(language, found);
         }
     }
-
+    //TODO moeglicherweise ueberarbeiten
     private void addChallengeIfNeeded(String challenge, Map<String, Challenge> challengeMap) {
         if(!challengeMap.containsKey(challenge)) {
             Challenge found = new Challenge();
@@ -93,7 +104,7 @@ public class HackerrankJSONService {
             challengeMap.put(challenge, found);
         }
     }
-
+    //TODO moeglicherweise ueberarbeiten
     private void addContestIfNeeded(String contest, Map<String, Contest> contestMap) {
         if(!contestMap.containsKey(contest)) {
             Contest found = new Contest();

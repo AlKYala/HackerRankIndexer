@@ -96,4 +96,28 @@ public class ChallengeServiceImpl extends ChallengeService {
                 .filter(challenge -> this.checkIsChallengePassedBySessionId(challenge.getId(), sessionId))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public boolean checkChallengeAlreadyExists(String challengeName) {
+        return this.getChallengeByName(challengeName) != null;
+    }
+
+    @Override
+    public Challenge getChallengeByName(String challengeName) {
+        for(Challenge challenge : this.findAll()) {
+            if(challenge.getChallengeName().equals(challengeName)) {
+                return challenge;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Challenge persist(Challenge challenge) {
+        Challenge foundChallenge = this.getChallengeByName(challenge.getChallengeName());
+        if(foundChallenge != null) {
+            return foundChallenge;
+        }
+        return this.save(challenge);
+    }
 }

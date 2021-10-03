@@ -27,7 +27,7 @@ public class SessionServiceImpl extends SessionService {
 
     @Override
     public long getFreeSessionId(HttpServletRequest request) {
-        log.info(request.toString());
+        //log.info(request.toString());
         this.cycleCurrentIdUntilVacant();
         this.usedSessionIds.add(this.currentId);
         request.getSession().setAttribute("sessionId", this.currentId); //TODO sessions verwalten

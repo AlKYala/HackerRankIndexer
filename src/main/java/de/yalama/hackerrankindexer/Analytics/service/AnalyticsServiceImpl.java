@@ -145,7 +145,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     public PassPercentages getPassPercentages(long sessionId) {
 
         //debug
-        log.info("languages used by SessionId: {}", this.pLanguageService.findPLanguagesUsedBySessionId(sessionId));
+        //log.info("languages used by SessionId: {}", this.pLanguageService.findPLanguagesUsedBySessionId(sessionId));
 
         if (!this.passPercentagesBySessionId.containsKey(sessionId)) {
             //er findet alle Sprachen die von der Session ID genutzt werden
@@ -153,12 +153,12 @@ public class AnalyticsServiceImpl extends AnalyticsService {
                     .findPLanguagesUsedBySessionId(sessionId)
                     .forEach(pLanguage -> this.addPLanguageToPassPercentages(pLanguage, sessionId));
         }
-        log.info("Pass percentages done: {}", this.passPercentagesBySessionId.get(sessionId));
+        //log.info("Pass percentages done: {}", this.passPercentagesBySessionId.get(sessionId));
         return this.passPercentagesBySessionId.get(sessionId);
     }
 
     private void addPLanguageToPassPercentages(PLanguage pLanguage, long sessionId) {
-        log.info("Adding: {} to passPercentages", pLanguage);
+        //log.info("Adding: {} to passPercentages", pLanguage);
         //TODO irgendwie gibts hier ein problem
 
         //Hierran liegts nicht
@@ -167,8 +167,8 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         }
         //hieran?
         this.createPassPercentageData(pLanguage, sessionId);
-        log.info("Pass percentages{}\n{}", this.passPercentagesBySessionId.get(sessionId).getPercentages()
-            ,this.passPercentagesBySessionId.get(sessionId).getPLanguages());
+        /*log.info("Pass percentages{}\n{}", this.passPercentagesBySessionId.get(sessionId).getPercentages()
+            ,this.passPercentagesBySessionId.get(sessionId).getPLanguages());*/
     }
 
     private void createPassPercentageData(PLanguage pLanguage, long sessionId) {
@@ -188,7 +188,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
         this.addPassPercentage(pLanguage, sessionId, passed, total);
 
-        log.info("{}", passPercentagesOfSession.toString());
+        //log.info("{}", passPercentagesOfSession.toString());
     }
 
     @Override

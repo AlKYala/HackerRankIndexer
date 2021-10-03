@@ -53,7 +53,7 @@ public class HackerrankJSONService {
         this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
                 sessionId);
-        log.info("Parsing complete");
+        //log.info("Parsing complete");
         return 1;
     }
 
@@ -78,7 +78,7 @@ public class HackerrankJSONService {
             found.setId(0L);
             found.setLanguage(language);
             found.setSubmissions(Collections.emptySet());
-            found = this.pLanguageService.save(found);
+            found = this.pLanguageService.persist(found);
             pLanguageMap.put(language, found);
         }
     }
@@ -89,7 +89,7 @@ public class HackerrankJSONService {
             found.setChallengeName(challenge);
             found.setId(0L);
             found.setSubmissions(Collections.emptySet());
-            found = this.challengeService.save(found);
+            found = this.challengeService.persist(found);
             challengeMap.put(challenge, found);
         }
     }

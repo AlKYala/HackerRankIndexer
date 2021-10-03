@@ -23,10 +23,10 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @Autowired
     private SessionService sessionService;
 
-    @Override
     @GetMapping
-    public List<Submission> findAll() {
-        return this.submissionService.findAll();
+    public List<Submission> findAllBySessionId(HttpServletRequest httpServletRequest) {
+        long sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+        return this.submissionService.findAllBySessionId(sessionId);
     }
 
     @GetMapping("bySessionId")
@@ -35,6 +35,13 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.findAllBySessionId(sessionId);
     }
 
+    //TODO close this
+    @Override
+    public List<Submission> findAll() {
+        return this.submissionService.findAll();
+    }
+
+    //TODO man sollte nur dann eine submission einsehen koennen wenn die sessionId passt!
     @Override
     @GetMapping("/{id}")
     public Submission findById(@PathVariable Long id) throws HackerrankIndexerException {

@@ -71,9 +71,12 @@ public class PLanguageServiceImpl extends PLanguageService {
     }
 
     @Override
-    public Set<Submission> findSubmissionsOfLanguage(Long id) {
+    public List<Submission> findSubmissionsOfLanguageAndSessionId(Long id, Long sessionId) {
         PLanguage pLanguage = this.findById(id);
-        return pLanguage.getSubmissions();
+        return pLanguage.getSubmissions()
+                .stream()
+                .filter(submission -> submission.getSessionId() == sessionId)
+                .collect(Collectors.toList());
     }
 
     @Override

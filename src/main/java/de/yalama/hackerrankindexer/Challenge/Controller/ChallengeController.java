@@ -28,7 +28,7 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     //TODO diesen endpunkt schliessen
     @Override
     @GetMapping("/all")
-    public List<Challenge> findAll() {
+    public List<Challenge> findAll(HttpServletRequest httpServletRequest) {
         return this.challengeService.findAll();
     }
 
@@ -39,7 +39,7 @@ public class ChallengeController implements BaseController<Challenge, Long> {
 
     @Override
     @GetMapping("/{id}")
-    public Challenge findById(@PathVariable Long id) throws HackerrankIndexerException {
+    public Challenge findById(@PathVariable Long id, HttpServletRequest httpServletRequest) throws HackerrankIndexerException {
         return this.challengeService.findById(id);
     }
 

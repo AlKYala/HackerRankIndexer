@@ -27,13 +27,13 @@ public class PLanguageController implements BaseController<PLanguage, Long> {
 
     @Override
     @GetMapping
-    public List<PLanguage> findAll() {
+    public List<PLanguage> findAll(HttpServletRequest httpServletRequest) {
         return this.pLanguageService.findAll();
     }
 
     @Override
     @GetMapping("/{id}")
-    public PLanguage findById(@PathVariable Long id) throws HackerrankIndexerException {
+    public PLanguage findById(@PathVariable Long id, HttpServletRequest httpServletRequest) throws HackerrankIndexerException {
         return this.pLanguageService.findById(id);
     }
 

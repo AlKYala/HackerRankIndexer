@@ -5,6 +5,7 @@ import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.DummyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,11 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @Autowired
     private SessionService sessionService;
 
+    @Autowired
+    private DummyService dummyService;
+
     @GetMapping
-    public List<Submission> findAllBySessionId(HttpServletRequest httpServletRequest) {
+    public List<Submission> findAll(HttpServletRequest httpServletRequest) {
         long sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
         return this.submissionService.findAllBySessionId(sessionId);
     }
@@ -35,24 +39,16 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.findAllBySessionId(sessionId);
     }
 
-    //TODO close this
-    @Override
-    public List<Submission> findAll() {
-        return this.submissionService.findAll();
-    }
-
-    //TODO man sollte nur dann eine submission einsehen koennen wenn die sessionId passt!
-    @Override
     @GetMapping("/{id}")
-    public Submission findById(@PathVariable Long id) throws HackerrankIndexerException {
-        return this.submissionService.findById(id);
+    public Submission findById(@PathVariable Long id, HttpServletRequest httpServletRequest) throws HackerrankIndexerException {
+        Submission submission = this.submissionService.findById(id);
+        long currentSessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+        System.out.printf("SessionID: %d SubmissionSessionId: %d\n", currentSessionId, submission.getSessionId());
+        if(submission.getSessionId() != currentSessionId) {
+            return this.dummyService.getDummySubmission();
+        }
+        return submission;
     }
-
-    /* TODO change to sessionId
-    @GetMapping("/user/{id}")
-    public List<Submission> findByUserId(@PathVariable Long id) throws HackerrankIndexerException {
-        return this.submissionService.findAllByUserId(id);
-    }*/
 
     @Override
     @PostMapping

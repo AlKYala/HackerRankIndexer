@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Set;
 
-//TODO das verteilen der sessionIDs klappt nicht
+//TODO das verteilen der sessionIDs klappt nichtmp
 
 @Service
 @Slf4j
@@ -24,10 +24,17 @@ public class SessionServiceImpl extends SessionService {
 
     public Long getCurrentSessionId(HttpServletRequest request) {
         log.info("next SessionId: {}\nusedIds: {}", this.currentId, this.usedSessionIds.toString());
+        Long id = (Long) request.getSession().getAttribute("sessionId");
         log.info("Request: {}", request.getSession().getAttribute("sessionId"));
-        return (this.checkIsSessionIdBad(request)) ?
+
+        if(id == null) {
+            id = this.getFreeSessionId(request);
+        }
+
+        /*return (this.checkIsSessionIdBad(request)) ?
                 (Long) request.getSession().getAttribute("sessionId") :
-                this.getFreeSessionId(request);
+                this.getFreeSessionId(request);*/
+        return id;
     }
 
     //TODO this is never fired!

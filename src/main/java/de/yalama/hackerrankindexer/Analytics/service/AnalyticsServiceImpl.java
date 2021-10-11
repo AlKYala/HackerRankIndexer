@@ -232,6 +232,9 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     //TODO remodel parameter
     @Override
     public boolean checkSubmissionsExistBySessionId(long sessionId) {
+
+        log.info("Checking sessionId for: {}", sessionId);
+
         return this.submissionService.findAllBySessionId(sessionId).size() > 0;
     }
 

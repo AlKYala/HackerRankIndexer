@@ -40,10 +40,11 @@ public class SessionServiceImpl extends SessionService {
     //TODO this is never fired!
     @Override
     public long getFreeSessionId(HttpServletRequest request) {
-
+        //debug
+        log.info("current session Ids{}", this.usedSessionIds.toString());
         this.cycleCurrentIdUntilVacant();
         log.info("setting sessionId to: {}", this.currentId);
-        this.usedSessionIds.add(this.currentId);
+        this.usedSessionIds.add(this.currentId); //Das hier passiert nie???
         request.getSession().setAttribute("sessionId", this.currentId); //TODO sessions verwalten
         return this.currentId;
     }

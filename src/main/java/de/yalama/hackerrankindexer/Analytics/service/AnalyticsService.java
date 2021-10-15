@@ -8,43 +8,43 @@ public abstract class AnalyticsService {
     /**
      * @return The percentage of (passed submissions) / (all submissions)
      */
-    public abstract Double getPercentagePassedSubmissions(long sessionId);
+    public abstract Double getPercentagePassedSubmissions(String sessionId);
 
     /**
      *
      * @return The percentage of (passed challenges) / (all attempted challenges)
      */
-    public abstract Double getPercentagePassedChallenges(long sessionId);
+    public abstract Double getPercentagePassedChallenges(String sessionId);
 
     /**
      * Returns the percentage of passed submissions by language
      * @param languageId the ID of the language in question
      * @return the percentage of passed submissions of language with ID languageId
      */
-    public abstract Double getPercentagePassedByLanguage(Long languageId, long sessionId);
+    public abstract Double getPercentagePassedByLanguage(Long languageId, String sessionId);
 
     /**
      * From all submissions give the share of submissions of each language in percent
      * @return two arrays with the percentage of submissions (total) for each language (Indices match)
      */
-    public abstract UsageStatistics getUsagePercentagesBySessionId(long sessionId);
+    public abstract UsageStatistics getUsagePercentagesBySessionId(String sessionId);
 
     /**
      * From all submissions give the suuccess rate of submissions of each language in percent
      * @return two arrays with the percentage of submissions (total) for each language (Indices match)
      */
-    public abstract PassPercentages getPassPercentages(long sessionId);
+    public abstract PassPercentages getPassPercentages(String sessionId);
 
     /**
      * returns the most used Language
      * @return
      */
-    public abstract PLanguage getFavouriteLanguage(long sessionId);
+    public abstract PLanguage getFavouriteLanguage(String sessionId);
 
     /**
      * A method to check if submissions exist by SessionId
      */
-    public abstract boolean checkSubmissionsExistBySessionId(long sessionId);
+    public abstract boolean checkSubmissionsExistBySessionId(String sessionId);
 
-    public abstract void clearEverythingBySessionId(long sessionId);
+    public abstract void clearEverythingBySessionId(String sessionId);
 }

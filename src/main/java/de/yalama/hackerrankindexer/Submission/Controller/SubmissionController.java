@@ -5,11 +5,13 @@ import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.DummyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RequestMapping("/submission")
@@ -23,29 +25,31 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @Autowired
     private SessionService sessionService;
 
-    @Override
-    @GetMapping
-    public List<Submission> findAll() {
-        return this.submissionService.findAll();
-    }
+    @Autowired
+    private DummyService dummyService;
 
-    @GetMapping("bySessionId")
-    public List<Submission> findAllBySubmissionId(HttpServletRequest httpServletRequest) {
-        long sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+    @GetMapping
+    public List<Submission> findAll(HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
         return this.submissionService.findAllBySessionId(sessionId);
     }
 
-    @Override
-    @GetMapping("/{id}")
-    public Submission findById(@PathVariable Long id) throws HackerrankIndexerException {
-        return this.submissionService.findById(id);
+    @GetMapping("bySessionId")
+    public List<Submission> findAllBySubmissionId(HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
+        return this.submissionService.findAllBySessionId(sessionId);
     }
 
-    /* TODO change to sessionId
-    @GetMapping("/user/{id}")
-    public List<Submission> findByUserId(@PathVariable Long id) throws HackerrankIndexerException {
-        return this.submissionService.findAllByUserId(id);
-    }*/
+    @GetMapping("/{id}")
+    public Submission findById(@PathVariable Long id, HttpSession httpSession) throws HackerrankIndexerException {
+        Submission submission = this.submissionService.findById(id);
+        String currentSessionId = this.sessionService.getCurrentSessionId(httpSession);
+        System.out.printf("SessionID: %d SubmissionSessionId: %d\n", currentSessionId, submission.getSessionId());
+        if(!submission.getSessionId().equals(currentSessionId)) {
+            return this.dummyService.getDummySubmission();
+        }
+        return submission;
+    }
 
     @Override
     @PostMapping
@@ -66,7 +70,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
     }
 
     @GetMapping("/passed")
-    public List<Submission> getPassedSubmissions(long sessionId) {
+    public List<Submission> getPassedSubmissions(String sessionId) {
         return this.submissionService.getAllPassed(sessionId);
     }
 
@@ -76,7 +80,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
      * of each challenge is
      */
     @GetMapping("/passed/latest")
-    public List<Submission> getLatestPassedSubmissions(long sessionId) {
+    public List<Submission> getLatestPassedSubmissions(String sessionId) {
         return this.submissionService.getLastPassedFromAll(sessionId);
     }
 }

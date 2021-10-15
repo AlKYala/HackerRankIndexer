@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/json")
@@ -24,8 +25,8 @@ public class HackerrankJSONController {
     private SessionService sessionService;
 
     @PostMapping
-    public Integer persistData(@RequestBody HackerrankJSON hackerrankJSON, HttpServletRequest httpServletRequest) {
-        Long sessionId = sessionService.getCurrentSessionId(httpServletRequest);
+    public Integer persistData(@RequestBody HackerrankJSON hackerrankJSON, HttpSession httpSession) {
+        String sessionId = sessionService.getCurrentSessionId(httpSession);
         return this.hackerrankJSONService.parse(hackerrankJSON, sessionId);
     }
 }

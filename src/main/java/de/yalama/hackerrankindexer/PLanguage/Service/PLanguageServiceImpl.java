@@ -40,11 +40,20 @@ public class PLanguageServiceImpl extends PLanguageService {
         return this.serviceHandler.findAll();
     }
 
+    public PLanguage persist(PLanguage instance) {
+        PLanguage foundInstance = this.findByName(instance.getLanguage());
+        if(foundInstance != null) {
+            return foundInstance;
+        }
+        return this.save(instance);
+    }
+
     @Override
     public PLanguage save(PLanguage instance) throws HackerrankIndexerException {
         /*int colorValue = ((int) (16777215f * Math.random()));
         String color = String.format("#%s", Integer.toHexString((colorValue)));
         instance.setColor(color);*/
+        log.info("saving language: {}", instance.getLanguage());
         instance.setColor(ColorPickerUtil.getNextColor());
         return this.serviceHandler.save(instance);
     }
@@ -62,20 +71,38 @@ public class PLanguageServiceImpl extends PLanguageService {
     }
 
     @Override
-    public Set<Submission> findSubmissionsOfLanguage(Long id) {
+    public List<Submission> findSubmissionsOfLanguageAndSessionId(Long id, String sessionId) {
         PLanguage pLanguage = this.findById(id);
-        return pLanguage.getSubmissions();
+        return pLanguage.getSubmissions()
+                .stream()
+                .filter(submission -> submission.getSessionId().equals(sessionId))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<PLanguage> findPLanguagesUsedBySessionId(long sessionId) {
+    public List<PLanguage> findPLanguagesUsedBySessionId(String sessionId) {
         return this.findAll()
                 .stream()
                 .filter(pLanguage -> this.checkPLanguageHasSubmissionBySessionId(pLanguage, sessionId))
                 .collect(Collectors.toList());
     }
 
-    private boolean checkPLanguageHasSubmissionBySessionId(PLanguage pLanguage, long sessionId) {
-        return pLanguage.getSubmissions().stream().anyMatch(submission -> submission.getSessionId() == sessionId);
+    @Override
+    public PLanguage findByName(String name) {
+        for(PLanguage pLanguage : this.findAll()) {
+            if(pLanguage.getLanguage().equals(name)) {
+                return pLanguage;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean checkExistsByName(String name) {
+        return this.findByName(name) != null;
+    }
+
+    private boolean checkPLanguageHasSubmissionBySessionId(PLanguage pLanguage, String sessionId) {
+        return pLanguage.getSubmissions().stream().anyMatch(submission -> submission.getSessionId().equals(sessionId));
     }
 }

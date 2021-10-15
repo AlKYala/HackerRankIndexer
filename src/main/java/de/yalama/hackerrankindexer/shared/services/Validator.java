@@ -34,7 +34,7 @@ public class Validator<E extends BaseEntity, T extends JpaRepository> {
     public void throwIfIdInvalid(Long id) throws HackerrankIndexerException {
         if (id == null || id < 0) {
             String message = "ID %d is invalid - it has to be a natural number >= 0";
-            log.info(message);
+            //log.info(message);
             throw new IdInvalidException(message);
         }
     }
@@ -49,7 +49,7 @@ public class Validator<E extends BaseEntity, T extends JpaRepository> {
     public void throwIfExistsByID(Long id) throws HackerrankIndexerException {
         if (this.repository.existsById(id)) {
             String message = String.format("A %s instance with ID %d is found", this.entityName, id);
-            log.info(message);
+            //log.info(message);
             throw new NotDeletedException(message);
         }
     }
@@ -76,7 +76,7 @@ public class Validator<E extends BaseEntity, T extends JpaRepository> {
                     exception = new NotFoundException(messageWrapper[0]);
             }
 
-            log.info(messageWrapper[0]);
+            //log.info(messageWrapper[0]);
             throw exception;
         }
 

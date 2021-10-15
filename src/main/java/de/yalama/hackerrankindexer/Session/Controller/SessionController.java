@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Session.Controller;
 
+
 import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
@@ -21,12 +22,7 @@ public class SessionController {
     }
 
     @GetMapping("/getId")
-    public Long getCurrentSessionId(HttpServletRequest httpServlet) {
-        return this.sessionService.getCurrentSessionId(httpServlet);
-    }
-
-    @PostMapping("/retireId/{id}")
-    public Long retireSessionId(HttpServletRequest httpServlet, @PathVariable Long id) {
-        return this.sessionService.retireId(id);
+    public String getCurrentSessionId(HttpSession httpSession) {
+        return this.sessionService.getCurrentSessionId(httpSession);
     }
 }

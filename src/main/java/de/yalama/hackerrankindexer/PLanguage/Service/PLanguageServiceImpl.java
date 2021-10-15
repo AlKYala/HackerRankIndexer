@@ -71,16 +71,16 @@ public class PLanguageServiceImpl extends PLanguageService {
     }
 
     @Override
-    public List<Submission> findSubmissionsOfLanguageAndSessionId(Long id, Long sessionId) {
+    public List<Submission> findSubmissionsOfLanguageAndSessionId(Long id, String sessionId) {
         PLanguage pLanguage = this.findById(id);
         return pLanguage.getSubmissions()
                 .stream()
-                .filter(submission -> submission.getSessionId() == sessionId)
+                .filter(submission -> submission.getSessionId().equals(sessionId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<PLanguage> findPLanguagesUsedBySessionId(long sessionId) {
+    public List<PLanguage> findPLanguagesUsedBySessionId(String sessionId) {
         return this.findAll()
                 .stream()
                 .filter(pLanguage -> this.checkPLanguageHasSubmissionBySessionId(pLanguage, sessionId))
@@ -102,7 +102,7 @@ public class PLanguageServiceImpl extends PLanguageService {
         return this.findByName(name) != null;
     }
 
-    private boolean checkPLanguageHasSubmissionBySessionId(PLanguage pLanguage, long sessionId) {
-        return pLanguage.getSubmissions().stream().anyMatch(submission -> submission.getSessionId() == sessionId);
+    private boolean checkPLanguageHasSubmissionBySessionId(PLanguage pLanguage, String sessionId) {
+        return pLanguage.getSubmissions().stream().anyMatch(submission -> submission.getSessionId().equals(sessionId));
     }
 }

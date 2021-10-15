@@ -55,7 +55,7 @@ public class HackerrankJSONService {
     private boolean mapsCreated = false;
 
 
-    public Integer parse(HackerrankJSON hackerrankJSON, long sessionId) {
+    public Integer parse(HackerrankJSON hackerrankJSON, String sessionId) {
         //debug
         System.out.println("start");
         if(!mapsCreated) {
@@ -105,7 +105,7 @@ public class HackerrankJSONService {
         }
     }
 
-    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, long sessionId) {
+    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, String sessionId) {
         Submission[] submissions = new Submission[submissionJSONS.length];
         for(int i = 0; i < submissions.length; i++) {
             Submission submission =
@@ -114,7 +114,7 @@ public class HackerrankJSONService {
         }
     }
 
-    private Submission createSubmissionFromJSON(SubmissionJSON json, long sessionId) {
+    private Submission createSubmissionFromJSON(SubmissionJSON json, String sessionId) {
         Submission submission = new Submission();
         submission.setId(0L);
         submission.setCode(json.getCode());

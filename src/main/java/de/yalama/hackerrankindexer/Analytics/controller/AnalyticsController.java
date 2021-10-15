@@ -27,56 +27,53 @@ public class AnalyticsController {
     private Long sessionId;
 
     @PostMapping("/clear")
-    public void clearStatistics(HttpServletRequest httpServletRequest) {
-        this.analyticsService.clearEverythingBySessionId(this.getSessionId(httpServletRequest));
+    public void clearStatistics(HttpSession httpSession) {
+        this.analyticsService.clearEverythingBySessionId(this.getSessionId(httpSession));
     }
 
     @GetMapping("/submissions/passed")
-    public double getPercentagePassedSubmissions(HttpServletRequest httpServletRequest) {
-        return this.analyticsService.getPercentagePassedSubmissions(this.getSessionId(httpServletRequest));
+    public double getPercentagePassedSubmissions(HttpSession httpSession) {
+        return this.analyticsService.getPercentagePassedSubmissions(this.getSessionId(httpSession));
     }
 
     @GetMapping("/challenges/passed")
-    public double getPercentagePassedChallenges(HttpServletRequest httpServletRequest) {
-        return this.analyticsService.getPercentagePassedChallenges(this.getSessionId(httpServletRequest));
+    public double getPercentagePassedChallenges(HttpSession httpSession) {
+        return this.analyticsService.getPercentagePassedChallenges(this.getSessionId(httpSession));
     }
 
     @GetMapping("/pLanguage/{languageId}/passed")
-    public double getPercentageOfPassedByLanguageId(@PathVariable Long languageId, HttpServletRequest httpServletRequest) {
-        return this.analyticsService.getPercentagePassedByLanguage(languageId, this.getSessionId(httpServletRequest));
+    public double getPercentageOfPassedByLanguageId(@PathVariable Long languageId, HttpSession httpSession) {
+        return this.analyticsService.getPercentagePassedByLanguage(languageId, this.getSessionId(httpSession));
     }
 
     @GetMapping("/pLanguage/percentages/usage")
-    public UsageStatistics getUsagePercentagesOfPLanguages(HttpServletRequest httpServletRequest) {
-        return this.analyticsService.getUsagePercentagesBySessionId(this.getSessionId(httpServletRequest));
+    public UsageStatistics getUsagePercentagesOfPLanguages(HttpSession httpSession) {
+        return this.analyticsService.getUsagePercentagesBySessionId(this.getSessionId(httpSession));
     }
 
     @GetMapping("/pLanguage/percentages/passed")
-    public PassPercentages getPassPercentagesOfLanguages(HttpServletRequest httpServletRequest) {
+    public PassPercentages getPassPercentagesOfLanguages(HttpSession httpSession) {
         //debug
         // hier stimmts!
         /*PassPercentages p = this.analyticsService.getPassPercentages(this.getSessionId(httpServletRequest));
         System.out.printf("debug: %s\n", p.toString());*/
 
-        return this.analyticsService.getPassPercentages(this.getSessionId(httpServletRequest));
+        return this.analyticsService.getPassPercentages(this.getSessionId(httpSession));
     }
 
     @GetMapping("/pLanguage/favourite")
-    public PLanguage getFavouriteLanguage(HttpServletRequest httpServletRequest){
+    public PLanguage getFavouriteLanguage(HttpSession httpSession){
         //debug
-        System.out.println(this.getSessionId(httpServletRequest));
-        return this.analyticsService.getFavouriteLanguage(this.getSessionId(httpServletRequest));
+        System.out.println(this.getSessionId(httpSession));
+        return this.analyticsService.getFavouriteLanguage(this.getSessionId(httpSession));
     }
 
     @GetMapping("/exists")
-    public boolean checkSubmissionsExist(HttpServletRequest httpServletRequest) {
-        return this.analyticsService.checkSubmissionsExistBySessionId(this.getSessionId(httpServletRequest));
+    public boolean checkSubmissionsExist(HttpSession httpSession) {
+        return this.analyticsService.checkSubmissionsExistBySessionId(this.getSessionId(httpSession));
     }
 
-    private long getSessionId(HttpServletRequest httpServletRequest) {
-        if(this.sessionId == null) {
-            this.sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
-        }
-        return this.sessionId;
+    private String getSessionId(HttpSession httpSession) {
+        return this.sessionService.getCurrentSessionId(httpSession);
     }
 }

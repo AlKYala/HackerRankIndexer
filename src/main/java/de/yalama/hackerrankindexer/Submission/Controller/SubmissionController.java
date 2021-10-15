@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RequestMapping("/submission")
@@ -28,23 +29,23 @@ public class SubmissionController implements BaseController<Submission, Long> {
     private DummyService dummyService;
 
     @GetMapping
-    public List<Submission> findAll(HttpServletRequest httpServletRequest) {
-        long sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+    public List<Submission> findAll(HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
         return this.submissionService.findAllBySessionId(sessionId);
     }
 
     @GetMapping("bySessionId")
-    public List<Submission> findAllBySubmissionId(HttpServletRequest httpServletRequest) {
-        long sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+    public List<Submission> findAllBySubmissionId(HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
         return this.submissionService.findAllBySessionId(sessionId);
     }
 
     @GetMapping("/{id}")
-    public Submission findById(@PathVariable Long id, HttpServletRequest httpServletRequest) throws HackerrankIndexerException {
+    public Submission findById(@PathVariable Long id, HttpSession httpSession) throws HackerrankIndexerException {
         Submission submission = this.submissionService.findById(id);
-        long currentSessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+        String currentSessionId = this.sessionService.getCurrentSessionId(httpSession);
         System.out.printf("SessionID: %d SubmissionSessionId: %d\n", currentSessionId, submission.getSessionId());
-        if(submission.getSessionId() != currentSessionId) {
+        if(!submission.getSessionId().equals(currentSessionId)) {
             return this.dummyService.getDummySubmission();
         }
         return submission;
@@ -69,7 +70,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
     }
 
     @GetMapping("/passed")
-    public List<Submission> getPassedSubmissions(long sessionId) {
+    public List<Submission> getPassedSubmissions(String sessionId) {
         return this.submissionService.getAllPassed(sessionId);
     }
 
@@ -79,7 +80,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
      * of each challenge is
      */
     @GetMapping("/passed/latest")
-    public List<Submission> getLatestPassedSubmissions(long sessionId) {
+    public List<Submission> getLatestPassedSubmissions(String sessionId) {
         return this.submissionService.getLastPassedFromAll(sessionId);
     }
 }

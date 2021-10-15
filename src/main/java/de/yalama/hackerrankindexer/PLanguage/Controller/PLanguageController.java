@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Set;
 
@@ -27,13 +28,13 @@ public class PLanguageController implements BaseController<PLanguage, Long> {
 
     @Override
     @GetMapping
-    public List<PLanguage> findAll(HttpServletRequest httpServletRequest) {
+    public List<PLanguage> findAll(HttpSession httpSession) {
         return this.pLanguageService.findAll();
     }
 
     @Override
     @GetMapping("/{id}")
-    public PLanguage findById(@PathVariable Long id, HttpServletRequest httpServletRequest) throws HackerrankIndexerException {
+    public PLanguage findById(@PathVariable Long id, HttpSession httpSession) throws HackerrankIndexerException {
         return this.pLanguageService.findById(id);
     }
 
@@ -56,8 +57,8 @@ public class PLanguageController implements BaseController<PLanguage, Long> {
     }
 
     @GetMapping("/{id}/submissions")
-    public List<Submission> getSubmissionsByLanguage(@PathVariable Long id, HttpServletRequest httpServletRequest) {
-        long sessionId = this.sessionService.getCurrentSessionId(httpServletRequest);
+    public List<Submission> getSubmissionsByLanguage(@PathVariable Long id, HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
         return this.pLanguageService.findSubmissionsOfLanguageAndSessionId(id, sessionId);
     }
 }

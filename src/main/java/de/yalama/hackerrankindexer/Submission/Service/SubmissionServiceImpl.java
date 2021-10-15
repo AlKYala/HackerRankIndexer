@@ -94,14 +94,14 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public List<Submission> getAllPassed(long sessionId) {
+    public List<Submission> getAllPassed(String sessionId) {
         return this.findAll().stream()
-                .filter(submission -> submission.getScore() == 1 && sessionId == submission.getSessionId())
+                .filter(submission -> submission.getScore() == 1 && sessionId.equals(submission.getSessionId()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Submission> getLastPassedFromAll(long sessionId) {
+    public List<Submission> getLastPassedFromAll(String sessionId) {
         List<Submission> passedSubmissions = this.getAllPassed(sessionId);
         List<Submission> passedLatest = new ArrayList<Submission>();
         Set<Long> idOfTakenChallenges = new HashSet<Long>();
@@ -119,23 +119,23 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public List<Submission> findAllBySessionId(long sessionId) {
+    public List<Submission> findAllBySessionId(String sessionId) {
         return this.findAll()
                 .stream()
-                .filter(submission -> submission.getSessionId() == sessionId)
+                .filter(submission -> submission.getSessionId().equals(sessionId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Submission> filterBySessionId(List<Submission> submissions, long sessionId) {
+    public List<Submission> filterBySessionId(List<Submission> submissions, String sessionId) {
         return submissions
                 .stream()
-                .filter(submission -> submission.getSessionId() == sessionId)
+                .filter(submission -> submission.getSessionId().equals(sessionId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Submission> filterBySessionIdAndLanguageId(long pLanguageId, long sessionId) {
+    public List<Submission> filterBySessionIdAndLanguageId(long pLanguageId, String sessionId) {
         return this.findAllBySessionId(sessionId)
                 .stream()
                 .filter(submission -> submission.getLanguage().getId() == pLanguageId)

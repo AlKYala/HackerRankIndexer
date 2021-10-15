@@ -13,13 +13,13 @@ public abstract class PLanguageService implements BaseService<PLanguage> {
      * returns all submissions of a language, queried by language id
      * @param id
      */
-    public abstract List<Submission> findSubmissionsOfLanguageAndSessionId(Long id, Long sessionId);
+    public abstract List<Submission> findSubmissionsOfLanguageAndSessionId(Long id, String sessionId);
 
     /**
      * returns all languages used by a specific sessionId
      * @param sessionId
      */
-    public abstract List<PLanguage> findPLanguagesUsedBySessionId(long sessionId);
+    public abstract List<PLanguage> findPLanguagesUsedBySessionId(String sessionId);
 
     /**
      * returns a pLanguage by matchign name - null if not exists

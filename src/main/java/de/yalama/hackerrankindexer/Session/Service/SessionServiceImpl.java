@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Session.Service;
 
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +16,12 @@ import java.util.Set;
 
 @Service
 @Slf4j
+@NoArgsConstructor
 public class SessionServiceImpl extends SessionService {
-
-    private Map<String, Long> cachedSessionIDs;
-
-    public SessionServiceImpl() {
-        this.cachedSessionIDs = new HashMap<String, Long>();
-    }
 
     @Override
     public String getCurrentSessionId(HttpSession httpSession) {
         log.info(httpSession.getId());
-        //TODO
-        return "a";
-    }
-
-    private long findAndPersistNewSessionId(String sessionId) {
-        //TODO
-        return 0l;
+        return httpSession.getId();
     }
 }

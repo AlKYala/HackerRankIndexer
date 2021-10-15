@@ -115,6 +115,7 @@ public class HackerrankJSONService {
     }
 
     private Submission createSubmissionFromJSON(SubmissionJSON json, String sessionId) {
+
         Submission submission = new Submission();
         submission.setId(0L);
         submission.setCode(json.getCode());

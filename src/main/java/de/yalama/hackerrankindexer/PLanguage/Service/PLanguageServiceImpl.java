@@ -52,7 +52,7 @@ public class PLanguageServiceImpl extends PLanguageService {
 
     @Override
     public Collection<Submission> getPassedSubmissionsForLanguage(Long languageId, String sessionId) {
-        return this.getAllSubmissionsByLanguage(languageId, sessionId).stream().filter(submission -> submission.getScore() == 1)
+        return this.findSubmissionsOfLanguageAndSessionId(languageId, sessionId).stream().filter(submission -> submission.getScore() == 1)
                 .collect(Collectors.toList());
     }
 
@@ -67,7 +67,7 @@ public class PLanguageServiceImpl extends PLanguageService {
 
     @Override
     public Collection<Submission> getFailedSubmissionsForLanguage(Long languageId, String sessionId) {
-        return this.getAllSubmissionsByLanguage(languageId, sessionId)
+        return this.findSubmissionsOfLanguageAndSessionId(languageId, sessionId)
                 .stream()
                 .filter(submission -> submission.getScore() < 1)
                 .collect(Collectors.toList());
@@ -80,12 +80,6 @@ public class PLanguageServiceImpl extends PLanguageService {
             submissions.addAll(this.getFailedSubmissionsForLanguage(languageId, sessionId));
         }
         return submissions;
-    }
-
-    @Override
-    public Collection<Submission> getAllSubmissionsByLanguage(Long languageId, String sessionId) {
-        return this.findById(languageId).getSubmissions().stream().filter(submission -> submission.getSessionId().equals(sessionId))
-                .collect(Collectors.toList());
     }
 
     @Override

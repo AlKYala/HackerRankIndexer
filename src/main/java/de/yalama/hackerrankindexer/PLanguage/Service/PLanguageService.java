@@ -71,12 +71,4 @@ public abstract class PLanguageService implements BaseService<PLanguage> {
      * @return A collection for the failed submissions of the language
      */
     public abstract Collection<Submission> getFailedSubmissionsForAllLanguages(Long[] languageIds, String sessionId);
-
-    /**
-     * returns all submissions for a language by session id
-     * @param languageId the id of the language
-     * @param sessionId the sessionId
-     * @return A collection for the passed submissions of the language
-     */
-    public abstract Collection<Submission> getAllSubmissionsByLanguage(Long languageId, String sessionId);
 }

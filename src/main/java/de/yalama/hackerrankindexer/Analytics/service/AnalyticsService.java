@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.Analytics.service;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.shared.models.PassData;
 
 public abstract class AnalyticsService {
     /**
@@ -47,4 +48,12 @@ public abstract class AnalyticsService {
     public abstract boolean checkSubmissionsExistBySessionId(String sessionId);
 
     public abstract void clearEverythingBySessionId(String sessionId);
+
+    /**
+     * Generates Pass Data for a language
+     * @param id Id of the language
+     * @param sessionId The
+     * @return A pass data instance
+     */
+    public abstract PassData getPassDataForLangauge(Long id, String sessionId);
 }

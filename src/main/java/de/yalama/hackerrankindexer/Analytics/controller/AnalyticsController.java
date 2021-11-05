@@ -6,6 +6,7 @@ import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Session.Service.SessionService;
+import de.yalama.hackerrankindexer.shared.models.PassData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +81,11 @@ public class AnalyticsController {
 
     private String getSessionId(HttpSession httpSession) {
         return this.sessionService.getCurrentSessionId(httpSession);
+    }
+
+    @GetMapping("{id}/passData/")
+    public PassData getPassDataForLanguage(@PathVariable Long id, HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
+        return this.analyticsService.getPassDataForLangauge(id, sessionId);
     }
 }

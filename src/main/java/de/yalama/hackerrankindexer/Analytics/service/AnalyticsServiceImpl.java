@@ -7,6 +7,7 @@ import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.shared.models.PassData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,11 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private Map<String, PLanguage> favouriteBySessionId;
 
+    /**
+     * sessionId : Map<LanguageId, Passdata>
+     */
+    private Map<String, Map<Long, PassData>> passDataInstances;
+
     public AnalyticsServiceImpl(SubmissionService submissionService, ChallengeService challengeService,
                                 PLanguageService pLanguageService) {
         this.pLanguageService = pLanguageService;
@@ -52,6 +59,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.usageStatisticsBySessionId = new HashMap<String, UsageStatistics>();
         this.passPercentagesBySessionId = new HashMap<String, PassPercentages>();
         this.favouriteBySessionId = new HashMap<String, PLanguage>();
+        this.passDataInstances = new HashMap<String, Map<Long, PassData>>();
     }
 
     @Override
@@ -115,6 +123,31 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.usageStatisticsBySessionId.remove(sessionId);
         this.passPercentagesBySessionId.remove(sessionId);
         this.favouriteBySessionId.remove(sessionId);
+    }
+
+    @Override
+    public PassData getPassDataForLangauge(Long id, String sessionId) {
+        return (this.passDataInstances.containsKey(sessionId) && this.passDataInstances.get(sessionId).containsKey(id)) ?
+                this.passDataInstances.get(sessionId).get(id) : this.generatePassDataAndPersist(id, sessionId);
+    }
+
+    private PassData generatePassDataAndPersist(Long id, String sessionId) {
+        if(!this.passDataInstances.containsKey(sessionId)) {
+            this.passDataInstances.put(sessionId, new HashMap<Long, PassData>());
+        }
+
+        PassData passData = new PassData();
+        PLanguage firstInstance = this.pLanguageService.findById(id);
+        Integer passed = this.pLanguageService.getPassedSubmissionsForLanguage(id, sessionId).size();
+        Integer failed = this.pLanguageService.getFailedSubmissionsForLanguage(id, sessionId).size();
+        passData.setFailed(failed);
+        passData.setPassed(passed);
+        passData.setLanguageId(firstInstance.getId());
+        passData.setLanguageName(firstInstance.getLanguage());
+
+        this.passDataInstances.get(sessionId).put(id, passData);
+
+        return passData;
     }
 
     @Override

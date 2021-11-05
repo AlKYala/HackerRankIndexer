@@ -7,12 +7,14 @@ import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+@Slf4j
 @RestController
 @RequestMapping("analytics")
 @RequiredArgsConstructor
@@ -33,11 +35,13 @@ public class AnalyticsController {
 
     @GetMapping("/submissions/passed")
     public double getPercentagePassedSubmissions(HttpSession httpSession) {
+        log.info("{}", this.analyticsService.getPercentagePassedSubmissions(this.getSessionId(httpSession)));
         return this.analyticsService.getPercentagePassedSubmissions(this.getSessionId(httpSession));
     }
 
     @GetMapping("/challenges/passed")
     public double getPercentagePassedChallenges(HttpSession httpSession) {
+        log.info("{}", this.analyticsService.getPercentagePassedChallenges(this.getSessionId(httpSession)));
         return this.analyticsService.getPercentagePassedChallenges(this.getSessionId(httpSession));
     }
 
@@ -65,6 +69,7 @@ public class AnalyticsController {
     public PLanguage getFavouriteLanguage(HttpSession httpSession){
         //debug
         System.out.println(this.getSessionId(httpSession));
+        log.info("{}", this.analyticsService.getFavouriteLanguage(this.getSessionId(httpSession)).getLanguage());
         return this.analyticsService.getFavouriteLanguage(this.getSessionId(httpSession));
     }
 

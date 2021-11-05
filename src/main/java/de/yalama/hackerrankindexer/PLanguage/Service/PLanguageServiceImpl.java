@@ -10,6 +10,8 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,6 +48,44 @@ public class PLanguageServiceImpl extends PLanguageService {
             return foundInstance;
         }
         return this.save(instance);
+    }
+
+    @Override
+    public Collection<Submission> getPassedSubmissionsForLanguage(Long languageId, String sessionId) {
+        return this.getAllSubmissionsByLanguage(languageId, sessionId).stream().filter(submission -> submission.getScore() == 1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Submission> getPassedSubmissionsForAllLanguages(Long[] languageIds, String sessionId) {
+        List<Submission> submissions = new ArrayList<Submission>();
+        for(Long languageId: languageIds) {
+            submissions.addAll(this.getPassedSubmissionsForLanguage(languageId, sessionId));
+        }
+        return submissions;
+    }
+
+    @Override
+    public Collection<Submission> getFailedSubmissionsForLanguage(Long languageId, String sessionId) {
+        return this.getAllSubmissionsByLanguage(languageId, sessionId)
+                .stream()
+                .filter(submission -> submission.getScore() < 1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Submission> getFailedSubmissionsForAllLanguages(Long[] languageIds, String sessionId) {
+        List<Submission> submissions = new ArrayList<Submission>();
+        for(Long languageId: languageIds) {
+            submissions.addAll(this.getFailedSubmissionsForLanguage(languageId, sessionId));
+        }
+        return submissions;
+    }
+
+    @Override
+    public Collection<Submission> getAllSubmissionsByLanguage(Long languageId, String sessionId) {
+        return this.findById(languageId).getSubmissions().stream().filter(submission -> submission.getSessionId().equals(sessionId))
+                .collect(Collectors.toList());
     }
 
     @Override

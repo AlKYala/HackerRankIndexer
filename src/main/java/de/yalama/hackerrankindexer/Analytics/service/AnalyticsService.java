@@ -1,9 +1,13 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
+import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentageChartData;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.shared.models.PassData;
+
+import java.util.Collection;
+import java.util.List;
 
 public abstract class AnalyticsService {
     /**
@@ -56,4 +60,20 @@ public abstract class AnalyticsService {
      * @return A pass data instance
      */
     public abstract PassData getPassDataForLangauge(Long id, String sessionId);
+
+    /**
+     * Returns a collection of passData of All Languages submitted by User
+     * @param sessionId SessionId by User
+     * @return a collection of passData of All Languages submitted by User
+     */
+    public abstract Collection<PassData> getPassDataForAllLanguages(String sessionId);
+
+    /**
+     * Essentially AnalyticsService::getPassDataForAllLanguages but new data types are used
+     * to have data for ngx-charts, see here
+     * https://swimlane.gitbook.io/ngx-charts/examples/bar-charts/normalized-horizontal-bar-chart
+     * @param sessionId sessionId by user
+     * @return
+     */
+    public abstract Collection<PassPercentageChartData> getPassPercentageChartData(String sessionId);
 }

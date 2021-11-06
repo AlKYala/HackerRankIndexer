@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Analytics.controller;
 
 
+import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentageChartData;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -83,9 +86,15 @@ public class AnalyticsController {
         return this.sessionService.getCurrentSessionId(httpSession);
     }
 
-    @GetMapping("{id}/passData/")
+    @GetMapping("/passData/{id}")
     public PassData getPassDataForLanguage(@PathVariable Long id, HttpSession httpSession) {
         String sessionId = this.sessionService.getCurrentSessionId(httpSession);
         return this.analyticsService.getPassDataForLangauge(id, sessionId);
+    }
+
+    @GetMapping("/passData/all")
+    public Collection<PassPercentageChartData> getPassDataForAllLanguages(HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
+        return this.analyticsService.getPassPercentageChartData(sessionId);
     }
 }

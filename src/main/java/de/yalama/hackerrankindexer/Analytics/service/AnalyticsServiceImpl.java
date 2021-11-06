@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
+import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentageChartData;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
@@ -13,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -129,6 +127,26 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     public PassData getPassDataForLangauge(Long id, String sessionId) {
         return (this.passDataInstances.containsKey(sessionId) && this.passDataInstances.get(sessionId).containsKey(id)) ?
                 this.passDataInstances.get(sessionId).get(id) : this.generatePassDataAndPersist(id, sessionId);
+    }
+
+    @Override
+    public Collection<PassData> getPassDataForAllLanguages(String sessionId) {
+        List<PLanguage> pLanguagesOfUser = this.pLanguageService.findPLanguagesUsedBySessionId(sessionId);
+        List<PassData> passData = new ArrayList<PassData>();
+        for(PLanguage pLanguage : pLanguagesOfUser) {
+            passData.add(this.getPassDataForLangauge(pLanguage.getId(), sessionId));
+        }
+        return passData;
+    }
+
+    @Override
+    public Collection<PassPercentageChartData> getPassPercentageChartData(String sessionId) {
+        Collection<PassData> passDataForAllLanguages = this.getPassDataForAllLanguages(sessionId);
+        Collection<PassPercentageChartData> chartData = new ArrayList<PassPercentageChartData>();
+        for(PassData passData: passDataForAllLanguages) {
+            chartData.add(PassPercentageChartData.generateFromPassData(passData));
+        }
+        return chartData;
     }
 
     private PassData generatePassDataAndPersist(Long id, String sessionId) {

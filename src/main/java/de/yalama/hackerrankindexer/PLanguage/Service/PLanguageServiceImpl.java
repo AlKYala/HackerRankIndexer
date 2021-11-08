@@ -113,6 +113,7 @@ public class PLanguageServiceImpl extends PLanguageService {
                 .collect(Collectors.toList());
     }
 
+    //TODO funktioniert nicht...
     @Override
     public List<PLanguage> findPLanguagesUsedBySessionId(String sessionId) {
         return this.findAll()
@@ -137,6 +138,19 @@ public class PLanguageServiceImpl extends PLanguageService {
     }
 
     private boolean checkPLanguageHasSubmissionBySessionId(PLanguage pLanguage, String sessionId) {
+        //erster teil: debug
+        log.info("Checking usages for {}", pLanguage.getLanguage());
+        Set<Submission> submissions = pLanguage.getSubmissions();
+        for(Submission submission: submissions) {
+            //log.info("ID: {}, SessionID: {}", submission.getId(), submission.getSessionId());
+            if(submission.getSessionId().equals(sessionId)) {
+                log.info("found for {}", pLanguage.getLanguage());
+                break;
+            }
+        }
+        //TODO problem gefunden: Er meint keine Submission passt?
+        //TODO Warum unterscheiden sich die SessionIDs denn?
+
         return pLanguage.getSubmissions().stream().anyMatch(submission -> submission.getSessionId().equals(sessionId));
     }
 }

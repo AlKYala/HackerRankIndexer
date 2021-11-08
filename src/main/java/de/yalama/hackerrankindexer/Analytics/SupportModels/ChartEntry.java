@@ -7,12 +7,16 @@ import lombok.Setter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+
+/**
+ * Used for ngx-charts by swimlane
+ */
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PassPercentageChartEntry {
+public class ChartEntry {
 
-    public PassPercentageChartEntry(String name, Integer value) {
+    public ChartEntry(String name, Integer value) {
         this.name = name;
         this.value = value;
     }

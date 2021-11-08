@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
+import de.yalama.hackerrankindexer.Analytics.SupportModels.ChartEntry;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentageChartData;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
@@ -9,7 +10,9 @@ import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.shared.models.PassData;
+import de.yalama.hackerrankindexer.shared.services.ColorPickerUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -149,6 +152,27 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         return chartData;
     }
 
+    @Override
+    public Collection<ChartEntry> getUsageChartEntries(String sessionId) {
+        UsageStatistics usageStatistics = this.getUsagePercentagesBySessionId(sessionId);
+        return this.getChartEntriesFromUsageStatistics(usageStatistics);
+    }
+
+    @Override
+    public String[] getAnalyticsColors() {
+        return ColorPickerUtil.getColors();
+    }
+
+    private Collection<ChartEntry> getChartEntriesFromUsageStatistics(UsageStatistics usageStatistics) {
+        List<ChartEntry> entries = new ArrayList<ChartEntry>();
+        for(int i = 0; i < usageStatistics.size(); i++) {
+            String name = usageStatistics.getPLanguages().get(i).getLanguage();
+            int numSubmissions = usageStatistics.getNumberSubmissions().get(i);
+            entries.add(new ChartEntry(name, numSubmissions));
+        }
+        return entries;
+    }
+
     private PassData generatePassDataAndPersist(Long id, String sessionId) {
         if(!this.passDataInstances.containsKey(sessionId)) {
             this.passDataInstances.put(sessionId, new HashMap<Long, PassData>());
@@ -170,8 +194,16 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public UsageStatistics getUsagePercentagesBySessionId(String sessionId) {
+        System.out.printf("Debug: %s\n", this.usageStatisticsBySessionId.keySet().toString());
+        log.info("{}", this.usageStatisticsBySessionId.containsKey(sessionId));
         if (!this.usageStatisticsBySessionId.containsKey(sessionId)) {
+            System.out.println("inside");
+            log.info("Before: {}", this.usageStatisticsBySessionId.toString());
+            System.out.println("CREATING");
             this.createUsagePercentages(sessionId);
+            log.info("After: {}", this.usageStatisticsBySessionId.toString());
+            log.info("After analysis: {}\n{}", this.usageStatisticsBySessionId.get(sessionId).getPLanguages().toString(),
+                    this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().toString());
         }
         return this.usageStatisticsBySessionId.get(sessionId);
     }
@@ -179,17 +211,26 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private void createUsagePercentages(String sessionId) {
         this.usageStatisticsBySessionId.put(sessionId, new UsageStatistics());
+        log.info("Usage Statistics for {} created", sessionId);
+        log.info("NUMBER LANGUAGES SEEN {}", this.usageStatisticsBySessionId.get(sessionId).size());
+        //TODO der fehler muesste dann wohl hier liegen - pruefe ob die languages der session gefunden wrden!
+        log.info("Languages by SessionID: {}", this.pLanguageService.findPLanguagesUsedBySessionId(sessionId).toString());
         this.pLanguageService
                 .findPLanguagesUsedBySessionId(sessionId)
                 .forEach(pLanguage -> this.addPLanguageToUsageStatistics(pLanguage, sessionId));
     }
 
     private void addPLanguageToUsageStatistics(PLanguage pLanguage, String sessionId) {
+        //TODO warum wird das hier nicht aufgerufen???
+        log.info("ADDING USAGEPERCENTAGE");
         int numSubmission = (int) pLanguage.getSubmissions()
                 .stream()
                 .filter(submission -> submission.getSessionId().equals(sessionId)).count();
+        log.info("{}", numSubmission);
         this.usageStatisticsBySessionId.get(sessionId).getPLanguages().add(pLanguage);
         this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().add(numSubmission);
+        log.info("{}\n{}", this.usageStatisticsBySessionId.get(sessionId).getPLanguages().toString(),
+                this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().toString());
     }
 
     @Override
@@ -255,10 +296,19 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         PLanguage favourite = null;
         double maxFavSize = 0;
 
+        //TODO hier wird also scheinbar nix in die usage percentages eingetragern?
         UsageStatistics usageStatisticsForId = this.getUsagePercentagesBySessionId(sessionId);
+        log.info(usageStatisticsForId.getNumberSubmissions().toString());
+        System.out.println("CALLINGUSAGE");
+
+        System.out.println(usageStatisticsForId.getNumberSubmissions().size());
+
+        //TODO fehler hier irgendwo?
 
         for(int i = 0; i < usageStatisticsForId.getNumberSubmissions().size(); i++) {
             double tempSize = this.usageStatisticsBySessionId.get(sessionId).getNumberSubmissions().get(i);
+            log.info("{} has {} usages", this.usageStatisticsBySessionId.get(sessionId).getPLanguages().get(i).getLanguage(),
+                    tempSize);
             if(maxFavSize < tempSize) {
                 maxFavSize = tempSize;
                 favourite = this.usageStatisticsBySessionId.get(sessionId).getPLanguages().get(i);

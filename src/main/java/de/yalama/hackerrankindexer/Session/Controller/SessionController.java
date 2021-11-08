@@ -21,6 +21,7 @@ public class SessionController {
         this.sessionService = sessionService;
     }
 
+    //TODO: mit crossOrigin gibts ein problem - bei submit und diesem endpunkt unterschiedliche sessionIds - ohne Websecurity gehts aber!
     @GetMapping("/getId")
     public String getCurrentSessionId(HttpSession httpSession) {
         return this.sessionService.getCurrentSessionId(httpSession);

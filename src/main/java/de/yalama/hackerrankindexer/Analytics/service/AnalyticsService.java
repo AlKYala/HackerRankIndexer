@@ -1,13 +1,13 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentageChartData;
+import de.yalama.hackerrankindexer.Analytics.SupportModels.ChartEntry;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.shared.models.PassData;
 
 import java.util.Collection;
-import java.util.List;
 
 public abstract class AnalyticsService {
     /**
@@ -76,4 +76,16 @@ public abstract class AnalyticsService {
      * @return
      */
     public abstract Collection<PassPercentageChartData> getPassPercentageChartData(String sessionId);
+
+    /**
+     * Returns a collection ChartEntry entities - used for usage Distribution in Frontend
+     * @param sessionId sessionId by User
+     * @return see description
+     */
+    public abstract Collection<ChartEntry> getUsageChartEntries(String sessionId);
+
+    /**
+     * @return an array of colors to be used in charts context
+     */
+    public abstract String[] getAnalyticsColors();
 }

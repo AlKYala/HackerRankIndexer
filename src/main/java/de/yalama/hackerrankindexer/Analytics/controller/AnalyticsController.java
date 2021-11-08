@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Analytics.controller;
 
 
+import de.yalama.hackerrankindexer.Analytics.SupportModels.ChartEntry;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentageChartData;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
@@ -8,6 +9,7 @@ import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import de.yalama.hackerrankindexer.shared.models.PassData;
+import de.yalama.hackerrankindexer.shared.services.ColorPickerUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,5 +98,16 @@ public class AnalyticsController {
     public Collection<PassPercentageChartData> getPassDataForAllLanguages(HttpSession httpSession) {
         String sessionId = this.sessionService.getCurrentSessionId(httpSession);
         return this.analyticsService.getPassPercentageChartData(sessionId);
+    }
+
+    @GetMapping("/usageData/all")
+    public Collection<ChartEntry> getUsageChartEntries(HttpSession httpSession) {
+        String sessionId = this.sessionService.getCurrentSessionId(httpSession);
+        return this.analyticsService.getUsageChartEntries(sessionId);
+    }
+
+    @GetMapping("/colors")
+    public String[] getAnalyticsColors() {
+        return this.analyticsService.getAnalyticsColors();
     }
 }

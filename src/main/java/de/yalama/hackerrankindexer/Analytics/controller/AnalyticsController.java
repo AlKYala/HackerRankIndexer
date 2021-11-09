@@ -61,22 +61,23 @@ public class AnalyticsController {
         return this.analyticsService.getUsagePercentagesBySessionId(this.getSessionId(httpSession));
     }
 
-    @GetMapping("/pLanguage/percentages/passed")
+    /*@GetMapping("/pLanguage/percentages/passed")
     public PassPercentages getPassPercentagesOfLanguages(HttpSession httpSession) {
         //debug
         // hier stimmts!
         /*PassPercentages p = this.analyticsService.getPassPercentages(this.getSessionId(httpServletRequest));
-        System.out.printf("debug: %s\n", p.toString());*/
+        System.out.printf("debug: %s\n", p.toString());
 
         return this.analyticsService.getPassPercentages(this.getSessionId(httpSession));
-    }
+    }*/
 
     @GetMapping("/pLanguage/favourite")
     public PLanguage getFavouriteLanguage(HttpSession httpSession){
         //debug
         System.out.println(this.getSessionId(httpSession));
-        log.info("{}", this.analyticsService.getFavouriteLanguage(this.getSessionId(httpSession)).getLanguage());
-        return this.analyticsService.getFavouriteLanguage(this.getSessionId(httpSession));
+        //return
+        PLanguage favourite = this.analyticsService.getFavouriteLanguage(this.getSessionId(httpSession));
+        return favourite;
     }
 
     @GetMapping("/exists")

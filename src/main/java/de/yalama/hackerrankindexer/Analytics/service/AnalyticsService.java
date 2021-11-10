@@ -41,12 +41,6 @@ public abstract class AnalyticsService {
     public abstract PassPercentages getPassPercentages(String sessionId);*/
 
     /**
-     * returns the most used Language
-     * @return
-     */
-    public abstract PLanguage getFavouriteLanguage(String sessionId);
-
-    /**
      * A method to check if submissions exist by SessionId
      */
     public abstract boolean checkSubmissionsExistBySessionId(String sessionId);

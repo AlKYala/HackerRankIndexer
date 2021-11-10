@@ -236,14 +236,4 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         reference.getPLanguages().add(pLanguage);
         reference.getNumberSubmissions().add(numSubmission);
     }
-
-
-    @Override
-    public PLanguage getFavouriteLanguage(String sessionId) {
-        UsageStatistics usageStatistics = this.usageStatisticsBySessionId.get(sessionId);
-        if(usageStatistics == null) {
-            this.createUsagePercentages(sessionId);
-        }
-        return this.getUsagePercentagesBySessionId(sessionId).getMostUsed();
-    }
 }

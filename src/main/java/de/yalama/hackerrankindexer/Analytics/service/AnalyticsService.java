@@ -82,4 +82,9 @@ public abstract class AnalyticsService {
      * @return an array of colors to be used in charts context
      */
     public abstract String[] getAnalyticsColors();
+
+    /**
+     * @return The number of passed challenges
+     */
+    public abstract Integer getNumberChallengesPassed(String sessionId);
 }

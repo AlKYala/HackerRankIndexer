@@ -86,4 +86,10 @@ public class AnalyticsController {
     public String[] getAnalyticsColors() {
         return this.analyticsService.getAnalyticsColors();
     }
+
+    @GetMapping("/challenges/passed/number")
+    public Integer getNumberChallengesPassed(HttpSession httpSession) {
+        String sessionId = this.getSessionId(httpSession);
+        return this.analyticsService.getNumberChallengesPassed(sessionId);
+    }
 }

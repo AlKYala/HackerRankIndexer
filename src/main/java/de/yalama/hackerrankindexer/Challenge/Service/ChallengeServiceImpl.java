@@ -64,7 +64,7 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public Boolean checkIsChallengePassedBySessionId(long challengeId, String sessionId) {
+    public boolean checkIsChallengePassedBySessionId(long challengeId, String sessionId) {
         for(Submission submission : this.getSubmissionsByChallengeIdAndSessionId(challengeId, sessionId)) {
             if(submission.getScore() == 1) {
                 return true;

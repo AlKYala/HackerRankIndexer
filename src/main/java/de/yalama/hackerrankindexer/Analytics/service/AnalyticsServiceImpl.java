@@ -236,4 +236,16 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         reference.getPLanguages().add(pLanguage);
         reference.getNumberSubmissions().add(numSubmission);
     }
+
+    // NUMBER CHALLENGES
+
+    public Integer getNumberChallengesPassed(String sessionId) {
+        int[] passed = new int[1];
+
+        this.challengeService.getAllChallengesBySessionId(sessionId).forEach(challenge ->
+               passed[0] += (this.challengeService.checkIsChallengePassedBySessionId(challenge.getId(), sessionId))
+                       ? 1 : 0);
+
+        return passed[0];
+    }
 }

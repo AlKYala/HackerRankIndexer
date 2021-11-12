@@ -18,4 +18,7 @@ public class ColorPickerUtil {
         return next;
     }
 
+    public static String[] getColors() {
+        return ColorPickerUtil.colors;
+    }
 }

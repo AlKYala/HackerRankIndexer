@@ -44,7 +44,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
     public Submission findById(@PathVariable Long id, HttpSession httpSession) throws HackerrankIndexerException {
         Submission submission = this.submissionService.findById(id);
         String currentSessionId = this.sessionService.getCurrentSessionId(httpSession);
-        System.out.printf("SessionID: %d SubmissionSessionId: %d\n", currentSessionId, submission.getSessionId());
+        //System.out.printf("SessionID: %d SubmissionSessionId: %d\n", currentSessionId, submission.getSessionId());
         if(!submission.getSessionId().equals(currentSessionId)) {
             return this.dummyService.getDummySubmission();
         }

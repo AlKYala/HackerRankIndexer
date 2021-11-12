@@ -68,6 +68,7 @@ public class HackerrankJSONService {
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(),
                 sessionId);
         //log.info("Parsing complete");
+        log.info("{}", submissionService.findAll().size());
         return 1;
     }
 

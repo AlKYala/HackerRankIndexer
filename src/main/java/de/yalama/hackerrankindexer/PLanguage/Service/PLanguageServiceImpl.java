@@ -10,6 +10,8 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,6 +51,38 @@ public class PLanguageServiceImpl extends PLanguageService {
     }
 
     @Override
+    public Collection<Submission> getPassedSubmissionsForLanguage(Long languageId, String sessionId) {
+        return this.findSubmissionsOfLanguageAndSessionId(languageId, sessionId).stream().filter(submission -> submission.getScore() == 1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Submission> getPassedSubmissionsForAllLanguages(Long[] languageIds, String sessionId) {
+        List<Submission> submissions = new ArrayList<Submission>();
+        for(Long languageId: languageIds) {
+            submissions.addAll(this.getPassedSubmissionsForLanguage(languageId, sessionId));
+        }
+        return submissions;
+    }
+
+    @Override
+    public Collection<Submission> getFailedSubmissionsForLanguage(Long languageId, String sessionId) {
+        return this.findSubmissionsOfLanguageAndSessionId(languageId, sessionId)
+                .stream()
+                .filter(submission -> submission.getScore() < 1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Submission> getFailedSubmissionsForAllLanguages(Long[] languageIds, String sessionId) {
+        List<Submission> submissions = new ArrayList<Submission>();
+        for(Long languageId: languageIds) {
+            submissions.addAll(this.getFailedSubmissionsForLanguage(languageId, sessionId));
+        }
+        return submissions;
+    }
+
+    @Override
     public PLanguage save(PLanguage instance) throws HackerrankIndexerException {
         /*int colorValue = ((int) (16777215f * Math.random()));
         String color = String.format("#%s", Integer.toHexString((colorValue)));
@@ -79,6 +113,7 @@ public class PLanguageServiceImpl extends PLanguageService {
                 .collect(Collectors.toList());
     }
 
+    //TODO funktioniert nicht...
     @Override
     public List<PLanguage> findPLanguagesUsedBySessionId(String sessionId) {
         return this.findAll()
@@ -103,6 +138,19 @@ public class PLanguageServiceImpl extends PLanguageService {
     }
 
     private boolean checkPLanguageHasSubmissionBySessionId(PLanguage pLanguage, String sessionId) {
+        //erster teil: debug
+        log.info("Checking usages for {}", pLanguage.getLanguage());
+        Set<Submission> submissions = pLanguage.getSubmissions();
+        for(Submission submission: submissions) {
+            //log.info("ID: {}, SessionID: {}", submission.getId(), submission.getSessionId());
+            if(submission.getSessionId().equals(sessionId)) {
+                log.info("found for {}", pLanguage.getLanguage());
+                break;
+            }
+        }
+        //TODO problem gefunden: Er meint keine Submission passt?
+        //TODO Warum unterscheiden sich die SessionIDs denn?
+
         return pLanguage.getSubmissions().stream().anyMatch(submission -> submission.getSessionId().equals(sessionId));
     }
 }

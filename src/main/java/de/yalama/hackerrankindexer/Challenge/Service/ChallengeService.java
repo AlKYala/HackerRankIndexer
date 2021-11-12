@@ -9,7 +9,7 @@ import java.util.Set;
 
 public abstract class ChallengeService implements BaseService<Challenge> {
     public abstract Set<Submission> getSubmissionsByChallengeIdAndSessionId(long challengeId, String sessionId);
-    public abstract Boolean checkIsChallengePassedBySessionId(long challengeId, String sessionId);
+    public abstract boolean checkIsChallengePassedBySessionId(long challengeId, String sessionId);
     public abstract List<Challenge> getAllChallengesBySessionId(String sessionId);
     public abstract List<Challenge> getAllPassedChallengesBySessionId(String sessionId);
     public abstract boolean checkChallengeAlreadyExists(String challengeName);

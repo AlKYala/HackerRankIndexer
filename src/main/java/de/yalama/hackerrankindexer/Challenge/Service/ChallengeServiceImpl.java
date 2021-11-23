@@ -139,6 +139,9 @@ public class ChallengeServiceImpl extends ChallengeService {
      * @return see logic
      */
     private Submission getMoreRecentPassedSubmission(Submission a, Submission b) {
+        if(a == null) {
+            return (b.getScore() == 1) ? b : null;
+        }
         return (b.getScore() < 1 || a.getId() > b.getId()) ? a : b;
     }
 

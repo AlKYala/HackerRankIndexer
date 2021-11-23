@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -75,6 +76,18 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     @GetMapping("/passed")
     public List<Challenge> getPassedChallenges(HttpSession httpSession) {
         return this.challengeService.getAllPassedChallengesBySessionId(this.getSessionId(httpSession));
+    }
+
+    @GetMapping("/passed/{id}/mostrecent")
+    public Submission getMostRecentPassedSubmissionForChallenge(@PathVariable Long id, HttpSession httpSession) {
+        return this.challengeService
+                .getMostRecentPassedSubmissionBySessionIdAndChallenge(id, this.getSessionId(httpSession));
+    }
+
+    @GetMapping("passed/mostrecent")
+    public Collection<Submission> getMostRecentPassedSumbissionForAllChallenges(HttpSession httpSession) {
+        return this.challengeService
+                .getMostRecentPassedSubmissionBySessionIdForAllChallenges(this.getSessionId(httpSession));
     }
 
     private String getSessionId(HttpSession httpSession) {

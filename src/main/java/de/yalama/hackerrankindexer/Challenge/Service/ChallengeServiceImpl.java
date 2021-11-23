@@ -9,8 +9,10 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,5 +121,49 @@ public class ChallengeServiceImpl extends ChallengeService {
             return foundChallenge;
         }
         return this.save(challenge);
+    }
+
+    @Override
+    public Submission getMostRecentPassedSubmissionBySessionIdAndChallenge(long challengeId, String sessionId) {
+        Submission[] result = new Submission[1];
+        this.getSubmissionsByChallengeIdAndSessionId(challengeId, sessionId)
+                .stream()
+                .forEach(submission -> result[0] = this.getMoreRecentPassedSubmission(result[0], submission));
+        return result[0];
+    }
+
+    /**
+     * a is the default
+     * if b has higher ID and is passed, return b
+     * @param a, b
+     * @return see logic
+     */
+    private Submission getMoreRecentPassedSubmission(Submission a, Submission b) {
+        return (b.getScore() < 1 || a.getId() > b.getId()) ? a : b;
+    }
+
+    @Override
+    public List<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallenges(String sessionId) {
+        List<Submission> passedSubmissions = new ArrayList<Submission>();
+
+        this.findAll()
+                .stream()
+                .forEach(challenge -> this.addIfValid(challenge, sessionId, passedSubmissions));
+
+        return passedSubmissions;
+    }
+
+    /**
+     * Only adds a found submission the the list if
+     * @param c The challenge to find passed submission for
+     * @param sessionId The sessionid
+     * @param submissions The list of submissions
+     */
+    private void addIfValid(Challenge c, String sessionId, List<Submission> submissions) {
+        Submission found = this.getMostRecentPassedSubmissionBySessionIdAndChallenge(c.getId(), sessionId);
+        if(found == null) {
+            return;
+        }
+        submissions.add(found);
     }
 }

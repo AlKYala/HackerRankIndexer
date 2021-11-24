@@ -12,3 +12,5 @@ Und schau dir an, wie du das am besten in die response einfuegst
 Herausfinden:
 Brauch ich die cookies nur responses beizufuegen?
 Inwiefern weiteres handling noetig? - teste einfach mal mit extra schnitstellen
+
+ansonsten musstes halt ins localstorageservice im frontend speichern

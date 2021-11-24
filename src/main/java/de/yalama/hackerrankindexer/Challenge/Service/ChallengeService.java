@@ -31,4 +31,11 @@ public abstract class ChallengeService implements BaseService<Challenge> {
      * @return The most recent passed submission of every challenge
      */
     public abstract Collection<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallenges(String sessionId);
+
+    /**
+     * @param languageId The langaugeId of the request
+     * @param sessionId The sessionid of the requesting client
+     * @return The most recent passed submission of every challenge
+     */
+    public abstract Collection<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(long languageId, String sessionId);
 }

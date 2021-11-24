@@ -157,14 +157,6 @@ public class ChallengeServiceImpl extends ChallengeService {
         return passedSubmissions;
     }
 
-    @Override
-    public Collection<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(long languageId, String sessionId) {
-        return this.getMostRecentPassedSubmissionBySessionIdForAllChallenges(sessionId)
-                .stream()
-                .filter(submission -> submission.getLanguage().getId() == languageId)
-                .collect(Collectors.toList());
-    }
-
     /**
      * Only adds a found submission the the list if
      * @param c The challenge to find passed submission for
@@ -177,5 +169,13 @@ public class ChallengeServiceImpl extends ChallengeService {
             return;
         }
         submissions.add(found);
+    }
+
+    @Override
+    public Collection<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(long languageId, String sessionId) {
+        return this.getMostRecentPassedSubmissionBySessionIdForAllChallenges(sessionId)
+                .stream()
+                .filter(submission -> submission.getLanguage().getId() == languageId)
+                .collect(Collectors.toList());
     }
 }

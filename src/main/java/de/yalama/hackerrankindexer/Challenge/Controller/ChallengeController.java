@@ -78,7 +78,7 @@ public class ChallengeController implements BaseController<Challenge, Long> {
         return this.challengeService.getAllPassedChallengesBySessionId(this.getSessionId(httpSession));
     }
 
-    @GetMapping("/passed/{id}/mostrecent")
+    @GetMapping("/passed/mostrecent/{id}")
     public Submission getMostRecentPassedSubmissionForChallenge(@PathVariable Long id, HttpSession httpSession) {
         return this.challengeService
                 .getMostRecentPassedSubmissionBySessionIdAndChallenge(id, this.getSessionId(httpSession));
@@ -89,6 +89,12 @@ public class ChallengeController implements BaseController<Challenge, Long> {
         return this.challengeService
                 .getMostRecentPassedSubmissionBySessionIdForAllChallenges(this.getSessionId(httpSession));
     }
+
+    @GetMapping("/passed/mostrecent/language/{languageId}")
+    public Collection<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(@PathVariable long languageId, HttpSession httpSession) {
+        return this.challengeService.getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(languageId, this.getSessionId(httpSession));
+    }
+
 
     private String getSessionId(HttpSession httpSession) {
         return this.sessionService.getCurrentSessionId(httpSession);

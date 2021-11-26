@@ -46,11 +46,19 @@ public class CookieServiceImpl extends CookieService {
         return temp;
     }
 
+    /*
+    TODO: Pruefen warum das beim ersten Aufruf ne nullpointerexception schmeisst ....
+
+    Die cookies sind beim ersten mal null.
+
+    Aber du kansnt die Methode nicht 2x aufrufen - das gibt auch nen nullpointerexception ....
+     */
+
     @Override
     public Optional<Cookie> readServletCookie(HttpServletRequest request) {
         log.info("{}", request.getSession().getId());
-        log.info("{}", request == null);
-        log.info("{}", request.getCookies().length);
+        log.info("{}", request.getCookies() == null);
+        //log.info("{}", request.getCookies().length);
         return Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getValue() != null)
                 .findAny();
@@ -63,6 +71,11 @@ public class CookieServiceImpl extends CookieService {
         return temp;
     }
 
+    /**
+     * Takes a request that has a cookie and gives us the value persisted in the cookie
+     * @param request The HttpServletRequest
+     * @return the Cookie::getValue
+     */
     @Override
     public String getCookieValueString(HttpServletRequest request) {
         return this.readServletCookie(request).get().getValue();

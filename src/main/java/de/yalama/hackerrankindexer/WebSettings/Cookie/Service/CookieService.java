@@ -10,12 +10,13 @@ import java.util.Optional;
 /**
  * A servlet to handle all cookie operations
  */
-@Service
 public abstract class CookieService {
 
     public abstract Cookie createCookie(String sessionId);
 
-    public abstract Optional<String> readServletCookie(HttpServletRequest request);
+    public abstract Optional<Cookie> readServletCookie(HttpServletRequest request);
 
     public abstract Cookie createDeletionCookie(HttpServletRequest request);
+
+    public abstract String getCookieValueString(HttpServletRequest request);
 }

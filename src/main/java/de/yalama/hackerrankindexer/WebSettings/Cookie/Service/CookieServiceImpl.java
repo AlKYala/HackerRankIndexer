@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import de.yalama.hackerrankindexer.WebSettings.Cookie.Settings.CookieConstants;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.dynamic.DynamicType;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
@@ -46,22 +47,19 @@ public class CookieServiceImpl extends CookieService {
         return temp;
     }
 
-    /*
-    TODO: Pruefen warum das beim ersten Aufruf ne nullpointerexception schmeisst ....
-
-    Die cookies sind beim ersten mal null.
-
-    Aber du kansnt die Methode nicht 2x aufrufen - das gibt auch nen nullpointerexception ....
-     */
-
     @Override
-    public Optional<Cookie> readServletCookie(HttpServletRequest request) {
-        log.info("{}", request.getSession().getId());
-        log.info("{}", request.getCookies() == null);
-        //log.info("{}", request.getCookies().length);
-        return Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getValue() != null)
-                .findAny();
+    public Cookie readServletCookie(HttpServletRequest request, HttpServletResponse response) {
+        if(request.getCookies() == null || request.getCookies().length == 0) {
+            return this.createCookie(request, response);
+        }
+        return request.getCookies()[0];
+    }
+
+    private Cookie createCookie(HttpServletRequest request, HttpServletResponse response) {
+        String id = request.getSession().getId();
+        Cookie cookie = this.createCookie(id);
+        response.addCookie(cookie);
+        return cookie;
     }
 
     @Override
@@ -77,7 +75,7 @@ public class CookieServiceImpl extends CookieService {
      * @return the Cookie::getValue
      */
     @Override
-    public String getCookieValueString(HttpServletRequest request) {
-        return this.readServletCookie(request).get().getValue();
+    public String getCookieValueString(HttpServletRequest request, HttpServletResponse response) {
+        return this.readServletCookie(request, response).getValue();
     }
 }

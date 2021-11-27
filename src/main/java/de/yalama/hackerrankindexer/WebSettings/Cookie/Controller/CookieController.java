@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -26,27 +27,16 @@ public class CookieController {
         this.cookieService = cookieService;
     }
 
-    /*
-    TODO Check:
-    0. Wo HttpServletResponse einarbeiten?
-    1. is value first set to null?
-    2. assign the value
-    3. check if you request again if the value is not null anymore
-     */
     @GetMapping
-    public String getCookie(HttpSession httpSession, HttpServletRequest httpServletRequest) {
-        String id = this.cookieService.readServletCookie(httpServletRequest).get().getValue();
+    public String getCookie(HttpServletRequest httpServletRequest, HttpServletResponse response) {
+        String id = this.cookieService.getCookieValueString(httpServletRequest, response);
         log.info(id);
-        if(id == null) {
-            Cookie cookie = this.cookieService.createCookie(httpSession.getId());
 
-        }
         return id;
     }
 
     @GetMapping("/string")
-    public String getCookieString(HttpServletRequest httpServletRequest) {
-        return this.cookieService.getCookieValueString(httpServletRequest);
+    public String getCookieString(HttpServletResponse response, HttpServletRequest httpServletRequest) {
+        return this.cookieService.getCookieValueString(httpServletRequest, response);
     }
-
 }

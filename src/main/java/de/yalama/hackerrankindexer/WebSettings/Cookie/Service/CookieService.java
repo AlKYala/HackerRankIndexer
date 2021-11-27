@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.Option;
 import java.util.Optional;
 
@@ -14,9 +15,9 @@ public abstract class CookieService {
 
     public abstract Cookie createCookie(String sessionId);
 
-    public abstract Optional<Cookie> readServletCookie(HttpServletRequest request);
+    public abstract Cookie readServletCookie(HttpServletRequest request, HttpServletResponse response);
 
     public abstract Cookie createDeletionCookie(HttpServletRequest request);
 
-    public abstract String getCookieValueString(HttpServletRequest request);
+    public abstract String getCookieValueString(HttpServletRequest request, HttpServletResponse response);
 }

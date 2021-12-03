@@ -1,0 +1,16 @@
+Die Idee koennte wie folgt ablaufen:
+
+Zum submit haust du die HttpSession mit rein. - Aus diesem extrahierst du
+die sessionID. Diese ist "relativ" unique.
+Diese nimmst du dann spaeter fuer die userID im Cookie.
+Zu jeder anderen Abfrage willst du dann den cookie abfragen.
+
+Und denk dran: der Cookie soll nach 15 Minuten ungueltig sein
+
+Und schau dir an, wie du das am besten in die response einfuegst
+
+Herausfinden:
+Brauch ich die cookies nur responses beizufuegen?
+Inwiefern weiteres handling noetig? - teste einfach mal mit extra schnitstellen
+
+ansonsten musstes halt ins localstorageservice im frontend speichern

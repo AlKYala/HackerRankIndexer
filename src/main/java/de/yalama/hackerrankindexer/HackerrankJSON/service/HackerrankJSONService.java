@@ -67,7 +67,6 @@ public class HackerrankJSONService {
         user.setId(0L);
         user.setSubmittedEntries(Collections.EMPTY_SET);
         user.setUsername(username);
-        user.setEmail(email);
         return this.userService.save(user);
     }
 

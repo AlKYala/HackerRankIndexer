@@ -22,7 +22,7 @@ public class AnalyticsController {
         this.analyticsService.clear();
     }
 
-    @GetMapping("/submissions/passed")
+    /*@GetMapping("/submissions/passed")
     public double getPercentagePassedSubmissions() {
         return this.analyticsService.getPercentagePassedSubmissions();
     }
@@ -50,7 +50,7 @@ public class AnalyticsController {
     @GetMapping("/pLanguage/favourite")
     public PLanguage getFavouriteLanguage(){
         return this.analyticsService.getFavouriteLanguage();
-    }
+    }*/
 
     @GetMapping("/exists")
     public boolean checkSubmissionsExist() {

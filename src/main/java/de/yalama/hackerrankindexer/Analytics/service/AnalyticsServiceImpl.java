@@ -44,7 +44,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.passPercentages = new PassPercentages();
     }
 
-    @Override
+    /*@Override
     public Double getPercentagePassedSubmissions() {
         if (percentageSubmissions == null) {
             int passed = this.submissionService.getAllPassed().size();
@@ -158,7 +158,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     private double findPercentageForPLanguage(Long id, int total) {
         return this.findPercentageForPLanguage(this.pLanguageService.findById(id), total);
-    }
+    }*/
 
     @Override
     public void clear() {

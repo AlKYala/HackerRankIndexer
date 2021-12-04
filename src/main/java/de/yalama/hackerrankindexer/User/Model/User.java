@@ -25,5 +25,5 @@ public class User extends BaseEntity {
     private String username;
 
     @NotNull
-    private String email;
+    private String passwordHashed;
 }

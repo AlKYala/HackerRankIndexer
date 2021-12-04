@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.User.Service;
 
+import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
@@ -50,5 +51,20 @@ public class UserServiceImpl extends UserService {
         this.validator.throwIfNotExistsByID(id, 1);
         this.findById(id).getSubmittedEntries().forEach(submission -> submission.setWriter(null));
         return this.serviceHandler.deleteById(id);
+    }
+
+    @Override
+    public PLanguage getFavouriteLanguage() {
+        return null;
+    }
+
+    @Override
+    public double getGeneralSubmissionPassPercentage() {
+        return 0;
+    }
+
+    @Override
+    public double getGeneralChallengePassPercentage() {
+        return 0;
     }
 }

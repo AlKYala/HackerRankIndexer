@@ -9,11 +9,8 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,16 +56,13 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public Set<Submission> getSubmissionsByChallengeIdAndSessionId(long challengeId, String sessionId) {
-        return this.findById(challengeId).getSubmissions()
-                .stream()
-                .filter(submission -> submission.getSessionId().equals(sessionId))
-                .collect(Collectors.toSet());
+    public Set<Submission> getSubmissionsByChallengeId(Long challengeId) {
+        return this.findById(challengeId).getSubmissions();
     }
 
     @Override
-    public boolean checkIsChallengePassedBySessionId(long challengeId, String sessionId) {
-        for(Submission submission : this.getSubmissionsByChallengeIdAndSessionId(challengeId, sessionId)) {
+    public Boolean checkIsChallengePassed(Long challengeId) {
+        for(Submission submission : this.findById(challengeId).getSubmissions()) {
             if(submission.getScore() == 1) {
                 return true;
             }
@@ -77,105 +71,18 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public List<Challenge> getAllChallengesBySessionId(String sessionId) {
-        return this.findAll().stream()
-                .filter(challenge -> this.checkHasSubmissionBySessionId(challenge, sessionId))
-                .collect(Collectors.toList());
-    }
-
-    private boolean checkHasSubmissionBySessionId(Challenge challenge, String sessionId) {
-        for(Submission submission : challenge.getSubmissions()) {
-            if(submission.getSessionId().equals(sessionId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public List<Challenge> getAllPassedChallengesBySessionId(String sessionId) {
+    public List<Challenge> getAllPassedChallenges() {
         return this.findAll()
                 .stream()
-                .filter(challenge -> this.checkIsChallengePassedBySessionId(challenge.getId(), sessionId))
+                .filter(challenge -> this.checkIsChallengePassed(challenge.getId()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public boolean checkChallengeAlreadyExists(String challengeName) {
-        return this.getChallengeByName(challengeName) != null;
-    }
-
-    @Override
-    public Challenge getChallengeByName(String challengeName) {
-        for(Challenge challenge : this.findAll()) {
-            if(challenge.getChallengeName().equals(challengeName)) {
-                return challenge;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Challenge persist(Challenge challenge) {
-        Challenge foundChallenge = this.getChallengeByName(challenge.getChallengeName());
-        if(foundChallenge != null) {
-            return foundChallenge;
-        }
-        return this.save(challenge);
-    }
-
-    @Override
-    public Submission getMostRecentPassedSubmissionBySessionIdAndChallenge(long challengeId, String sessionId) {
-        Submission[] result = new Submission[1];
-        this.getSubmissionsByChallengeIdAndSessionId(challengeId, sessionId)
+    public List<Challenge> getAllFailedChallenges() {
+        return this.findAll()
                 .stream()
-                .forEach(submission -> result[0] = this.getMoreRecentPassedSubmission(result[0], submission));
-        return result[0];
-    }
-
-    /**
-     * a is the default
-     * if b has higher ID and is passed, return b
-     * @param a, b
-     * @return see logic
-     */
-    private Submission getMoreRecentPassedSubmission(Submission a, Submission b) {
-        if(a == null) {
-            return (b.getScore() == 1) ? b : null;
-        }
-        return (b.getScore() < 1 || a.getId() > b.getId()) ? a : b;
-    }
-
-    @Override
-    public List<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallenges(String sessionId) {
-        List<Submission> passedSubmissions = new ArrayList<Submission>();
-
-        this.findAll()
-                .stream()
-                .forEach(challenge -> this.addIfValid(challenge, sessionId, passedSubmissions));
-
-        return passedSubmissions;
-    }
-
-    /**
-     * Only adds a found submission the the list if
-     * @param c The challenge to find passed submission for
-     * @param sessionId The sessionid
-     * @param submissions The list of submissions
-     */
-    private void addIfValid(Challenge c, String sessionId, List<Submission> submissions) {
-        Submission found = this.getMostRecentPassedSubmissionBySessionIdAndChallenge(c.getId(), sessionId);
-        if(found == null) {
-            return;
-        }
-        submissions.add(found);
-    }
-
-    @Override
-    public Collection<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(long languageId, String sessionId) {
-        return this.getMostRecentPassedSubmissionBySessionIdForAllChallenges(sessionId)
-                .stream()
-                .filter(submission -> submission.getLanguage().getId() == languageId)
+                .filter(challenge -> !this.checkIsChallengePassed(challenge.getId()))
                 .collect(Collectors.toList());
     }
 }

@@ -14,7 +14,6 @@ public class DummyService {
 
     public Submission getDummySubmission() {
         Submission submission = new Submission();
-        submission.setSessionId("");
         submission.setCode("dummycode");
         submission.setId(0L);
         submission.setScore(0.0);

@@ -2,7 +2,6 @@ package de.yalama.hackerrankindexer.Challenge.Controller;
 
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
-import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
@@ -10,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -24,24 +20,15 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     @Autowired
     private ChallengeService challengeService;
 
-    @Autowired
-    private SessionService sessionService;
-
-    //TODO diesen endpunkt schliessen
     @Override
-    @GetMapping("/all")
-    public List<Challenge> findAll(HttpSession httpSession) {
+    @GetMapping
+    public List<Challenge> findAll() {
         return this.challengeService.findAll();
-    }
-
-    @GetMapping()
-    public List<Challenge> findAllBySession(HttpSession httpSession) {
-        return this.challengeService.getAllChallengesBySessionId(this.getSessionId(httpSession));
     }
 
     @Override
     @GetMapping("/{id}")
-    public Challenge findById(@PathVariable Long id, HttpSession httpSession) throws HackerrankIndexerException {
+    public Challenge findById(@PathVariable Long id) throws HackerrankIndexerException {
         return this.challengeService.findById(id);
     }
 
@@ -64,39 +51,22 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     }
 
     @GetMapping("/{id}/submissions")
-    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpSession httpSession) {
-        return this.challengeService.getSubmissionsByChallengeIdAndSessionId(id, this.getSessionId(httpSession));
+    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id) {
+        return this.challengeService.getSubmissionsByChallengeId(id);
     }
 
     @GetMapping("/{id}/ispassed")
-    public Boolean checkIsSubmissionPassed(@PathVariable Long id, HttpSession httpSession) {
-        return this.challengeService.checkIsChallengePassedBySessionId(id, this.getSessionId(httpSession));
+    public Boolean checkIsSubmissionPassed(@PathVariable Long id) {
+        return this.challengeService.checkIsChallengePassed(id);
     }
 
     @GetMapping("/passed")
-    public List<Challenge> getPassedChallenges(HttpSession httpSession) {
-        return this.challengeService.getAllPassedChallengesBySessionId(this.getSessionId(httpSession));
+    public List<Challenge> getPassedChallenges() {
+        return this.challengeService.getAllPassedChallenges();
     }
 
-    @GetMapping("/passed/mostrecent/{id}")
-    public Submission getMostRecentPassedSubmissionForChallenge(@PathVariable Long id, HttpSession httpSession) {
-        return this.challengeService
-                .getMostRecentPassedSubmissionBySessionIdAndChallenge(id, this.getSessionId(httpSession));
-    }
-
-    @GetMapping("/passed/mostrecent")
-    public Collection<Submission> getMostRecentPassedSumbissionForAllChallenges(HttpSession httpSession) {
-        return this.challengeService
-                .getMostRecentPassedSubmissionBySessionIdForAllChallenges(this.getSessionId(httpSession));
-    }
-
-    @GetMapping("/passed/mostrecent/language/{languageId}")
-    public Collection<Submission> getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(@PathVariable long languageId, HttpSession httpSession) {
-        return this.challengeService.getMostRecentPassedSubmissionBySessionIdForAllChallengesOfLangauge(languageId, this.getSessionId(httpSession));
-    }
-
-
-    private String getSessionId(HttpSession httpSession) {
-        return this.sessionService.getCurrentSessionId(httpSession);
+    @GetMapping("/failed")
+    public List<Challenge> getFailedChallenges() {
+        return this.challengeService.getAllFailedChallenges();
     }
 }

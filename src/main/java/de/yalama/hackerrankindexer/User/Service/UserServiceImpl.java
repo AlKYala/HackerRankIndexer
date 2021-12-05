@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
@@ -13,10 +14,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -64,16 +63,14 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public PLanguage getFavouriteLanguage(User user) {
-        Map<Long, Integer> usages = new HashMap<Long, Integer>();
+        long max = -1;
         PLanguage favourite = null;
-        int max = -1;
-        for(Submission submission : user.getSubmittedEntries()) {
-            long langId =  submission.getLanguage().getId();
-            int freq = (usages.containsKey(langId)) ? usages.get(langId)+1 : 1;
-            usages.put(langId, freq);
-            if(max < freq) {
-                max = freq;
-                favourite = submission.getLanguage();
+        log.info("looking for favouriote");
+        for(UsagePercentage usagePercentage: user.getUsagePercentages()) {
+            log.info("user {}: {} . {}", user.getId(), usagePercentage.getPLanguage().toString(), usagePercentage.getTotal());
+            if(usagePercentage.getTotal() > max) {
+                max = usagePercentage.getTotal();
+                favourite = usagePercentage.getPLanguage();
             }
         }
         return favourite;
@@ -101,5 +98,13 @@ public class UserServiceImpl extends UserService {
             throw new UsernameNotFoundException("Username not found");
         }
         return found;
+    }
+
+    @Override
+    public Set<Submission> findSubmissionsOfUserOfLanguage(User user, PLanguage language) {
+        return user.getSubmittedEntries()
+                .stream()
+                .filter(submission -> submission.getLanguage().getId() == language.getId())
+                .collect(Collectors.toSet());
     }
 }

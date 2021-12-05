@@ -33,10 +33,19 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService{
     public GeneralPercentage create(User user) {
         GeneralPercentage generalPercentage = new GeneralPercentage();
         generalPercentage.setUser(user);
-        generalPercentage.setFavouriteLanguage(this.userService.getFavouriteLanguage(user));
+
         generalPercentage.setPercentageSubmissionsPassed(this.calculateSubmissionPercentage(user));
         generalPercentage.setPercentageChallengesSolved(this.calculateChallengePercentage(user));
-        return this.generalPercentageRepository.save(generalPercentage);
+        GeneralPercentage result = this.generalPercentageRepository.save(generalPercentage);
+        user.setGeneralPercentage(result);
+
+        PLanguage favorite = this.userService.getFavouriteLanguage(user);
+
+        //TODO doesnt work?
+        generalPercentage.setFavouriteLanguage(this.userService.getFavouriteLanguage(user));
+
+        this.userService.update(user.getId(), user);
+        return result;
     }
 
     @Override

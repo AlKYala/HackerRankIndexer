@@ -21,11 +21,14 @@ public class HeaderService {
 
     public String extractJWTTokenFromRequest(HttpServletRequest request) {
         log.info(request.getHeader("Authorization"));
+        //TODO CHECK FOR PASSWORD!
+
         return request.getHeader("Authorization");
     }
 
     public long extractIdFromHeader(HttpServletRequest request) {
         String longString = jwtService.extractId(this.extractJWTTokenFromRequest(request));
+        log.info("Extracting userID: {}", longString);
         return Long.valueOf(longString);
     }
 

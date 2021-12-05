@@ -5,6 +5,7 @@ import com.sun.istack.NotNull;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,12 +31,14 @@ public class User extends BaseEntity {
     @JsonIgnore
     private GeneralPercentage generalPercentage;
 
+    @OneToMany
+    @JsonIgnore
+    private Set<UsagePercentage> usagePercentages;
+
     @Column(unique = true)
     @NotNull
     private String username;
 
     @NotNull
     private String passwordHashed;
-
-
 }

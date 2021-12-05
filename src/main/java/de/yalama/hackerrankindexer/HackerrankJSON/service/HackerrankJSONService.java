@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Service.ContestService;
+import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.HackerrankJSON;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.SubmissionJSON;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
@@ -43,6 +44,9 @@ public class HackerrankJSONService {
     @Autowired
     private ContestService contestService;
 
+    @Autowired
+    private GeneralPercentageService generalPercentageService;
+
     public Integer parse(HackerrankJSON hackerrankJSON, User user) {
         //debug
         System.out.println("start");
@@ -53,6 +57,9 @@ public class HackerrankJSONService {
         this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
                 user);
+        this.generalPercentageService.create(user);
+        //TODO pass percentages
+        //TODO usage percentages
         log.info("Parsing complete");
         return 1;
     }

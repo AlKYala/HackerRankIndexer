@@ -2,7 +2,6 @@ package de.yalama.hackerrankindexer.HackerrankJSON.controller;
 
 import de.yalama.hackerrankindexer.HackerrankJSON.model.HackerrankJSON;
 import de.yalama.hackerrankindexer.HackerrankJSON.service.HackerrankJSONService;
-import de.yalama.hackerrankindexer.Session.Service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +17,8 @@ public class HackerrankJSONController {
     @Autowired
     private HackerrankJSONService hackerrankJSONService;
 
-    @Autowired
-    private SessionService sessionService;
-
     @PostMapping
     public Integer persistData(@RequestBody HackerrankJSON hackerrankJSON, HttpSession httpSession) {
-        String sessionId = sessionService.getCurrentSessionId(httpSession);
-        return this.hackerrankJSONService.parse(hackerrankJSON, sessionId);
+        return this.hackerrankJSONService.parse(hackerrankJSON);
     }
 }

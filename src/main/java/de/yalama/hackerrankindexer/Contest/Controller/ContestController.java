@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -22,13 +20,13 @@ public class ContestController implements BaseController<Contest, Long> {
 
     @Override
     @GetMapping
-    public List<Contest> findAll(HttpSession httpSession) {
+    public List<Contest> findAll() {
         return this.contestService.findAll();
     }
 
     @Override
     @GetMapping("/{id}")
-    public Contest findById(@PathVariable Long id, HttpSession httpSession) throws HackerrankIndexerException {
+    public Contest findById(@PathVariable Long id) throws HackerrankIndexerException {
         return this.contestService.findById(id);
     }
 

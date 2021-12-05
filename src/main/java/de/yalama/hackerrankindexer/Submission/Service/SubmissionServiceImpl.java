@@ -9,6 +9,8 @@ import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
+import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
@@ -29,16 +31,18 @@ public class SubmissionServiceImpl extends SubmissionService {
     private ChallengeRepository challengeRepository;
     private ChallengeService challengeService;
     private PLanguageRepository pLanguageRepository;
+    private UserRepository userRepository;
     private Comparator<Submission> submissionIdComparator;
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, ContestRepository contestRepository,
                                  ChallengeRepository challengeRepository, PLanguageRepository pLanguageRepository,
-                                 ChallengeService challengeService) {
+                                 UserRepository userRepository, ChallengeService challengeService) {
         this.submissionRepository = submissionRepository;
         this.validator =
                 new Validator<Submission, SubmissionRepository>("Submission", this.submissionRepository);
         this.serviceHandler =
                 new ServiceHandler<Submission, SubmissionRepository>(this.submissionRepository, this.validator);
+        this.userRepository = userRepository;
         this.pLanguageRepository = pLanguageRepository;
         this.challengeRepository = challengeRepository;
         this.contestRepository = contestRepository;
@@ -71,6 +75,7 @@ public class SubmissionServiceImpl extends SubmissionService {
         this.validator.throwIfNotExistsByID(id, 1);
         Submission toDelete = this.submissionRepository.getById(id);
         this.removeSubmissionFromChallenge(toDelete);
+        this.removeSubmissionFromUser(toDelete);
         this.removeSubmissionFromPLanguage(toDelete);
         this.removeSubmissionFromContest(toDelete);
         return this.serviceHandler.deleteById(id);
@@ -93,16 +98,21 @@ public class SubmissionServiceImpl extends SubmissionService {
                 .removeIf(submission -> submission.getId() == toDelete.getId());
     }
 
+    private void removeSubmissionFromUser(Submission toDelete) {
+        User user = this.userRepository.getById(toDelete.getId());
+        user.getSubmittedEntries().removeIf(submission -> submission.getId() == toDelete.getId());
+    }
+
     @Override
-    public List<Submission> getAllPassed(String sessionId) {
+    public List<Submission> getAllPassed() {
         return this.findAll().stream()
-                .filter(submission -> submission.getScore() == 1 && sessionId.equals(submission.getSessionId()))
+                .filter(submission -> submission.getScore() == 1)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Submission> getLastPassedFromAll(String sessionId) {
-        List<Submission> passedSubmissions = this.getAllPassed(sessionId);
+    public List<Submission> getLastPassedFromAll() {
+        List<Submission> passedSubmissions = this.getAllPassed();
         List<Submission> passedLatest = new ArrayList<Submission>();
         Set<Long> idOfTakenChallenges = new HashSet<Long>();
 
@@ -115,30 +125,6 @@ public class SubmissionServiceImpl extends SubmissionService {
         }
 
         passedLatest.sort(this.submissionIdComparator);
-        return this.filterBySessionId(passedSubmissions, sessionId);
-    }
-
-    @Override
-    public List<Submission> findAllBySessionId(String sessionId) {
-        return this.findAll()
-                .stream()
-                .filter(submission -> submission.getSessionId().equals(sessionId))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Submission> filterBySessionId(List<Submission> submissions, String sessionId) {
-        return submissions
-                .stream()
-                .filter(submission -> submission.getSessionId().equals(sessionId))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Submission> filterBySessionIdAndLanguageId(long pLanguageId, String sessionId) {
-        return this.findAllBySessionId(sessionId)
-                .stream()
-                .filter(submission -> submission.getLanguage().getId() == pLanguageId)
-                .collect(Collectors.toList());
+        return passedLatest;
     }
 }

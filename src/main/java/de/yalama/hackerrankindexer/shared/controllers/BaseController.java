@@ -5,8 +5,6 @@ import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -20,7 +18,7 @@ public interface BaseController<T extends BaseEntity, ID> {
      * GET-Request - returns all instances of T saved
      * @return a list of all instances of type T saved in the database
      */
-    List<T> findAll(HttpSession httpSession);
+    List<T> findAll();
 
     /**
      * GET-Request to get an item with a specified ID
@@ -28,7 +26,7 @@ public interface BaseController<T extends BaseEntity, ID> {
      * @return The found instance
      * @throws HackerrankIndexerException for thrown exceptions see BaseService::findById
      */
-    T findById(@PathVariable ID id, HttpSession httpSession) throws HackerrankIndexerException;
+    T findById(@PathVariable ID id) throws HackerrankIndexerException;
 
     /**
      * POST-Request to persist instances in the database

@@ -1,7 +1,6 @@
 package de.yalama.hackerrankindexer.Security.filter;
 
-import de.yalama.hackerrankindexer.Security.service.JwtUtil;
-import de.yalama.hackerrankindexer.Security.service.JwtUtil;
+import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,7 +25,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtService jwtService;
 
     @Override
     /**
@@ -40,11 +39,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             jwt = authorizationHeader.substring(7);
-            email = jwtUtil.extractEmail(jwt);
+            email = jwtService.extractEmail(jwt);
         }
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (jwtService.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken

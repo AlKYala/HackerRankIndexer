@@ -20,7 +20,7 @@ import static de.yalama.hackerrankindexer.Security.SecurityConstants.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JwtUtil {
+public class JwtService {
 
     @Autowired
     private UserService userService;
@@ -50,6 +50,10 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractId(String token) {
+        return extractClaim(token, Claims::getId);
+    }
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -69,12 +73,13 @@ public class JwtUtil {
         User user = this.userService.findByUsername(userDetails.getUsername());
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims)
-                .setSubject(subject)
+                .setId(claims.get("id").toString())
+                .setSubject(claims.get("username").toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SIGNATURE_ALGORITHM, SECRET_KEY).compact();

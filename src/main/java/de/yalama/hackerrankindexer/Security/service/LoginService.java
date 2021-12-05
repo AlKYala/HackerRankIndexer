@@ -20,7 +20,7 @@ public class LoginService {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    private final JwtUtil jwtTokenUtil;
+    private final JwtService jwtTokenUtil;
 
     public ResponseEntity<?> createAuthenticationToken(AuthenticationRequest authenticationRequest) {
         this.checkIfPasswordIsCorrect(authenticationRequest.getUsername(), authenticationRequest.getPassword());

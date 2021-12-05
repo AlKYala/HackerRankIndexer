@@ -11,7 +11,6 @@ import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
-import de.yalama.hackerrankindexer.User.Service.UserService;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,30 +43,18 @@ public class HackerrankJSONService {
     @Autowired
     private ContestService contestService;
 
-    @Autowired
-    private UserService userService;
-
-    public Integer parse(HackerrankJSON hackerrankJSON) {
+    public Integer parse(HackerrankJSON hackerrankJSON, User user) {
         //debug
         System.out.println("start");
         Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
         Map<String, Challenge> foundChallenges = new HashMap<String, Challenge>();
         Map<String, Contest> foundContests = new HashMap<String, Contest>();
         this.createMapData(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
-        User user = this.persistUser(hackerrankJSON.getEmail(), hackerrankJSON.getUsername());
         this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
                 user);
         log.info("Parsing complete");
         return 1;
-    }
-
-    private User persistUser(String email, String username) {
-        User user = new User();
-        user.setId(0L);
-        user.setSubmittedEntries(Collections.EMPTY_SET);
-        user.setUsername(username);
-        return this.userService.save(user);
     }
 
     private void gatherInfoFromSubmissions(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,

@@ -25,6 +25,7 @@ public class User extends BaseEntity {
     @JsonIgnore
     private Set<PLanguage> usedPLanguages;
 
+    @Column(unique = true)
     @NotNull
     private String username;
 

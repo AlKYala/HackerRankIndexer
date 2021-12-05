@@ -17,9 +17,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // TODO de.yalama.hackerrankindexer.User.Model.User user = this.userService.findByEmail(email);
-        de.yalama.hackerrankindexer.User.Model.User user = null; //TODO
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        de.yalama.hackerrankindexer.User.Model.User user = this.userService.findByUsername(username);
         return new org.springframework.security.core.userdetails.User
                 (user.getUsername(), user.getPasswordHashed(), Collections.emptyList());
     }

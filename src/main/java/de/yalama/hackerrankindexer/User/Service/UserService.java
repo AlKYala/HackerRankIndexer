@@ -11,4 +11,6 @@ public abstract class UserService implements BaseService<User> {
     public abstract double getGeneralSubmissionPassPercentage();
 
     public abstract double getGeneralChallengePassPercentage();
+
+    public abstract User findByUsername(String username);
 }

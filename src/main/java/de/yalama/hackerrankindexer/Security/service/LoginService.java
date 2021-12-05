@@ -24,7 +24,7 @@ public class LoginService {
 
     public ResponseEntity<?> createAuthenticationToken(AuthenticationRequest authenticationRequest) {
         this.checkIfPasswordIsCorrect(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getPassword());
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         log.info(userDetails.getPassword());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         log.info(jwt);
@@ -34,10 +34,8 @@ public class LoginService {
     private void checkIfPasswordIsCorrect(String username, String password) {
         try {
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
-            log.info(token.toString()); //TODO delete later
-            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            this.authenticationManager.authenticate(token);
         } catch (BadCredentialsException e){
-            log.info("Password incorrect");
             throw new RuntimeException("Incorrect username or password",e);
         }
     }

@@ -8,10 +8,12 @@ import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -57,18 +59,35 @@ public class UserServiceImpl extends UserService {
         return this.serviceHandler.deleteById(id);
     }
 
+    //TODO
     @Override
     public PLanguage getFavouriteLanguage() {
         return null;
     }
 
+    //TODO
     @Override
     public double getGeneralSubmissionPassPercentage() {
         return 0;
     }
 
+    //TODO
     @Override
     public double getGeneralChallengePassPercentage() {
         return 0;
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        log.info("search: {}", username);
+        User found = this.findAll()
+                .stream()
+                .filter(user -> user.getUsername().equals(username))
+                .findAny()
+                .get();
+        if(found == null) {
+            throw new UsernameNotFoundException("Username not found");
+        }
+        return found;
     }
 }

@@ -41,7 +41,6 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService{
 
         PLanguage favorite = this.userService.getFavouriteLanguage(user);
 
-        //TODO doesnt work?
         generalPercentage.setFavouriteLanguage(this.userService.getFavouriteLanguage(user));
 
         this.userService.update(user.getId(), user);

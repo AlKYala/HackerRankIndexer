@@ -24,8 +24,8 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
     }
 
     public int createAll(User user) {
-        log.info("{}", user.getUsedPLanguages()); //TODO problem liegt hier
         user.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
+        this.userService.update(user.getId(), user);
         return 1;
     }
 

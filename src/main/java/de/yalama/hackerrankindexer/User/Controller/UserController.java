@@ -32,6 +32,7 @@ public class UserController implements BaseController<User, Long> {
     }
 
     @Override
+    @PostMapping("/register")
     public User create(@RequestBody User user) throws HackerrankIndexerException {
         return this.userService.save(user);
     }

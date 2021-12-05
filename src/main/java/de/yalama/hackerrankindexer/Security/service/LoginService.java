@@ -1,9 +1,9 @@
 package de.yalama.hackerrankindexer.Security.service;
 
-import com.sun.mail.iap.Response;
-import de.yalama.onlineshopbackend.Security.model.AuthenticationRequest;
-import de.yalama.onlineshopbackend.Security.model.AuthenticationResponse;
+import de.yalama.hackerrankindexer.Security.model.AuthenticationRequest;
+import de.yalama.hackerrankindexer.Security.model.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class LoginService {
 
@@ -22,16 +23,21 @@ public class LoginService {
     private final JwtUtil jwtTokenUtil;
 
     public ResponseEntity<?> createAuthenticationToken(AuthenticationRequest authenticationRequest) {
-        this.checkIfPasswordIsCorrect(authenticationRequest.getEmail(), authenticationRequest.getPassword());
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+        this.checkIfPasswordIsCorrect(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getPassword());
+        log.info(userDetails.getPassword());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
+        log.info(jwt);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
-    private void checkIfPasswordIsCorrect(String email, String password) {
+    private void checkIfPasswordIsCorrect(String username, String password) {
         try {
-            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+            log.info(token.toString()); //TODO delete later
+            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (BadCredentialsException e){
+            log.info("Password incorrect");
             throw new RuntimeException("Incorrect username or password",e);
         }
     }

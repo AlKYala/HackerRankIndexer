@@ -8,6 +8,7 @@ import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +20,10 @@ public class UserServiceImpl extends UserService {
     private UserRepository userRepository;
     private Validator<User, UserRepository> validator;
     private ServiceHandler<User, UserRepository> serviceHandler;
+    private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
         this.serviceHandler = new ServiceHandler<User, UserRepository>(this.userRepository, this.validator);
@@ -38,6 +41,7 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public User save(User instance) throws HackerrankIndexerException {
+        instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
         return this.serviceHandler.save(instance);
     }
 

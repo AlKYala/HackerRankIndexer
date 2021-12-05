@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.User.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
+import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
@@ -25,10 +26,16 @@ public class User extends BaseEntity {
     @JsonIgnore
     private Set<PLanguage> usedPLanguages;
 
+    @OneToOne
+    @JsonIgnore
+    private GeneralPercentage generalPercentage;
+
     @Column(unique = true)
     @NotNull
     private String username;
 
     @NotNull
     private String passwordHashed;
+
+
 }

@@ -5,6 +5,7 @@ import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 
 public abstract class AnalyticsService {
+
     /**
      * @return The percentage of (passed submissions) / (all submissions)
      */

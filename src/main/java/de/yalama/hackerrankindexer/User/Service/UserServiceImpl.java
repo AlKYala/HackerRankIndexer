@@ -8,11 +8,14 @@ import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
@@ -59,22 +62,31 @@ public class UserServiceImpl extends UserService {
         return this.serviceHandler.deleteById(id);
     }
 
-    //TODO
     @Override
-    public PLanguage getFavouriteLanguage() {
-        return null;
+    public PLanguage getFavouriteLanguage(User user) {
+        Map<Long, Integer> usages = new HashMap<Long, Integer>();
+        PLanguage favourite = null;
+        int max = -1;
+        for(Submission submission : user.getSubmittedEntries()) {
+            long langId =  submission.getLanguage().getId();
+            int freq = (usages.containsKey(langId)) ? usages.get(langId)+1 : 1;
+            usages.put(langId, freq);
+            if(max < freq) {
+                max = freq;
+                favourite = submission.getLanguage();
+            }
+        }
+        return favourite;
     }
 
-    //TODO
     @Override
-    public double getGeneralSubmissionPassPercentage() {
-        return 0;
+    public double getGeneralSubmissionPassPercentage(User user) {
+        return user.getGeneralPercentage().getPercentageSubmissionsPassed();
     }
 
-    //TODO
     @Override
-    public double getGeneralChallengePassPercentage() {
-        return 0;
+    public double getGeneralChallengePassPercentage(User user) {
+        return user.getGeneralPercentage().getPercentageChallengesSolved();
     }
 
     @Override

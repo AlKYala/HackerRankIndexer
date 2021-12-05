@@ -2,18 +2,20 @@ package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -59,22 +61,29 @@ public class UserServiceImpl extends UserService {
         return this.serviceHandler.deleteById(id);
     }
 
-    //TODO
     @Override
-    public PLanguage getFavouriteLanguage() {
-        return null;
+    public PLanguage getFavouriteLanguage(User user) {
+        long max = -1;
+        PLanguage favourite = null;
+        log.info("looking for favouriote");
+        for(UsagePercentage usagePercentage: user.getUsagePercentages()) {
+            log.info("user {}: {} . {}", user.getId(), usagePercentage.getPLanguage().toString(), usagePercentage.getTotal());
+            if(usagePercentage.getTotal() > max) {
+                max = usagePercentage.getTotal();
+                favourite = usagePercentage.getPLanguage();
+            }
+        }
+        return favourite;
     }
 
-    //TODO
     @Override
-    public double getGeneralSubmissionPassPercentage() {
-        return 0;
+    public double getGeneralSubmissionPassPercentage(User user) {
+        return user.getGeneralPercentage().getPercentageSubmissionsPassed();
     }
 
-    //TODO
     @Override
-    public double getGeneralChallengePassPercentage() {
-        return 0;
+    public double getGeneralChallengePassPercentage(User user) {
+        return user.getGeneralPercentage().getPercentageChallengesSolved();
     }
 
     @Override
@@ -89,5 +98,13 @@ public class UserServiceImpl extends UserService {
             throw new UsernameNotFoundException("Username not found");
         }
         return found;
+    }
+
+    @Override
+    public Set<Submission> findSubmissionsOfUserOfLanguage(User user, PLanguage language) {
+        return user.getSubmittedEntries()
+                .stream()
+                .filter(submission -> submission.getLanguage().getId() == language.getId())
+                .collect(Collectors.toSet());
     }
 }

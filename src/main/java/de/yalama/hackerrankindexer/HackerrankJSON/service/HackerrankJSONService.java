@@ -4,13 +4,19 @@ import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Service.ContestService;
+import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.HackerrankJSON;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.SubmissionJSON;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
+import de.yalama.hackerrankindexer.PassPercentage.Service.PassPercentageService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
+import de.yalama.hackerrankindexer.UsagePercentage.Service.UsagePercentageService;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.User.Service.UserService;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +49,18 @@ public class HackerrankJSONService {
     @Autowired
     private ContestService contestService;
 
+    @Autowired
+    private GeneralPercentageService generalPercentageService;
+
+    @Autowired
+    private UsagePercentageService usagePercentageService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PassPercentageService passPercentageService;
+
     public Integer parse(HackerrankJSON hackerrankJSON, User user) {
         //debug
         System.out.println("start");
@@ -53,7 +71,20 @@ public class HackerrankJSONService {
         this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
                 user);
-        log.info("Parsing complete");
+        this.usagePercentageService.createAll(user);
+        //debug
+
+        for(UsagePercentage usagePercentage: user.getUsagePercentages()) {
+            log.info("{}", usagePercentage.getId());
+        }
+
+        this.generalPercentageService.create(user);
+
+        this.passPercentageService.createAll(user);
+
+
+        this.userService.update(user.getId(), user);
+        log.info("Parsing complete, user now has {} submissions", user.getSubmittedEntries().size());
         return 1;
     }
 
@@ -127,6 +158,8 @@ public class HackerrankJSONService {
         submission.setLanguage(pLanguageMap.get(json.getLanguage()));
         submission.setChallenge(challengeMap.get(json.getChallenge()));
         submission.setContest(contestMap.get(json.getContest()));
+
+        this.userService.findById(user.getId()).getUsedPLanguages().add(pLanguageMap.get(json.getLanguage()));
         return submission;
     }
 }

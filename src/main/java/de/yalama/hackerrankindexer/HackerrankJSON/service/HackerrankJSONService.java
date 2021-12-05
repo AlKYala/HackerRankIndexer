@@ -10,7 +10,8 @@ import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
-import de.yalama.hackerrankindexer.shared.services.DummyService;
+import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.User.Service.UserService;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,87 +45,101 @@ public class HackerrankJSONService {
     private ContestService contestService;
 
     @Autowired
-    private DummyService dummyService;
+    private UserService userService;
 
-    private Map<String, PLanguage> foundPLanguages;
-
-    private Map<String, Challenge> foundChallenges;
-
-    private Map<String, Contest> foundContests;
-
-    private boolean mapsCreated = false;
-
-
-    public Integer parse(HackerrankJSON hackerrankJSON, String sessionId) {
+    public Integer parse(HackerrankJSON hackerrankJSON) {
         //debug
         System.out.println("start");
-        if(!mapsCreated) {
-            this.foundChallenges = new HashMap<String, Challenge>();
-            this.foundContests = new HashMap<String, Contest>();
-            this.foundPLanguages = new HashMap<String, PLanguage>();
-        }
-        this.createMapData(hackerrankJSON.getSubmissions());
-        this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions());
-        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(),
-                sessionId);
-        //log.info("Parsing complete");
-        log.info("{}", submissionService.findAll().size());
+        Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
+        Map<String, Challenge> foundChallenges = new HashMap<String, Challenge>();
+        Map<String, Contest> foundContests = new HashMap<String, Contest>();
+        this.createMapData(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
+        User user = this.persistUser(hackerrankJSON.getEmail(), hackerrankJSON.getUsername());
+        this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
+        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
+                user);
+        log.info("Parsing complete");
         return 1;
     }
 
-    private void gatherInfoFromSubmissions(SubmissionJSON[] submissionJSONS) {
-        this.createMapData(submissionJSONS);
+    private User persistUser(String email, String username) {
+        User user = new User();
+        user.setId(0L);
+        user.setSubmittedEntries(Collections.EMPTY_SET);
+        user.setUsername(username);
+        return this.userService.save(user);
+    }
+
+    private void gatherInfoFromSubmissions(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
+                                           Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
+        this.createMapData(submissionJSONS, pLanguageMap, challengeMap, contestMap);
 
     }
 
-    private void createMapData(SubmissionJSON[] submissionJSONS) {
+    private void createMapData(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
+                               Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
         for(SubmissionJSON submission: submissionJSONS) {
-            this.addLanguageIfNeeded(submission.getLanguage());
-            this.addChallengeIfNeeded(submission.getChallenge());
-            this.addContestIfNeeded(submission.getContest());
+            this.addLanguageIfNeeded(submission.getLanguage(), pLanguageMap);
+            this.addChallengeIfNeeded(submission.getChallenge(), challengeMap);
+            this.addContestIfNeeded(submission.getContest(), contestMap);
         }
     }
 
-    private void addLanguageIfNeeded(String language) {
-        if(!this.foundPLanguages.containsKey(language)) {
-            PLanguage dummy = this.dummyService.getDummyPLanguage(language);
-            this.foundPLanguages.put(language, this.pLanguageService.persist(dummy));
+    private void addLanguageIfNeeded(String language, Map<String, PLanguage> pLanguageMap) {
+        if(!pLanguageMap.containsKey(language)) {
+            PLanguage found = new PLanguage();
+            found.setId(0L);
+            found.setLanguage(language);
+            found.setSubmissions(Collections.emptySet());
+            found = this.pLanguageService.save(found);
+            pLanguageMap.put(language, found);
         }
     }
 
-    private void addChallengeIfNeeded(String challenge) {
-        if(!this.foundChallenges.containsKey(challenge)) {
-            Challenge dummy = this.dummyService.getDummyChallenge(challenge);
-            this.foundChallenges.put(challenge, this.challengeService.persist(dummy));
+    private void addChallengeIfNeeded(String challenge, Map<String, Challenge> challengeMap) {
+        if(!challengeMap.containsKey(challenge)) {
+            Challenge found = new Challenge();
+            found.setChallengeName(challenge);
+            found.setId(0L);
+            found.setSubmissions(Collections.emptySet());
+            found = this.challengeService.save(found);
+            challengeMap.put(challenge, found);
         }
     }
 
-    private void addContestIfNeeded(String contest) {
-        if(!this.foundContests.containsKey(contest)) {
-            Contest dummy = this.dummyService.getDummyContest(contest);
-            this.foundContests.put(contest, this.contestService.persist(dummy));
+    private void addContestIfNeeded(String contest, Map<String, Contest> contestMap) {
+        if(!contestMap.containsKey(contest)) {
+            Contest found = new Contest();
+            found.setName(contest);
+            found.setId(0L);
+            found.setSubmissions(Collections.emptySet());
+            found = this.contestService.save(found);
+            contestMap.put(contest, found);
         }
     }
 
-    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, String sessionId) {
+    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, Map<String, Challenge> challengeMap,
+                                                   Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
+                                                   User user) {
         Submission[] submissions = new Submission[submissionJSONS.length];
         for(int i = 0; i < submissions.length; i++) {
             Submission submission =
-                    this.createSubmissionFromJSON(submissionJSONS[i], sessionId);
+                    this.createSubmissionFromJSON(submissionJSONS[i], challengeMap, pLanguageMap, contestMap, user);
             this.submissionService.save(submission);
         }
     }
 
-    private Submission createSubmissionFromJSON(SubmissionJSON json, String sessionId) {
-
+    private Submission createSubmissionFromJSON(SubmissionJSON json, Map<String, Challenge> challengeMap,
+                                                Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
+                                                User user) {
         Submission submission = new Submission();
         submission.setId(0L);
         submission.setCode(json.getCode());
         submission.setScore(json.getScore());
-        submission.setLanguage(this.foundPLanguages.get(json.getLanguage()));
-        submission.setChallenge(this.foundChallenges.get(json.getChallenge()));
-        submission.setContest(this.foundContests.get(json.getContest()));
-        submission.setSessionId(sessionId);
+        submission.setWriter(user);
+        submission.setLanguage(pLanguageMap.get(json.getLanguage()));
+        submission.setChallenge(challengeMap.get(json.getChallenge()));
+        submission.setContest(contestMap.get(json.getContest()));
         return submission;
     }
 }

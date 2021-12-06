@@ -50,36 +50,6 @@ public class AnalyticsController {
         return this.analyticsService.getPassPercentages(this.resolveUser(request));
     }
 
-    /*@GetMapping("/submissions/passed")
-    public double getPercentagePassedSubmissions() {
-        return this.analyticsService.getPercentagePassedSubmissions();
-    }
-
-    @GetMapping("/challenges/passed")
-    public double getPercentagePassedChallenges() {
-        return this.analyticsService.getPercentagePassedChallenges();
-    }
-
-    @GetMapping("/pLanguage/{languageId}/passed")
-    public double getPercentageOfPassedByLanguageId(@PathVariable Long languageId) {
-        return this.analyticsService.getPercentagePassedByLanguage(languageId);
-    }
-
-    @GetMapping("/pLanguage/percentages/usage")
-    public UsageStatistics getUsagePercentagesOfPLanguages() {
-        return this.analyticsService.getUsagePercentages();
-    }
-
-    @GetMapping("/pLanguage/percentages/passed")
-    public PassPercentages getPassPercentagesOfLanguages() {
-        return this.analyticsService.getPassPercentages();
-    }
-
-    @GetMapping("/pLanguage/favourite")
-    public PLanguage getFavouriteLanguage(){
-        return this.analyticsService.getFavouriteLanguage();
-    }*/
-
     @GetMapping("/exists")
     public boolean checkSubmissionsExist() {
         return this.analyticsService.checkSubmissionsExist();

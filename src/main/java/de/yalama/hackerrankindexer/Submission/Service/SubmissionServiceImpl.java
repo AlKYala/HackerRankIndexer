@@ -17,6 +17,7 @@ import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -104,27 +105,24 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public List<Submission> getAllPassed() {
-        return this.findAll().stream()
-                .filter(submission -> submission.getScore() == 1)
+    public List<Submission> getAllPassed(User user) {
+        return this.findAllByUser(user)
+                .stream()
+                .filter(submission -> submission.getScore() >= 1)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Submission> getLastPassedFromAll() {
-        List<Submission> passedSubmissions = this.getAllPassed();
-        List<Submission> passedLatest = new ArrayList<Submission>();
-        Set<Long> idOfTakenChallenges = new HashSet<Long>();
+    public Collection<Submission> getLastPassedFromAll(User user) {
+        //ChallengeID : Submission
+        Map<Long, Submission> submissionsByChallengeId = new HashMap<Long, Submission>();
+        this.getAllPassed(user)
+                .forEach(submission -> submissionsByChallengeId.put(submission.getChallenge().getId(), submission));
+        return submissionsByChallengeId.values();
+    }
 
-        for(int i = passedSubmissions.size()-1; i > -1; i--) {
-            if(idOfTakenChallenges.contains(passedSubmissions.get(i).getChallenge().getId())) {
-                continue;
-            }
-            idOfTakenChallenges.add(passedSubmissions.get(i).getChallenge().getId());
-            passedLatest.add(passedSubmissions.get(i));
-        }
-
-        passedLatest.sort(this.submissionIdComparator);
-        return passedLatest;
+    @Override
+    public Collection<Submission> findAllByUser(User user) {
+        return user.getSubmittedEntries();
     }
 }

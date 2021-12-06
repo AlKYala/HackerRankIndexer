@@ -29,15 +29,12 @@ public class User extends BaseEntity {
     private Set<PLanguage> usedPLanguages;
 
     @OneToOne
-    @JsonIgnore
     private GeneralPercentage generalPercentage;
 
     @OneToMany
-    @JsonIgnore
     private Set<UsagePercentage> usagePercentages;
 
     @OneToMany
-    @JsonIgnore
     private Set<PassPercentage> passPercentages;
 
     @Column(unique = true)

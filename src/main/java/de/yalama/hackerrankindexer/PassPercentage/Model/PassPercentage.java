@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.PassPercentage.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
@@ -20,6 +21,7 @@ public class PassPercentage extends BaseEntity {
     private PLanguage pLanguage;
 
     @OneToOne
+    @JsonIgnore
     private User user;
 
     private double percentage;

@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.GeneralPercentage.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.sun.istack.NotNull;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
@@ -23,6 +24,7 @@ public class GeneralPercentage extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @NotNull
     @JoinColumn
+    @JsonIgnore
     private User user;
 
     private Double percentageChallengesSolved;

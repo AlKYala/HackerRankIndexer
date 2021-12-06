@@ -17,12 +17,12 @@ public abstract class AnalyticsService {
      * A method to clear all cached statistics
      * Fired when Dataset is manipulated
      */
-    public abstract void clear();
+    public abstract void clear(User user);
 
     /**
      * A method to check if submissions exist
      */
-    public abstract boolean checkSubmissionsExist();
+    public abstract boolean checkSubmissionsExist(User user);
 
     /**
      * A method to get the linked GeneralPercentage instance linked to a user

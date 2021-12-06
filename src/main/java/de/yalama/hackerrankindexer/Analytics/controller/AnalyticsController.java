@@ -31,8 +31,8 @@ public class AnalyticsController {
     private HeaderService headerService;
 
     @PostMapping("/clear")
-    public void clearStatistics() {
-        this.analyticsService.clear();
+    public void clearStatistics(HttpServletRequest request) {
+        this.analyticsService.clear(this.headerService.getUserFromHeader(request));
     }
 
     @GetMapping("/general")
@@ -51,8 +51,8 @@ public class AnalyticsController {
     }
 
     @GetMapping("/exists")
-    public boolean checkSubmissionsExist() {
-        return this.analyticsService.checkSubmissionsExist();
+    public boolean checkSubmissionsExist(HttpServletRequest request) {
+        return this.analyticsService.checkSubmissionsExist(this.headerService.getUserFromHeader(request));
     }
 
     private User resolveUser(HttpServletRequest request) {

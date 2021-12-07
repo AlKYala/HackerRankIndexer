@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.Challenge.Controller;
 
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
+import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +21,9 @@ public class ChallengeController implements BaseController<Challenge, Long> {
 
     @Autowired
     private ChallengeService challengeService;
+
+    @Autowired
+    private HeaderService headerService;
 
     @Override
     @GetMapping
@@ -51,22 +56,22 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     }
 
     @GetMapping("/{id}/submissions")
-    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id) {
-        return this.challengeService.getSubmissionsByChallengeId(id);
+    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpServletRequest request) {
+        return this.challengeService.getSubmissionsByChallengeId(id, this.headerService.getUserFromHeader(request));
     }
 
     @GetMapping("/{id}/ispassed")
-    public Boolean checkIsSubmissionPassed(@PathVariable Long id) {
-        return this.challengeService.checkIsChallengePassed(id);
+    public Boolean checkIsSubmissionPassed(@PathVariable Long id, HttpServletRequest request) {
+        return this.challengeService.checkIsChallengePassed(id, this.headerService.getUserFromHeader(request));
     }
 
     @GetMapping("/passed")
-    public List<Challenge> getPassedChallenges() {
-        return this.challengeService.getAllPassedChallenges();
+    public List<Challenge> getPassedChallenges(HttpServletRequest request) {
+        return this.challengeService.getAllPassedChallenges(this.headerService.getUserFromHeader(request));
     }
 
     @GetMapping("/failed")
-    public List<Challenge> getFailedChallenges() {
-        return this.challengeService.getAllFailedChallenges();
+    public List<Challenge> getFailedChallenges(HttpServletRequest request) {
+        return this.challengeService.getAllFailedChallenges(this.headerService.getUserFromHeader(request));
     }
 }

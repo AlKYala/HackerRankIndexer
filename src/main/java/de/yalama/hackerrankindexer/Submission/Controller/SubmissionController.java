@@ -1,13 +1,18 @@
 package de.yalama.hackerrankindexer.Submission.Controller;
 
+import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -17,18 +22,33 @@ import java.util.Set;
 public class SubmissionController implements BaseController<Submission, Long> {
 
     @Autowired
-
     private SubmissionService submissionService;
 
-    @Override
+    @Autowired
+    private HeaderService headerService;
+
     @GetMapping
+    public Collection<Submission> findAllByUser(HttpServletRequest request) {
+        return this.submissionService.findAllByUser(this.headerService.getUserFromHeader(request));
+    }
+
+    @GetMapping("/{id}")
+    public Submission findByIdByUser(@PathVariable Long id, HttpServletRequest request) throws HackerrankIndexerException {
+        User user = this.headerService.getUserFromHeader(request);
+        Submission found =  this.submissionService.findById(id);
+        if(found.getWriter().getId() != user.getId()) {
+            throw new NotFoundException("User ID does not Match submission ID");
+        }
+        return found;
+    }
+
+    @Override
     public List<Submission> findAll() {
         return this.submissionService.findAll();
     }
 
     @Override
-    @GetMapping("/{id}")
-    public Submission findById(@PathVariable Long id) throws HackerrankIndexerException {
+    public Submission findById(Long id) throws HackerrankIndexerException {
         return this.submissionService.findById(id);
     }
 
@@ -51,8 +71,8 @@ public class SubmissionController implements BaseController<Submission, Long> {
     }
 
     @GetMapping("/passed")
-    public List<Submission> getPassedSubmissions() {
-        return this.submissionService.getAllPassed();
+    public List<Submission> getPassedSubmissions(HttpServletRequest request) {
+        return this.submissionService.getAllPassed(this.headerService.getUserFromHeader(request));
     }
 
     /**
@@ -61,7 +81,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
      * of each challenge is
      */
     @GetMapping("/passed/latest")
-    public List<Submission> getLatestPassedSubmissions() {
-        return this.submissionService.getLastPassedFromAll();
+    public Collection<Submission> getLatestPassedSubmissions(HttpServletRequest request) {
+        return this.submissionService.getLastPassedFromAll(this.headerService.getUserFromHeader(request));
     }
 }

@@ -37,7 +37,6 @@ public class HeaderService {
         if(user.isVerified() == false) {
             throw new UserNotVerifiedException(String.format("User %s exists but is not verified", user.getEmail()));
         }
-
         return user;
     }
 }

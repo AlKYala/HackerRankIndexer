@@ -23,8 +23,8 @@ public class LoginService {
     private final JwtService jwtTokenUtil;
 
     public ResponseEntity<?> createAuthenticationToken(AuthenticationRequest authenticationRequest) {
-        this.checkIfPasswordIsCorrect(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        this.checkIfPasswordIsCorrect(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         log.info(userDetails.getPassword());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         log.info(jwt);
@@ -36,7 +36,7 @@ public class LoginService {
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
             this.authenticationManager.authenticate(token);
         } catch (BadCredentialsException e){
-            throw new RuntimeException("Incorrect username or password",e);
+            throw new RuntimeException("Incorrect email or password",e);
         }
     }
 }

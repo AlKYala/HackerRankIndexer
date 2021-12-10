@@ -87,11 +87,11 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        log.info("search: {}", username);
+    public User findByEmail(String email) {
+        log.info("search: {}", email);
         User found = this.findAll()
                 .stream()
-                .filter(user -> user.getUsername().equals(username))
+                .filter(user -> user.getEmail().equals(email))
                 .findAny()
                 .get();
         if(found == null) {

@@ -70,16 +70,16 @@ public class JwtService {
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<String, Object>();
-        User user = this.userService.findByUsername(userDetails.getUsername());
+        User user = this.userService.findByEmail(userDetails.getUsername());
         claims.put("id", user.getId());
-        claims.put("username", user.getUsername());
+        claims.put("email", user.getEmail());
         return createToken(claims);
     }
 
     private String createToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims)
                 .setId(claims.get("id").toString())
-                .setSubject(claims.get("username").toString())
+                .setSubject(claims.get("email").toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SIGNATURE_ALGORITHM, SECRET_KEY).compact();

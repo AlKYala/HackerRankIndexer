@@ -18,8 +18,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        de.yalama.hackerrankindexer.User.Model.User user = this.userService.findByUsername(username);
+        de.yalama.hackerrankindexer.User.Model.User user = this.userService.findByEmail(username);
         return new org.springframework.security.core.userdetails.User
-                (user.getUsername(), user.getPasswordHashed(), Collections.emptyList());
+                (user.getEmail(), user.getPasswordHashed(), Collections.emptyList());
     }
 }

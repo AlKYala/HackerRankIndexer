@@ -36,7 +36,7 @@ public class LoginService {
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
             this.authenticationManager.authenticate(token);
         } catch (BadCredentialsException e){
-            throw new RuntimeException("Incorrect username or password",e);
+            throw new RuntimeException("Incorrect email or password",e);
         }
     }
 }

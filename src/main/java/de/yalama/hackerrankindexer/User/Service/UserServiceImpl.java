@@ -6,6 +6,7 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.EmailSendService;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +26,14 @@ public class UserServiceImpl extends UserService {
     private Validator<User, UserRepository> validator;
     private ServiceHandler<User, UserRepository> serviceHandler;
     private PasswordEncoder passwordEncoder;
+    private EmailSendService emailSendService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailSendService emailSendService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
         this.serviceHandler = new ServiceHandler<User, UserRepository>(this.userRepository, this.validator);
+        this.emailSendService = emailSendService;
     }
 
     @Override
@@ -46,6 +49,7 @@ public class UserServiceImpl extends UserService {
     @Override
     public User save(User instance) throws HackerrankIndexerException {
         instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
+        this.emailSendService.sendEmail(instance);
         return this.serviceHandler.save(instance);
     }
 

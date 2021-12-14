@@ -1,6 +1,8 @@
 package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
+import de.yalama.hackerrankindexer.Security.service.UserVerificationService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -15,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,13 +30,16 @@ public class UserServiceImpl extends UserService {
     private ServiceHandler<User, UserRepository> serviceHandler;
     private PasswordEncoder passwordEncoder;
     private EmailSendService emailSendService;
+    private TokenGenerationService tokenGenerationService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailSendService emailSendService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                           EmailSendService emailSendService, TokenGenerationService tokenGenerationService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
         this.serviceHandler = new ServiceHandler<User, UserRepository>(this.userRepository, this.validator);
         this.emailSendService = emailSendService;
+        this.tokenGenerationService = tokenGenerationService;
     }
 
     @Override
@@ -48,9 +54,15 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public User save(User instance) throws HackerrankIndexerException {
-        instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
-        this.emailSendService.sendEmail(instance);
         return this.serviceHandler.save(instance);
+    }
+
+    @Override
+    public User register(User instance) throws HackerrankIndexerException, NoSuchAlgorithmException {
+        instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
+        instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
+        this.emailSendService.sendEmail(instance);
+        return this.save(instance);
     }
 
     @Override

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RequestMapping("/user")
@@ -31,10 +32,16 @@ public class UserController implements BaseController<User, Long> {
         return this.userService.findById(id);
     }
 
+    //BLOCKED ENDPOINT
     @Override
-    @PostMapping("/register")
+    //@PostMapping("/register")
     public User create(@RequestBody User user) throws HackerrankIndexerException {
         return this.userService.save(user);
+    }
+
+    @PostMapping("/register")
+    public User register(@RequestBody User user) throws HackerrankIndexerException, NoSuchAlgorithmException {
+        return this.userService.register(user);
     }
 
     @Override

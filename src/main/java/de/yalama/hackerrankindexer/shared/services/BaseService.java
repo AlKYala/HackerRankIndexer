@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.shared.services;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**

@@ -43,4 +43,8 @@ public class User extends BaseEntity {
 
     @NotNull
     private String passwordHashed;
+
+    private boolean isVerified;
+
+    private String token;
 }

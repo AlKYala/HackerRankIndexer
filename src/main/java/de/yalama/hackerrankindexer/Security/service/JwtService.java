@@ -43,6 +43,9 @@ public class JwtService {
     }
 
     public Claims extractAllClaims(String token) {
+        if(token == null || token.isEmpty()) {
+            //TODO - not logged in!
+        }
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 

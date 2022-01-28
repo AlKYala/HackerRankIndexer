@@ -54,4 +54,18 @@ public class UserController implements BaseController<User, Long> {
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.userService.deleteById(id);
     }
+
+    /**
+     * TODO endpoint to trigger passwordReset
+     */
+
+
+    /**
+    TODO:
+    You need a token and the user has to be flagged
+     */
+    @PostMapping("/updatePassword")
+    public User updatePassword(@RequestBody User user, @RequestBody String passwordResetToken) {
+        return this.userService.setNewPassword(user, passwordResetToken);
+    }
 }

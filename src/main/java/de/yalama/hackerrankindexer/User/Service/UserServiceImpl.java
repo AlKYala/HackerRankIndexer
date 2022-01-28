@@ -8,6 +8,7 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
 import de.yalama.hackerrankindexer.shared.services.EmailSendService;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
@@ -63,6 +64,37 @@ public class UserServiceImpl extends UserService {
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
         this.emailSendService.sendEmail(instance);
         return this.save(instance);
+    }
+
+    @Override
+    public User setNewPassword(User user, String token) {
+
+        user = this.findById(user.getId());
+
+        user.setResetPasswordFlag(false);
+        user.setResetPasswordToken(null);
+
+        if(!token.equals(user.getResetPasswordToken())) {
+            throw new VerificationFailedException("Incorrect password reset token");
+        }
+
+        user.setPasswordHashed(this.passwordEncoder.encode(user.getPasswordHashed()));
+        return this.update(user.getId(), user);
+    }
+
+    @Override
+    public String triggerPasswordReset(User user) {
+
+        //user.setResetPasswordFlag(true);
+
+
+        //erstell doch nen jwt?
+
+
+    }
+
+    private String generatePasswordResetToken(User user) {
+
     }
 
     @Override
@@ -123,4 +155,6 @@ public class UserServiceImpl extends UserService {
                 .filter(submission -> submission.getLanguage().getId() == language.getId())
                 .collect(Collectors.toSet());
     }
+
+
 }

@@ -36,4 +36,20 @@ public abstract class UserService implements BaseService<User> {
      * @return the persisted User instance
      */
     public abstract User register(User user) throws HackerrankIndexerException, NoSuchAlgorithmException;
+
+    /**
+     * Updates an exisiting user - overrides password
+     * @param user The user instance with the new password
+     * @return The updated instance
+     */
+    public abstract User setNewPassword(User user, String token);
+
+    /**
+     * Triggers an update for password of given user.
+     * When this is triggered but the user does not update his password, the user is still allowed to login
+     * with exisiting credentials
+     * @param user The instance to reset password for
+     * @return A string as confirmation message
+     */
+    public abstract String triggerPasswordReset(User user);
 }

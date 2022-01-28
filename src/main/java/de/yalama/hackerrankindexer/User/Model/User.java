@@ -47,4 +47,9 @@ public class User extends BaseEntity {
     private boolean isVerified;
 
     private String token;
+
+    /* better: just use JWT
+    private String resetPasswordToken;
+
+    private boolean resetPasswordFlag;*/
 }

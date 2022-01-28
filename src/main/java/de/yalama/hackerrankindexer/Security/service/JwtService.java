@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.Security.service;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +80,12 @@ public class JwtService {
         return createToken(claims);
     }
 
-    private String createToken(Map<String, Object> claims) {
+    /**
+     * creates a Token based on the Map passed
+     * @param claims the Map
+     * @return a JWT Token String
+     */
+    public String createToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims)
                 .setId(claims.get("id").toString())
                 .setSubject(claims.get("email").toString())

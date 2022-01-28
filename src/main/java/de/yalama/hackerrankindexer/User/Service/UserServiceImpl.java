@@ -67,19 +67,16 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public User setNewPassword(User user, String token) {
+    public User setNewPassword(String token) {
 
-        user = this.findById(user.getId());
+        //TODO Check for expiration of token
 
-        user.setResetPasswordFlag(false);
-        user.setResetPasswordToken(null);
+        //TODO Extract User ID
 
-        if(!token.equals(user.getResetPasswordToken())) {
-            throw new VerificationFailedException("Incorrect password reset token");
-        }
+        /*user = this.findById(user.getId());
 
         user.setPasswordHashed(this.passwordEncoder.encode(user.getPasswordHashed()));
-        return this.update(user.getId(), user);
+        return this.update(user.getId(), user);*/
     }
 
     @Override
@@ -91,10 +88,12 @@ public class UserServiceImpl extends UserService {
         //erstell doch nen jwt?
 
 
+
     }
 
     private String generatePasswordResetToken(User user) {
 
+        //TODO: use JwtService createToken
     }
 
     @Override

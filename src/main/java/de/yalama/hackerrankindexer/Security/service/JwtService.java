@@ -77,21 +77,30 @@ public class JwtService {
         User user = this.userService.findByEmail(userDetails.getUsername());
         claims.put("id", user.getId());
         claims.put("email", user.getEmail());
-        return createToken(claims);
+        return createUserToken(claims);
     }
 
-    /**
-     * creates a Token based on the Map passed
-     * @param claims the Map
-     * @return a JWT Token String
-     */
-    public String createToken(Map<String, Object> claims) {
+
+    private String createUserToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims)
                 .setId(claims.get("id").toString())
                 .setSubject(claims.get("email").toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SIGNATURE_ALGORITHM, SECRET_KEY).compact();
+    }
+
+    public String createCustomToken(Map<String, Object> claims) {
+        JwtBuilder jwtBuilder = Jwts.builder();
+        for(String key : claims.keySet()) {
+            jwtBuilder.setHeaderParam(key, claims.get(key));
+        }
+        jwtBuilder
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SIGNATURE_ALGORITHM, SECRET_KEY);
+
+        return jwtBuilder.compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

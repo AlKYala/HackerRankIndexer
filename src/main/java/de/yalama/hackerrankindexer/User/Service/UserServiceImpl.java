@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
 import de.yalama.hackerrankindexer.Security.service.UserVerificationService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
@@ -14,6 +15,8 @@ import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.relational.core.sql.In;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,15 +35,20 @@ public class UserServiceImpl extends UserService {
     private PasswordEncoder passwordEncoder;
     private EmailSendService emailSendService;
     private TokenGenerationService tokenGenerationService;
+    private UserDetailsService userDetailsService;
+    private JwtService jwtService;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                           EmailSendService emailSendService, TokenGenerationService tokenGenerationService) {
+                           EmailSendService emailSendService, TokenGenerationService tokenGenerationService,
+                           UserDetailsService userDetailsService, JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
         this.serviceHandler = new ServiceHandler<User, UserRepository>(this.userRepository, this.validator);
         this.emailSendService = emailSendService;
         this.tokenGenerationService = tokenGenerationService;
+        this.userDetailsService = userDetailsService;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -62,7 +70,7 @@ public class UserServiceImpl extends UserService {
     public User register(User instance) throws HackerrankIndexerException, NoSuchAlgorithmException {
         instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
-        this.emailSendService.sendEmail(instance);
+        this.emailSendService.sendConfirmationEmail(instance);
         return this.save(instance);
     }
 
@@ -82,18 +90,24 @@ public class UserServiceImpl extends UserService {
     @Override
     public String triggerPasswordReset(User user) {
 
-        //user.setResetPasswordFlag(true);
 
+        String resetToken = this.generatePasswordResetToken(user);
 
-        //erstell doch nen jwt?
+        //TODO send Email
+        this.emailSendService.sendPasswordResetMail(user, resetToken);
 
-
-
+        return "Email reset password sent. Check your inbox";
     }
 
     private String generatePasswordResetToken(User user) {
 
-        //TODO: use JwtService createToken
+        Map<String, Object> claims = new HashMap<String, Object>();
+
+        claims.put("email", user.getEmail());
+        claims.put("id", user.getId());
+        claims.put("isPasswordReset", true);
+
+        return this.jwtService.createCustomToken(claims);
     }
 
     @Override

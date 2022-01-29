@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.ValidationException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,16 +76,18 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public User setNewPassword(String token) {
+    public User setNewPassword(String token) throws ValidationException {
 
-        //TODO Check for expiration of token
+        if(jwtService.isTokenExpired(token)) {
+            throw new ValidationException("User Token is Expired, cannot set New Password!");
+        }
 
-        //TODO Extract User ID
+        Long userId = Long.parseLong(jwtService.extractId(token));
 
-        /*user = this.findById(user.getId());
+        User user = this.findById(userId);
 
         user.setPasswordHashed(this.passwordEncoder.encode(user.getPasswordHashed()));
-        return this.update(user.getId(), user);*/
+        return this.update(user.getId(), user);
     }
 
     @Override

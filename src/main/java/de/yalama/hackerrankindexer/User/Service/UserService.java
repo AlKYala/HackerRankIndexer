@@ -6,6 +6,7 @@ import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.BaseService;
 
+import javax.xml.bind.ValidationException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ public abstract class UserService implements BaseService<User> {
      * @param user The user instance with the new password
      * @return The updated instance
      */
-    public abstract User setNewPassword(String token);
+    public abstract User setNewPassword(String token) throws ValidationException;
 
     /**
      * Triggers an update for password of given user.

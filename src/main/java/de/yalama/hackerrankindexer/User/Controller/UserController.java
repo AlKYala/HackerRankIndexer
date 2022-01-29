@@ -66,6 +66,6 @@ public class UserController implements BaseController<User, Long> {
      */
     @PostMapping("/updatePassword")
     public User updatePassword(@RequestBody User user, @RequestBody String passwordResetToken) {
-        return this.userService.setNewPassword(user, passwordResetToken);
+        return this.userService.setNewPassword(passwordResetToken);
     }
 }

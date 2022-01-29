@@ -36,19 +36,17 @@ public class UserServiceImpl extends UserService {
     private PasswordEncoder passwordEncoder;
     private EmailSendService emailSendService;
     private TokenGenerationService tokenGenerationService;
-    private UserDetailsService userDetailsService;
     private JwtService jwtService;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                            EmailSendService emailSendService, TokenGenerationService tokenGenerationService,
-                           UserDetailsService userDetailsService, JwtService jwtService) {
+                           JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
         this.serviceHandler = new ServiceHandler<User, UserRepository>(this.userRepository, this.validator);
         this.emailSendService = emailSendService;
         this.tokenGenerationService = tokenGenerationService;
-        this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
     }
 
@@ -93,10 +91,8 @@ public class UserServiceImpl extends UserService {
     @Override
     public String triggerPasswordReset(User user) {
 
-
         String resetToken = this.generatePasswordResetToken(user);
 
-        //TODO send Email
         this.emailSendService.sendPasswordResetMail(user, resetToken);
 
         return "Email reset password sent. Check your inbox";
@@ -171,6 +167,4 @@ public class UserServiceImpl extends UserService {
                 .filter(submission -> submission.getLanguage().getId() == language.getId())
                 .collect(Collectors.toSet());
     }
-
-
 }

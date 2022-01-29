@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.ValidationException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -65,7 +66,8 @@ public class UserController implements BaseController<User, Long> {
     You need a token and the user has to be flagged
      */
     @PostMapping("/updatePassword")
-    public User updatePassword(@RequestBody User user, @RequestBody String passwordResetToken) {
+    public User updatePassword(@RequestBody User user, @RequestBody String passwordResetToken) throws ValidationException
+    {
         return this.userService.setNewPassword(passwordResetToken);
     }
 }

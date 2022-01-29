@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Security.service;
 
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,7 +26,7 @@ import static de.yalama.hackerrankindexer.Security.SecurityConstants.*;
 public class JwtService {
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     /**
      * Used to extract claims from JWTokens.
@@ -76,12 +78,20 @@ public class JwtService {
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<String, Object>();
-        User user = this.userService.findByEmail(userDetails.getUsername());
+        User user = this.findByEmail(userDetails.getUsername());
         claims.put("id", user.getId());
         claims.put("email", user.getEmail());
         return createUserToken(claims);
     }
 
+    //To prevent circular dependency with UserService - re-implement
+    private User findByEmail(String email) {
+        return this.userRepository.findAll()
+                .stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user with email %s found", email)));
+    }
 
     private String createUserToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims)

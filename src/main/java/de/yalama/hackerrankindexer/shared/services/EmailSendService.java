@@ -35,11 +35,17 @@ public class EmailSendService {
 
         StringBuilder sb = new StringBuilder();
 
-        String resetLink = ""; //TODO
+        String baseUrl = "localhost:8080/user/reset?token=";
+
+        String resetLink = String.format("%s%s", baseUrl, token);
 
         sb.append(String.format("Hello %s,\n\n", user.getEmail()));
         sb.append(String.format("We've received a password reset request for your account\n"));
         sb.append(String.format("To reset your password, please click here: %s\n\n", resetLink));
+
+        message.setText(sb.toString());
+
+        this.mailSender.send(message);
     }
 
     public void sendDummyMail() {

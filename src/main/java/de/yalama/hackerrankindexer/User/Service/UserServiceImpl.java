@@ -76,9 +76,12 @@ public class UserServiceImpl extends UserService {
     @Override
     public User setNewPassword(String token) throws ValidationException {
 
+
         if(jwtService.isTokenExpired(token)) {
             throw new ValidationException("User Token is Expired, cannot set New Password!");
         }
+
+        System.out.printf("userId: %s\n", jwtService.extractId(token));
 
         Long userId = Long.parseLong(jwtService.extractId(token));
 
@@ -89,7 +92,9 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public String triggerPasswordReset(User user) {
+    public String triggerPasswordReset(Long id) {
+
+        User user = this.findById(id);
 
         String resetToken = this.generatePasswordResetToken(user);
 

@@ -35,7 +35,7 @@ public class EmailSendService {
 
         StringBuilder sb = new StringBuilder();
 
-        String baseUrl = "localhost:8080/user/reset?token=";
+        String baseUrl = "localhost:8080/user/updatePassword?token=";
 
         String resetLink = String.format("%s%s", baseUrl, token);
 
@@ -44,6 +44,8 @@ public class EmailSendService {
         sb.append(String.format("To reset your password, please click here: %s\n\n", resetLink));
 
         message.setText(sb.toString());
+
+        System.out.println(sb.toString());
 
         this.mailSender.send(message);
     }

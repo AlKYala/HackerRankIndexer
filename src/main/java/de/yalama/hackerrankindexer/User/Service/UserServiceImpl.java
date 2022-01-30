@@ -3,20 +3,15 @@ package de.yalama.hackerrankindexer.User.Service;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
-import de.yalama.hackerrankindexer.Security.service.UserVerificationService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
-import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
 import de.yalama.hackerrankindexer.shared.services.EmailSendService;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.relational.core.sql.In;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -74,7 +69,7 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public User setNewPassword(String token) throws ValidationException {
+    public User setNewPassword(User user, String token) throws ValidationException {
 
         System.out.println(this.jwtService.extractAnyHeaderFromToken(token, "id"));
 
@@ -82,13 +77,6 @@ public class UserServiceImpl extends UserService {
             throw new ValidationException("User Token is Expired, cannot set New Password!");
         }
 
-        System.out.printf("userId: %s\n", jwtService.extractId(token));
-
-        Long userId = Long.parseLong(jwtService.extractId(token));
-
-        User user = this.findById(userId);
-
-        user.setPasswordHashed(this.passwordEncoder.encode(user.getPasswordHashed()));
         return this.update(user.getId(), user);
     }
 

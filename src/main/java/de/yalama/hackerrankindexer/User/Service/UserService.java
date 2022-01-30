@@ -43,7 +43,7 @@ public abstract class UserService implements BaseService<User> {
      * @param user The user instance with the new password
      * @return The updated instance
      */
-    public abstract User setNewPassword(String token) throws ValidationException;
+    public abstract User setNewPassword(User user, String token) throws ValidationException;
 
     /**
      * Triggers an update for password of given user.

@@ -67,9 +67,16 @@ public class UserController implements BaseController<User, Long> {
     }
 
 
+    /**
+     * Idea: User instance is sent as payload, jwt token is put as parameter
+     * @param request HTTP header, token available under parameter token
+     * @param user User instance with updated password in payload
+     * @return The updated user instance
+     * @throws ValidationException
+     */
     @GetMapping("/updatePassword")
-    public User updatePassword(HttpServletRequest request) throws ValidationException {
+    public User updatePassword(HttpServletRequest request, @RequestBody User user) throws ValidationException {
         String token = request.getParameter("token");
-        return this.userService.setNewPassword(token);
+        return this.userService.setNewPassword(user, token);
     }
 }

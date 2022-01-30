@@ -53,11 +53,11 @@ public class JwtService {
     }
 
     public String extractEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return this.extractAnyHeaderFromToken(token, "email");
     }
 
     public String extractId(String token) {
-        return extractClaim(token, Claims::getId);
+        return this.extractAnyHeaderFromToken(token, "id");
     }
 
     public Boolean isTokenExpired(String token) {
@@ -116,5 +116,14 @@ public class JwtService {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractEmail(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public String extractAnyHeaderFromToken(String token, String key) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getHeader()
+                .get(key)
+                .toString();
     }
 }

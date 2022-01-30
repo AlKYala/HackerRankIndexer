@@ -76,6 +76,7 @@ public class UserServiceImpl extends UserService {
     @Override
     public User setNewPassword(String token) throws ValidationException {
 
+        System.out.println(this.jwtService.extractAnyHeaderFromToken(token, "id"));
 
         if(jwtService.isTokenExpired(token)) {
             throw new ValidationException("User Token is Expired, cannot set New Password!");

@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.User.Controller;
 
+import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
@@ -22,6 +23,9 @@ public class UserController implements BaseController<User, Long> {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private HeaderService headerService; //use here to prevent cyclic dependency
 
     @Override
     @GetMapping

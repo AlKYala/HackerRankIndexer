@@ -67,7 +67,6 @@ public class UserController implements BaseController<User, Long> {
         return this.userService.triggerPasswordReset(email);
     }
 
-
     /**
      * Idea: User instance is sent as payload, jwt token is put as parameter
      * @param request HTTP header, token available under parameter token

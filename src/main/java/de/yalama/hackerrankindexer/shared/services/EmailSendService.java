@@ -35,13 +35,13 @@ public class EmailSendService {
 
         StringBuilder sb = new StringBuilder();
 
-        String baseUrl = "localhost:8080/user/updatePassword?token=";
+        String baseUrl = "localhost:4200/setNewPassword?token=%s&email=%s";
 
-        String resetLink = String.format("%s%s", baseUrl, token);
+        String formatted = String.format(baseUrl, token, user.getEmail());
 
         sb.append(String.format("Hello %s,\n\n", user.getEmail()));
         sb.append(String.format("We've received a password reset request for your account\n"));
-        sb.append(String.format("To reset your password, please click here: %s\n\n", resetLink));
+        sb.append(String.format("To reset your password, please click here: %s\n\n", formatted));
 
         message.setText(sb.toString());
 

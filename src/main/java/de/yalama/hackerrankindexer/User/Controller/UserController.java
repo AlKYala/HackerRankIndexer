@@ -61,9 +61,10 @@ public class UserController implements BaseController<User, Long> {
         return this.userService.deleteById(id);
     }
 
-    @GetMapping("/resetPassword/{id}")
-    public String triggerPasswordReset(@PathVariable Long id) {
-        return this.userService.triggerPasswordReset(id);
+    @GetMapping("/resetPassword")
+    public String triggerPasswordReset(@RequestBody String email) {
+        System.out.println(email);
+        return this.userService.triggerPasswordReset(email);
     }
 
 

@@ -8,10 +8,12 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
 import de.yalama.hackerrankindexer.shared.services.EmailSendService;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -81,9 +83,15 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public String triggerPasswordReset(Long id) {
+    public String triggerPasswordReset(String email) {
 
-        User user = this.findById(id);
+        User user = null;
+        try {
+           user = this.findByEmail(email);
+        }
+        catch (UsernameNotFoundException e) {
+            return "Email not found, terminating";
+        }
 
         String resetToken = this.generatePasswordResetToken(user);
 
@@ -147,7 +155,7 @@ public class UserServiceImpl extends UserService {
                 .stream()
                 .filter(user -> user.getEmail().equals(email))
                 .findAny()
-                .get();
+                .orElse(null);
         if(found == null) {
             throw new UsernameNotFoundException("Username not found");
         }

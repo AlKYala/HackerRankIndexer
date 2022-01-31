@@ -52,5 +52,5 @@ public abstract class UserService implements BaseService<User> {
      * @param id id of the instance to reset password for
      * @return A string as confirmation message
      */
-    public abstract String triggerPasswordReset(Long id);
+    public abstract String triggerPasswordReset(String email);
 }

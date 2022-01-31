@@ -74,6 +74,8 @@ public class UserServiceImpl extends UserService {
     @Override
     public User setNewPassword(PasswordResetModel passwordResetModel) throws ValidationException {
 
+        System.out.println(passwordResetModel.getToken());
+
         String emailFromToken = this.jwtService.extractAnyHeaderFromToken(passwordResetModel.getToken(), "email");
 
         if(!emailFromToken.equals(passwordResetModel.getEmail())) {

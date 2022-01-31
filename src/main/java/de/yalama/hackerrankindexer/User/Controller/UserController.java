@@ -74,7 +74,7 @@ public class UserController implements BaseController<User, Long> {
      * @return The updated user instance
      * @throws ValidationException
      */
-    @GetMapping("/updatePassword")
+    @PostMapping("/updatePassword")
     public User updatePassword(HttpServletRequest request, @RequestBody User user) throws ValidationException {
         String token = request.getParameter("token");
         return this.userService.setNewPassword(user, token);

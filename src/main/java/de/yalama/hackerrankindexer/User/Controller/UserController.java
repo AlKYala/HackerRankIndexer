@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.User.Controller;
 
+import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
@@ -69,14 +70,12 @@ public class UserController implements BaseController<User, Long> {
 
     /**
      * Idea: User instance is sent as payload, jwt token is put as parameter
-     * @param request HTTP header, token available under parameter token
-     * @param user User instance with updated password in payload
+     * @param passwordResetModel A helper class that contains all the needed information
      * @return The updated user instance
      * @throws ValidationException
      */
     @PostMapping("/updatePassword")
-    public User updatePassword(HttpServletRequest request, @RequestBody User user) throws ValidationException {
-        String token = request.getParameter("token");
-        return this.userService.setNewPassword(user, token);
+    public User updatePassword(PasswordResetModel passwordResetModel) throws ValidationException {
+        return this.userService.setNewPassword(passwordResetModel);
     }
 }

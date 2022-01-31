@@ -6,4 +6,5 @@ import lombok.Getter;
 public class PasswordResetModel {
     private String token;
     private String email;
+    private String password;
 }

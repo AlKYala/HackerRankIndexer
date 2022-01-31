@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
@@ -71,13 +72,23 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public User setNewPassword(User user, String token) throws ValidationException {
+    public User setNewPassword(PasswordResetModel passwordResetModel) throws ValidationException {
 
-        System.out.println(this.jwtService.extractAnyHeaderFromToken(token, "id"));
+        String emailFromToken = this.jwtService.extractAnyHeaderFromToken(passwordResetModel.getToken(), "email");
 
-        if(jwtService.isTokenExpired(token)) {
+        if(!emailFromToken.equals(passwordResetModel.getEmail())) {
+            throw new ValidationException("Email Token mismatch");
+        }
+
+        if(jwtService.isTokenExpired(passwordResetModel.getToken())) {
             throw new ValidationException("User Token is Expired, cannot set New Password!");
         }
+
+        String passwordHashed = this.passwordEncoder.encode(passwordResetModel.getPassword());
+
+        log.info(passwordHashed);
+
+        User user = this.findByEmail(passwordResetModel.getEmail());
 
         return this.update(user.getId(), user);
     }

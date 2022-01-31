@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
@@ -40,10 +41,10 @@ public abstract class UserService implements BaseService<User> {
 
     /**
      * Updates an exisiting user - overrides password
-     * @param user The user instance with the new password
+     * @param passwordResetModel an instance of PaswordResetModel that contains the info that is needed
      * @return The updated instance
      */
-    public abstract User setNewPassword(User user, String token) throws ValidationException;
+    public abstract User setNewPassword(PasswordResetModel passwordResetModel) throws ValidationException;
 
     /**
      * Triggers an update for password of given user.

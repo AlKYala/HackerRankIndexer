@@ -91,6 +91,7 @@ public class UserServiceImpl extends UserService {
         log.info(passwordHashed);
 
         User user = this.findByEmail(passwordResetModel.getEmail());
+        user.setPasswordHashed(passwordHashed);
 
         return this.update(user.getId(), user);
     }

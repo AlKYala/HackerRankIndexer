@@ -75,7 +75,7 @@ public class UserController implements BaseController<User, Long> {
      * @throws ValidationException
      */
     @PostMapping("/updatePassword")
-    public User updatePassword(PasswordResetModel passwordResetModel) throws ValidationException {
+    public User updatePassword(@RequestBody PasswordResetModel passwordResetModel) throws ValidationException {
         return this.userService.setNewPassword(passwordResetModel);
     }
 }

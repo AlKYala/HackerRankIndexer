@@ -1,11 +1,13 @@
 package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.BaseService;
 
+import javax.xml.bind.ValidationException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
@@ -36,4 +38,20 @@ public abstract class UserService implements BaseService<User> {
      * @return the persisted User instance
      */
     public abstract User register(User user) throws HackerrankIndexerException, NoSuchAlgorithmException;
+
+    /**
+     * Updates an exisiting user - overrides password
+     * @param passwordResetModel an instance of PaswordResetModel that contains the info that is needed
+     * @return The updated instance
+     */
+    public abstract User setNewPassword(PasswordResetModel passwordResetModel) throws ValidationException;
+
+    /**
+     * Triggers an update for password of given user.
+     * When this is triggered but the user does not update his password, the user is still allowed to login
+     * with exisiting credentials
+     * @param id id of the instance to reset password for
+     * @return A string as confirmation message
+     */
+    public abstract String triggerPasswordReset(String email);
 }

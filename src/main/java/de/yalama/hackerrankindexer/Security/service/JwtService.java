@@ -1,13 +1,16 @@
 package de.yalama.hackerrankindexer.Security.service;
 
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,7 +26,7 @@ import static de.yalama.hackerrankindexer.Security.SecurityConstants.*;
 public class JwtService {
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     /**
      * Used to extract claims from JWTokens.
@@ -43,23 +46,26 @@ public class JwtService {
     }
 
     public Claims extractAllClaims(String token) {
+        if(token == null || token.isEmpty()) {
+            //TODO - not logged in!
+        }
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
     public String extractEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return this.extractAnyHeaderFromToken(token, "email");
     }
 
     public String extractId(String token) {
-        return extractClaim(token, Claims::getId);
+        return this.extractAnyHeaderFromToken(token, "id");
     }
 
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 
     /**
@@ -70,13 +76,22 @@ public class JwtService {
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<String, Object>();
-        User user = this.userService.findByEmail(userDetails.getUsername());
+        User user = this.findByEmail(userDetails.getUsername());
         claims.put("id", user.getId());
         claims.put("email", user.getEmail());
-        return createToken(claims);
+        return createUserToken(claims);
     }
 
-    private String createToken(Map<String, Object> claims) {
+    //To prevent circular dependency with UserService - re-implement
+    private User findByEmail(String email) {
+        return this.userRepository.findAll()
+                .stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user with email %s found", email)));
+    }
+
+    private String createUserToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims)
                 .setId(claims.get("id").toString())
                 .setSubject(claims.get("email").toString())
@@ -85,8 +100,30 @@ public class JwtService {
                 .signWith(SIGNATURE_ALGORITHM, SECRET_KEY).compact();
     }
 
+    public String createCustomToken(Map<String, Object> claims) {
+        JwtBuilder jwtBuilder = Jwts.builder();
+        for(String key : claims.keySet()) {
+            jwtBuilder.setHeaderParam(key, claims.get(key));
+        }
+        jwtBuilder
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SIGNATURE_ALGORITHM, SECRET_KEY);
+
+        return jwtBuilder.compact();
+    }
+
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractEmail(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public String extractAnyHeaderFromToken(String token, String key) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getHeader()
+                .get(key)
+                .toString();
     }
 }

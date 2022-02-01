@@ -45,4 +45,8 @@ public abstract class AnalyticsService {
      * @return the pass percentages of a user
      */
     public abstract Set<PassPercentage> getPassPercentages(User user);
+
+    public abstract Long getNumberOfUsers();
+
+    public abstract Long getNumberOfSubmissions();
 }

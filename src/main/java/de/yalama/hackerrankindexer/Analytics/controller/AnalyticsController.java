@@ -22,6 +22,7 @@ import java.util.Set;
 @RequestMapping("analytics")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "http://localhost:4200")
 public class AnalyticsController {
 
     @Autowired
@@ -53,6 +54,16 @@ public class AnalyticsController {
     @GetMapping("/exists")
     public boolean checkSubmissionsExist(HttpServletRequest request) {
         return this.analyticsService.checkSubmissionsExist(this.headerService.getUserFromHeader(request));
+    }
+
+    @GetMapping("/numberUsers")
+    public Long getNumberOfUsers() {
+        return this.analyticsService.getNumberOfUsers();
+    }
+
+    @GetMapping("/numberSubmissions")
+    public Long getNumberOfSubmissions() {
+        return this.analyticsService.getNumberOfSubmissions();
     }
 
     private User resolveUser(HttpServletRequest request) {

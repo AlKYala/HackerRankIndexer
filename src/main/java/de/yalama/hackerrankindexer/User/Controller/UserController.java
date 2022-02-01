@@ -1,5 +1,7 @@
 package de.yalama.hackerrankindexer.User.Controller;
 
+import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
+import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
@@ -9,16 +11,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.ValidationException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RequestMapping("/user")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController implements BaseController<User, Long> {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private HeaderService headerService; //use here to prevent cyclic dependency
 
     @Override
     @GetMapping
@@ -52,5 +60,22 @@ public class UserController implements BaseController<User, Long> {
     @Override
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.userService.deleteById(id);
+    }
+
+    @PostMapping("/resetPassword")
+    public String triggerPasswordReset(@RequestBody String email) {
+        System.out.println(email);
+        return this.userService.triggerPasswordReset(email);
+    }
+
+    /**
+     * Idea: User instance is sent as payload, jwt token is put as parameter
+     * @param passwordResetModel A helper class that contains all the needed information
+     * @return The updated user instance
+     * @throws ValidationException
+     */
+    @PostMapping("/updatePassword")
+    public User updatePassword(@RequestBody PasswordResetModel passwordResetModel) throws ValidationException {
+        return this.userService.setNewPassword(passwordResetModel);
     }
 }

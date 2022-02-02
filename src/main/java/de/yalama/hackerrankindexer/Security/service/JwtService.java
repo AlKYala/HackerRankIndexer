@@ -53,11 +53,11 @@ public class JwtService {
     }
 
     public String extractEmail(String token) {
-        return this.extractAnyHeaderFromToken(token, "email");
+        return this.extractAnyHeaderFromPayload(token, "email");
     }
 
     public String extractId(String token) {
-        return this.extractAnyHeaderFromToken(token, "id");
+        return this.extractAnyHeaderFromPayload(token, "id");
     }
 
     public Boolean isTokenExpired(String token) {
@@ -123,6 +123,15 @@ public class JwtService {
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getHeader()
+                .get(key)
+                .toString();
+    }
+
+    public String extractAnyHeaderFromPayload(String token, String key) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody()
                 .get(key)
                 .toString();
     }

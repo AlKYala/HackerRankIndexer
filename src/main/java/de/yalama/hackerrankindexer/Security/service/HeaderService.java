@@ -27,13 +27,16 @@ public class HeaderService {
     }
 
     private long extractIdFromHeader(HttpServletRequest request) {
-        String longString = jwtService.extractId(this.extractJWTTokenFromRequest(request));
+        String jwtToken = this.extractJWTTokenFromRequest(request);
+        String longString = jwtService.extractId(jwtToken);
         log.info("Extracting userID: {}", longString);
         return Long.valueOf(longString);
     }
 
     public User getUserFromHeader(HttpServletRequest request) {
-        User user = this.userService.findById(this.extractIdFromHeader(request));
+        Long id = this.extractIdFromHeader(request);
+        System.out.printf("Userid: %d\n", id);
+        User user = this.userService.findById(id);
         if(user.isVerified() == false) {
             throw new UserNotVerifiedException(String.format("User %s exists but is not verified", user.getEmail()));
         }

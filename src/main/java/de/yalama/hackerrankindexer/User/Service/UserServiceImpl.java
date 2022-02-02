@@ -88,8 +88,6 @@ public class UserServiceImpl extends UserService {
 
         String passwordHashed = this.passwordEncoder.encode(passwordResetModel.getPassword());
 
-        log.info(passwordHashed);
-
         User user = this.findByEmail(passwordResetModel.getEmail());
         user.setPasswordHashed(passwordHashed);
 

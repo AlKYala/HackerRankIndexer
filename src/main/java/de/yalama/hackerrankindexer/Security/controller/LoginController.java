@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Security.controller;
 
 import de.yalama.hackerrankindexer.Security.model.AuthenticationRequest;
+import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private JwtService jwtService;
 
     /**
      * checks if request matches with submitted data

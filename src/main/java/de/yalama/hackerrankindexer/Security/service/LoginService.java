@@ -25,9 +25,7 @@ public class LoginService {
     public ResponseEntity<?> createAuthenticationToken(AuthenticationRequest authenticationRequest) {
         this.checkIfPasswordIsCorrect(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
-        log.info(userDetails.getPassword());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
-        log.info(jwt);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 

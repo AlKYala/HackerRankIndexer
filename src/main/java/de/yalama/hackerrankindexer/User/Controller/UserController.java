@@ -77,8 +77,9 @@ public class UserController implements BaseController<User, Long> {
         return this.userService.setNewPassword(passwordResetModel);
     }
 
-    @PostMapping("/veirfy/{id}")
-    public String verifyUser(@PathVariable String token) {
+    @PostMapping("/verify/{id}")
+    public String verifyUser(@RequestBody String token) {
+        System.out.println(token);
         return this.userService.verifyUser(token);
     }
 }

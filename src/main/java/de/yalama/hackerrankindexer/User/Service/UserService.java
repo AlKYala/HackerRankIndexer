@@ -54,4 +54,11 @@ public abstract class UserService implements BaseService<User> {
      * @return A string as confirmation message
      */
     public abstract String triggerPasswordReset(String email);
+
+    /**
+     * Endpoint used to verify users
+     * @param token String that is persisted when user is registered - used to match in verification
+     * @return A message about the result
+     */
+    public abstract String verifyUser(String token);
 }

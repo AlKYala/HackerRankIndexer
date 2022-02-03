@@ -9,12 +9,11 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
-import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
-import de.yalama.hackerrankindexer.shared.services.EmailSendService;
+import de.yalama.hackerrankindexer.shared.Email.EmailSendService;
+import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -110,6 +109,23 @@ public class UserServiceImpl extends UserService {
         this.emailSendService.sendPasswordResetMail(user, resetToken);
 
         return "Email reset password sent. Check your inbox";
+    }
+
+    @Override
+    public String verifyUser(String token) {
+        User userToVerify = this.findAll().stream()
+                .filter(user -> user.getToken().equals(token))
+                .findFirst()
+                .orElse(null);
+        if(userToVerify == null) {
+            log.error("User with token {} not found", token);
+        }
+
+        userToVerify.setVerified(true);
+
+        this.update(userToVerify.getId(), userToVerify);
+
+        return String.format("User %s verified successfully", userToVerify.getEmail());
     }
 
     private String generatePasswordResetToken(User user) {

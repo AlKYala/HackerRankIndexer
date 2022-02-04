@@ -43,7 +43,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * To ignore security checks on selected endpoints
      */
     public void configure(WebSecurity webSecurity) {
-        webSecurity.ignoring().antMatchers("/user/register", "/user/verify");
+        webSecurity.ignoring().antMatchers("/user/register", "/users/*/isTaken/*", "/ad", "/marke", "/category",
+                "/ad/filter",  "/ad/featured", "/category/*", "/marke/*", "/picture", "/ad/*", "/register",
+                "/picture/advertisement/*", "/authenticate", "/analytics/*", "/analytics/exists", "/user/verify/**", "/**");
     }
 
     /**

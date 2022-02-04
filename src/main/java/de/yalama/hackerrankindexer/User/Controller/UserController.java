@@ -6,6 +6,7 @@ import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +79,7 @@ public class UserController implements BaseController<User, Long> {
     }
 
     @PostMapping("/verify")
-    public String verifyUser(@RequestBody String token) {
+    public ResponseString verifyUser(@RequestBody String token) {
         System.out.println(token);
         return this.userService.verifyUser(token);
     }

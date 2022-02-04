@@ -11,6 +11,7 @@ import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.Email.EmailSendService;
 import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
+import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -112,20 +113,21 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public String verifyUser(String token) {
+    public ResponseString verifyUser(String token) {
         User userToVerify = this.findAll().stream()
                 .filter(user -> user.getToken().equals(token))
                 .findFirst()
                 .orElse(null);
         if(userToVerify == null) {
-            log.error("User with token {} not found", token);
+            String formattedMessage = String.format("User with token %s not found", token);
+            log.error(formattedMessage, new VerificationFailedException(formattedMessage));
         }
 
         userToVerify.setVerified(true);
 
         this.update(userToVerify.getId(), userToVerify);
 
-        return String.format("User %s verified successfully", userToVerify.getEmail());
+        return new ResponseString(String.format("User %s verified successfully", userToVerify.getEmail()));
     }
 
     private String generatePasswordResetToken(User user) {

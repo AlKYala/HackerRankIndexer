@@ -6,12 +6,11 @@ import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
-import de.yalama.hackerrankindexer.shared.services.EmailSendService;
+import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.ValidationException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -77,5 +76,11 @@ public class UserController implements BaseController<User, Long> {
     @PostMapping("/updatePassword")
     public User updatePassword(@RequestBody PasswordResetModel passwordResetModel) throws ValidationException {
         return this.userService.setNewPassword(passwordResetModel);
+    }
+
+    @PostMapping("/verify")
+    public ResponseString verifyUser(@RequestBody String token) {
+        System.out.println(token);
+        return this.userService.verifyUser(token);
     }
 }

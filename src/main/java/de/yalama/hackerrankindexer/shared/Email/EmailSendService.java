@@ -1,4 +1,4 @@
-package de.yalama.hackerrankindexer.shared.services;
+package de.yalama.hackerrankindexer.shared.Email;
 
 import de.yalama.hackerrankindexer.User.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,7 @@ public class EmailSendService {
         message.setFrom("hello@hello.com"); //see application.properties
         message.setSubject("Your registration with Hackerrank Indexer");
         message.setTo(user.getEmail());
-        String domain = "localhost:8080";
-        String confirmAdress = String.format("%s/verify/%s", domain, user.getToken()); //TODO;
+        String confirmAdress = String.format("%s/verify/%s", EmailConstants.WEBSITE, user.getToken()); //TODO;
 
         String messageBody = String.format("Thanks for signing up at Hackerrank Indexer\nTo complete your registration click on this link:\n%s\nregards,\nHackerrank Indexer Team", confirmAdress);
 
@@ -35,9 +34,9 @@ public class EmailSendService {
 
         StringBuilder sb = new StringBuilder();
 
-        String baseUrl = "localhost:4200/setNewPassword?token=%s&email=%s";
+        String baseUrl = "%s/setNewPassword?token=%s&email=%s";
 
-        String formatted = String.format(baseUrl, token, user.getEmail());
+        String formatted = String.format(baseUrl, EmailConstants.WEBSITE, token, user.getEmail());
 
         sb.append(String.format("Hello %s,\n\n", user.getEmail()));
         sb.append(String.format("We've received a password reset request for your account\n"));
@@ -45,7 +44,7 @@ public class EmailSendService {
 
         message.setText(sb.toString());
 
-        System.out.println(sb.toString());
+        System.out.println(sb);
 
         this.mailSender.send(message);
     }

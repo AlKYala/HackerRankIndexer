@@ -5,6 +5,7 @@ import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import de.yalama.hackerrankindexer.shared.services.BaseService;
 
 import javax.xml.bind.ValidationException;
@@ -54,4 +55,11 @@ public abstract class UserService implements BaseService<User> {
      * @return A string as confirmation message
      */
     public abstract String triggerPasswordReset(String email);
+
+    /**
+     * Endpoint used to verify users
+     * @param token String that is persisted when user is registered - used to match in verification
+     * @return A message about the result
+     */
+    public abstract ResponseString verifyUser(String token);
 }

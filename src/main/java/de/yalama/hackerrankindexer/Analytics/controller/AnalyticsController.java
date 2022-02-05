@@ -10,6 +10,7 @@ import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.shared.models.UsageData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class AnalyticsController {
     }
 
     @GetMapping("/usagepercentages")
-    public Set<UsagePercentage> getUsagePercentages(HttpServletRequest request) {
+    public Set<UsageData> getUsagePercentages(HttpServletRequest request) {
         return this.analyticsService.getUsagePercentages(this.resolveUser(request));
     }
 

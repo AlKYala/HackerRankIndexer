@@ -13,12 +13,14 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.shared.models.UsageData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,8 +54,20 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public Set<UsagePercentage> getUsagePercentages(User user) {
-        return user.getUsagePercentages();
+    public Set<UsageData> getUsagePercentages(User user) {
+        return this.getUsageDataOfUser(user);
+    }
+
+    private Set<UsageData> getUsageDataOfUser(User user) {
+        Set<UsagePercentage> usagePercentages   = user.getUsagePercentages();
+        Set<UsageData> usageData                = new HashSet<UsageData>();
+
+        for(UsagePercentage usagePercentage : usagePercentages) {
+            UsageData converted = new UsageData(usagePercentage.getPLanguage(), usagePercentage.getTotal(), usagePercentage.getPercentage());
+            usageData.add(converted);
+        }
+
+        return usageData;
     }
 
     @Override

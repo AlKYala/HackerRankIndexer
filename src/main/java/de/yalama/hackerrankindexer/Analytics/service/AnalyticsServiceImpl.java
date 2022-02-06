@@ -62,12 +62,29 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         Set<UsagePercentage> usagePercentages   = user.getUsagePercentages();
         Set<UsageData> usageData                = new HashSet<UsageData>();
 
+        Map<Long, PassPercentage> passPercentageMap = this.getPassPercentagesMapOfUser(user);
+
         for(UsagePercentage usagePercentage : usagePercentages) {
-            UsageData converted = new UsageData(usagePercentage.getPLanguage(), usagePercentage.getTotal(), usagePercentage.getPercentage());
+
+            Long passed = passPercentageMap.get(usagePercentage.getPLanguage().getId()).getPassed(); //always returns 0 because passPercentage is never initiated
+
+            UsageData converted = new UsageData(usagePercentage.getPLanguage(), usagePercentage.getTotal(), passed);
             usageData.add(converted);
         }
 
         return usageData;
+    }
+
+    private Map<Long, PassPercentage> getPassPercentagesMapOfUser(User user) {
+        Map<Long, PassPercentage> passPercentages = new HashMap<Long, PassPercentage>();
+
+        for(PassPercentage percentage: user.getPassPercentages()) {
+            passPercentages.put(percentage.getPLanguage().getId(), percentage);
+        }
+
+        //System.out.println(passPercentages);
+
+        return passPercentages;
     }
 
     @Override

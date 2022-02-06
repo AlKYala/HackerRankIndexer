@@ -29,4 +29,8 @@ public class PassPercentage extends BaseEntity {
     private long total;
 
     private long passed;
+
+    public String toString() {
+        return String.format("Language: %s, User: %s,  Total: %d, Passed: %d", pLanguage.toString(), user.getEmail(), total, passed);
+    }
 }

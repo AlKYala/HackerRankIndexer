@@ -7,6 +7,7 @@ import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
+import de.yalama.hackerrankindexer.PassPercentage.Service.PassPercentageService;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
@@ -32,10 +33,16 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     private UserService             userService;
     private UserRepository          userRepository;
     private SubmissionRepository    submissionRepository;
+    private PassPercentageService   passPercentageService;
 
-    public AnalyticsServiceImpl(UserService userService, UserRepository userRepository) {
+    public AnalyticsServiceImpl(UserService userService,
+                                UserRepository userRepository,
+                                PassPercentageService passPercentageService,
+                                SubmissionRepository submissionRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.passPercentageService = passPercentageService;
+        this.submissionRepository = submissionRepository;
     }
 
     @Override
@@ -76,6 +83,8 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     private Map<Long, PassPercentage> getPassPercentagesMapOfUser(User user) {
+
+        this.passPercentageService.createAll(user);
         Map<Long, PassPercentage> passPercentages = new HashMap<Long, PassPercentage>();
 
         for(PassPercentage percentage: user.getPassPercentages()) {

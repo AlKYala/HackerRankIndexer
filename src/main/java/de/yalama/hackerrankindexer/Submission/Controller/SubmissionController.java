@@ -19,6 +19,7 @@ import java.util.Set;
 @RequestMapping("/submission")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class SubmissionController implements BaseController<Submission, Long> {
 
     @Autowired

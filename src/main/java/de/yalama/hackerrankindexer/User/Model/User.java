@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,7 +22,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Submission> submittedEntries;
+    private List<Submission> submittedEntries;
 
     //unidirectional n:m
     @ManyToMany

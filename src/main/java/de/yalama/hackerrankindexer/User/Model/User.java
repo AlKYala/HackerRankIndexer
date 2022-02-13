@@ -47,6 +47,9 @@ public class User extends BaseEntity {
 
     private boolean isVerified;
 
+    /**
+    Verification token for Email Verification
+     */
     private String token;
 
     /* better: just use JWT

@@ -27,8 +27,7 @@ public abstract class AnalyticsService {
 
     /**
      * A method to get the linked GeneralPercentage instance linked to a user
-     * The user is specified in the httpServletRequest
-     * @param request
+     * @param User user
      * @return
      */
     public abstract GeneralPercentage getGeneralPercentages(User user);

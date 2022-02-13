@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
 import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
+import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
@@ -34,15 +35,18 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     private UserRepository          userRepository;
     private SubmissionRepository    submissionRepository;
     private PassPercentageService   passPercentageService;
+    private GeneralPercentageService generalPercentageService;
 
     public AnalyticsServiceImpl(UserService userService,
                                 UserRepository userRepository,
                                 PassPercentageService passPercentageService,
-                                SubmissionRepository submissionRepository) {
+                                SubmissionRepository submissionRepository,
+                                GeneralPercentageService generalPercentageService) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.passPercentageService = passPercentageService;
         this.submissionRepository = submissionRepository;
+        this.generalPercentageService = generalPercentageService;
     }
 
     @Override
@@ -57,6 +61,10 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public GeneralPercentage getGeneralPercentages(User user) {
+        if(!user.getGeneralPercentage().isCalculated()) {
+            this.generalPercentageService.calculateUsersGeneralPercentages(user);
+        }
+
         return user.getGeneralPercentage();
     }
 

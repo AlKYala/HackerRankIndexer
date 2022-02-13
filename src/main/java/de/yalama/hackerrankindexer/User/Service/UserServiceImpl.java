@@ -1,10 +1,15 @@
 package de.yalama.hackerrankindexer.User.Service;
 
+import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
+import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
+import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
+import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
@@ -35,10 +40,14 @@ public class UserServiceImpl extends UserService {
     private EmailSendService emailSendService;
     private TokenGenerationService tokenGenerationService;
     private JwtService jwtService;
+    private SubmissionService submissionService;
+    private ChallengeService challengeService;
+    private GeneralPercentageRepository generalPercentageRepository;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                            EmailSendService emailSendService, TokenGenerationService tokenGenerationService,
-                           JwtService jwtService) {
+                           JwtService jwtService, SubmissionService submissionService,
+                           ChallengeService challengeService, GeneralPercentageRepository generalPercentageRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
@@ -46,6 +55,9 @@ public class UserServiceImpl extends UserService {
         this.emailSendService = emailSendService;
         this.tokenGenerationService = tokenGenerationService;
         this.jwtService = jwtService;
+        this.submissionService = submissionService;
+        this.challengeService = challengeService;
+        this.generalPercentageRepository = generalPercentageRepository;
     }
 
     @Override

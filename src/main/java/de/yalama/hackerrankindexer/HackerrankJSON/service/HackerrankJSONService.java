@@ -78,8 +78,7 @@ public class HackerrankJSONService {
             log.info("{}", usagePercentage.getId());
         }
 
-        this.generalPercentageService.create(user);
-
+        this.generalPercentageService.calculateUsersGeneralPercentages(user);
         this.passPercentageService.createAll(user);
 
 

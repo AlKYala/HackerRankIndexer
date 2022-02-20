@@ -12,7 +12,11 @@ import java.util.Set;
 @Setter
 public class FilterRequest {
 
+    /**
+     * 1 is all passed
+     * 2 is all failed
+     * 3 is most recent passed
+     */
     private int mode;
     private Set<Integer> languageIDs;
-
 }

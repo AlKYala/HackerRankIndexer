@@ -7,6 +7,7 @@ import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Submission.Model.FilterRequest;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -118,7 +119,38 @@ public class SubmissionServiceImpl extends SubmissionService {
         Map<Long, Submission> submissionsByChallengeId = new HashMap<Long, Submission>();
         this.getAllPassed(user)
                 .forEach(submission -> submissionsByChallengeId.put(submission.getChallenge().getId(), submission));
-        return submissionsByChallengeId.values();
+        return submissionsByChallengeId.values().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Submission> getAllFailed(User user) {
+        return this.findAllByUser(user)
+                .stream()
+                .filter(submission ->  submission.getScore() < 1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Submission> getByFilterRequest(FilterRequest filterRequest, User user) {
+        Collection<Submission> submissions = null;
+        switch (filterRequest.getMode()) {
+            case 1:     submissions = this.getAllPassed(user);          break;
+            case 2:     submissions = this.getAllFailed(user);          break;
+            case 3:     submissions = this.getLastPassedFromAll(user);  break;
+            default:    submissions = this.findAllByUser(user);
+        }
+        return this.filterByLanguage(filterRequest, submissions);
+    }
+
+    private Collection<Submission> filterByLanguage(FilterRequest filterRequest, Collection<Submission> submissions) {
+        if(filterRequest.getLanguageIDs().isEmpty()) {
+            return submissions;
+        }
+
+        return submissions
+                .stream()
+                .filter(submission -> filterRequest.getLanguageIDs().contains(submission.getLanguage().getId()))
+                .collect(Collectors.toList());
     }
 
     @Override

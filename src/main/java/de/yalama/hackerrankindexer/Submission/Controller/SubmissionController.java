@@ -73,7 +73,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
     }
 
     @GetMapping("/filter")
-    public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, FilterRequest filterRequest) {
+    public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, @RequestBody  FilterRequest filterRequest) {
         User user = this.headerService.getUserFromHeader(httpServletRequest);
         return this.submissionService.getByFilterRequest(filterRequest, user);
     }

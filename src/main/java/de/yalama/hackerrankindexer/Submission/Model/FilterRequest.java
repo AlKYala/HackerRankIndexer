@@ -18,5 +18,5 @@ public class FilterRequest {
      * 3 is most recent passed
      */
     private int mode;
-    private Set<Integer> languageIDs;
+    private Set<Long> languageIDs;
 }

@@ -72,8 +72,8 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.deleteById(id);
     }
 
-    @GetMapping("/filter")
-    public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, @RequestBody  FilterRequest filterRequest) {
+    @PostMapping("/filter")
+    public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, @RequestBody FilterRequest filterRequest) {
         User user = this.headerService.getUserFromHeader(httpServletRequest);
         return this.submissionService.getByFilterRequest(filterRequest, user);
     }

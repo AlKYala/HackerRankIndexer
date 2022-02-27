@@ -31,6 +31,8 @@ public class GeneralPercentage extends BaseEntity {
 
     private Double percentageSubmissionsPassed;
 
+    private boolean calculated;
+
     @ManyToOne
     @EqualsAndHashCode.Exclude
     @NotNull

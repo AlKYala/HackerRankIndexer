@@ -40,17 +40,45 @@ public class PassPercentageServiceImpl extends PassPercentageService{
 
     @Override
     public PassPercentage create(User user, PLanguage pLanguage) {
-        PassPercentage passPercentage = new PassPercentage();
+        PassPercentage passPercentage = this.findByUserAndLanguage(user, pLanguage);
+        if(passPercentage != null) {
+            return passPercentage;
+        }
+        passPercentage = new PassPercentage();
         passPercentage.setUser(user);
         passPercentage.setPLanguage(pLanguage);
         Set<Submission> submissions = this.userService.findSubmissionsOfUserOfLanguage(user, pLanguage);
         long total = submissions.size();
         long passed = submissions.stream().filter(submission -> submission.getScore() >= 1).count();
-        double percentage = ((double) passed) / ((double) total);
         passPercentage.setTotal(total);
-        passPercentage.setPercentage(percentage);
+        passPercentage.setPassed(passed);
         PassPercentage result = this.passPercentageRepository.save(passPercentage);
         user.getPassPercentages().add(result);
         return passPercentage;
+    }
+
+    @Override
+    public PassPercentage findByUserAndLanguage(User user, PLanguage pLanguage) {
+        PassPercentage found = null;
+        try {
+            found = this.passPercentageRepository.findAll()
+                    .stream()
+                    .filter(passPercentage -> this.checkPassPercentageIsOfUserAndLanguage(user, pLanguage, passPercentage))
+                    .findFirst().get();
+        } catch (Exception e) {
+            //do nothing
+        }
+
+        return found;
+    }
+
+    @Override
+    public boolean existsByUserAndPLanguage(User user, PLanguage pLanguage) {
+        return this.findByUserAndLanguage(user, pLanguage) != null;
+    }
+
+    private boolean checkPassPercentageIsOfUserAndLanguage(User user, PLanguage pLanguage, PassPercentage percentage) {
+        return percentage.getUser().getId() == user.getId()
+                && percentage.getPLanguage().getId() == pLanguage.getId();
     }
 }

@@ -24,9 +24,18 @@ public class PassPercentage extends BaseEntity {
     @JsonIgnore
     private User user;
 
-    private double percentage;
-
     private long total;
 
     private long passed;
+
+    private boolean created;
+
+    public String toString() {
+        return String.format("Language: %s, User: %s,  Total: %d, Passed: %d", pLanguage.toString(), user.getEmail(), total, passed);
+    }
+
+    public boolean equals(PassPercentage other) {
+        return other.getPLanguage().getId() == this.getPLanguage().getId()
+                && other.getUser().getId() == this.getUser().getId();
+    }
 }

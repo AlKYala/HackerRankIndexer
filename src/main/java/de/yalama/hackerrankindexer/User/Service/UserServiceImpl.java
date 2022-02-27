@@ -1,20 +1,25 @@
 package de.yalama.hackerrankindexer.User.Service;
 
+import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
+import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
+import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
+import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
-import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
-import de.yalama.hackerrankindexer.shared.services.EmailSendService;
+import de.yalama.hackerrankindexer.shared.Email.EmailSendService;
+import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
+import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,10 +40,14 @@ public class UserServiceImpl extends UserService {
     private EmailSendService emailSendService;
     private TokenGenerationService tokenGenerationService;
     private JwtService jwtService;
+    private SubmissionService submissionService;
+    private ChallengeService challengeService;
+    private GeneralPercentageRepository generalPercentageRepository;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                            EmailSendService emailSendService, TokenGenerationService tokenGenerationService,
-                           JwtService jwtService) {
+                           JwtService jwtService, SubmissionService submissionService,
+                           ChallengeService challengeService, GeneralPercentageRepository generalPercentageRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
@@ -46,6 +55,9 @@ public class UserServiceImpl extends UserService {
         this.emailSendService = emailSendService;
         this.tokenGenerationService = tokenGenerationService;
         this.jwtService = jwtService;
+        this.submissionService = submissionService;
+        this.challengeService = challengeService;
+        this.generalPercentageRepository = generalPercentageRepository;
     }
 
     @Override
@@ -110,6 +122,24 @@ public class UserServiceImpl extends UserService {
         this.emailSendService.sendPasswordResetMail(user, resetToken);
 
         return "Email reset password sent. Check your inbox";
+    }
+
+    @Override
+    public ResponseString verifyUser(String token) {
+        User userToVerify = this.findAll().stream()
+                .filter(user -> user.getToken().equals(token))
+                .findFirst()
+                .orElse(null);
+        if(userToVerify == null) {
+            String formattedMessage = String.format("User with token %s not found", token);
+            log.error(formattedMessage, new VerificationFailedException(formattedMessage));
+        }
+
+        userToVerify.setVerified(true);
+
+        this.update(userToVerify.getId(), userToVerify);
+
+        return new ResponseString(String.format("User %s verified successfully", userToVerify.getEmail()));
     }
 
     private String generatePasswordResetToken(User user) {

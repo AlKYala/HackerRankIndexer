@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Submission.Controller;
 
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
+import de.yalama.hackerrankindexer.Submission.Model.FilterRequest;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -19,6 +20,7 @@ import java.util.Set;
 @RequestMapping("/submission")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class SubmissionController implements BaseController<Submission, Long> {
 
     @Autowired
@@ -70,18 +72,9 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.deleteById(id);
     }
 
-    @GetMapping("/passed")
-    public List<Submission> getPassedSubmissions(HttpServletRequest request) {
-        return this.submissionService.getAllPassed(this.headerService.getUserFromHeader(request));
-    }
-
-    /**
-     * Returns the latest passed submission of each challenge
-     * @return a List of Submission instances where only the latest passed Submission
-     * of each challenge is
-     */
-    @GetMapping("/passed/latest")
-    public Collection<Submission> getLatestPassedSubmissions(HttpServletRequest request) {
-        return this.submissionService.getLastPassedFromAll(this.headerService.getUserFromHeader(request));
+    @PostMapping("/filter")
+    public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, @RequestBody FilterRequest filterRequest) {
+        User user = this.headerService.getUserFromHeader(httpServletRequest);
+        return this.submissionService.getByFilterRequest(filterRequest, user);
     }
 }

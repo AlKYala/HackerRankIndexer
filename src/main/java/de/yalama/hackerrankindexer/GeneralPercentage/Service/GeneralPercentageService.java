@@ -7,11 +7,9 @@ import de.yalama.hackerrankindexer.User.Model.User;
 
 public abstract class GeneralPercentageService {
 
-    public abstract GeneralPercentage findByUser(User user);
-
-    public abstract GeneralPercentage create(User user);
-
-    public abstract Double calculateSubmissionPercentage(User user);
-
-    public abstract Double calculateChallengePercentage(User user);
+    /**
+     * Calculates a users general percentages.
+     * @param user
+     */
+    public abstract void calculateUsersGeneralPercentages(User user);
 }

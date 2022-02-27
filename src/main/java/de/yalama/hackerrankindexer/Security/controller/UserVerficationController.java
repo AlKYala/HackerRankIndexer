@@ -1,7 +1,7 @@
 package de.yalama.hackerrankindexer.Security.controller;
 
 import de.yalama.hackerrankindexer.Security.service.UserVerificationService;
-import de.yalama.hackerrankindexer.shared.services.EmailSendService;
+import de.yalama.hackerrankindexer.shared.Email.EmailSendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

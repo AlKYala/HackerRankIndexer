@@ -7,6 +7,7 @@ import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.shared.models.UsageData;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
@@ -26,8 +27,7 @@ public abstract class AnalyticsService {
 
     /**
      * A method to get the linked GeneralPercentage instance linked to a user
-     * The user is specified in the httpServletRequest
-     * @param request
+     * @param User user
      * @return
      */
     public abstract GeneralPercentage getGeneralPercentages(User user);
@@ -37,7 +37,7 @@ public abstract class AnalyticsService {
      * @param user the user
      * @return usage percentages of a user
      */
-    public abstract Set<UsagePercentage> getUsagePercentages(User user);
+    public abstract Set<UsageData> getUsagePercentages(User user);
 
     /**
      * A method to get the pass percentages of a user

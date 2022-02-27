@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity webSecurity) {
         webSecurity.ignoring().antMatchers("/user/register", "/users/*/isTaken/*", "/ad", "/marke", "/category",
                 "/ad/filter",  "/ad/featured", "/category/*", "/marke/*", "/picture", "/ad/*", "/register",
-                "/picture/advertisement/*", "/authenticate", "/analytics/*", "/analytics/exists", "/**");
+                "/picture/advertisement/*", "/authenticate", "/analytics/*", "/analytics/exists", "/user/verify/**", "/**");
     }
 
     /**

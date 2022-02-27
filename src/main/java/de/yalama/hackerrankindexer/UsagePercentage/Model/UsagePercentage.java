@@ -28,3 +28,8 @@ public class UsagePercentage extends BaseEntity {
 
     private Long total;
 }
+
+/**
+ * NOTE: UsageData.java is used for transferring json objects to frontend because
+ * they are easier to work with
+ */

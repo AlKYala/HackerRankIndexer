@@ -15,7 +15,7 @@ public class DocumentGeneratorUtil {
     }
 
     private static String generateInfo(Submission submission) {
-        return String.format("/**\nPowered by HackerrankIndexer by Ali Yalama 2021\nhttps://github.com/AlKYala/HackerRankIndexer\nFile created: %s\nChallenge name: %s\nAuthor: %s\n*/\n",
+        return String.format("/**\nPowered by HackerrankIndexer by Ali Yalama 2021-2022\nhttps://github.com/AlKYala/HackerRankIndexer\nFile created: %s\nChallenge name: %s\nAuthor: %s\n*/\n",
                 getCurrentDateAsString(), submission.getChallenge().getChallengeName());
     }
 

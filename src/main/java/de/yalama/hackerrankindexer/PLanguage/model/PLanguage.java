@@ -27,6 +27,8 @@ public class PLanguage extends BaseEntity {
     @JsonIgnore
     private Set<Submission> submissions;
 
+    private String fileEnding;
+
     public String toString() {
         return String.format("Language: %s, numSubmissions: %d", this.language, submissions.size());
     }

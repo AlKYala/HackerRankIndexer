@@ -22,13 +22,15 @@ public class PLanguageServiceImpl extends PLanguageService {
     private PLanguageRepository pLangaugeRepository;
     private Validator<PLanguage, PLanguageRepository> validator;
     private ServiceHandler<PLanguage, PLanguageRepository> serviceHandler;
+    private PLanguageInfoService pLanguageInfoService;
 
-    public PLanguageServiceImpl(PLanguageRepository pLanguageRepository) {
+    public PLanguageServiceImpl(PLanguageRepository pLanguageRepository, PLanguageInfoService pLanguageInfoService) {
         this.pLangaugeRepository = pLanguageRepository;
         this.validator =
                 new Validator<PLanguage, PLanguageRepository>("Programming Language", pLanguageRepository);
         this.serviceHandler =
                 new ServiceHandler<PLanguage, PLanguageRepository>(this.pLangaugeRepository, this.validator);
+        this.pLanguageInfoService = pLanguageInfoService;
     }
 
     @Override
@@ -44,8 +46,12 @@ public class PLanguageServiceImpl extends PLanguageService {
     @Override
     public PLanguage save(PLanguage instance) throws HackerrankIndexerException {
         int colorValue = ((int) (16777215f * Math.random()));
+        String fileExtension = this.pLanguageInfoService.getFileExtension(instance);
+        String displayName = this.pLanguageInfoService.getPLanguageDisplayName(instance);
         String color = String.format("#%s", Integer.toHexString((colorValue)));
         instance.setColor(color);
+        instance.setDisplayName(displayName);
+        instance.setFileExtension(fileExtension);
         return this.serviceHandler.save(instance);
     }
 

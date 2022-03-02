@@ -167,9 +167,18 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public PLanguage getFavouriteLanguage(User user) {
+
+        if(user.getGeneralPercentage() != null
+                && user.getGeneralPercentage().getFavouriteLanguage() != null) {
+            return user.getGeneralPercentage().getFavouriteLanguage();
+        }
+
         long max = -1;
         PLanguage favourite = null;
         log.info("looking for favouriote");
+
+        //TODO - er hat die usagePercentages noch nicht?
+
         for(UsagePercentage usagePercentage: user.getUsagePercentages()) {
             log.info("user {}: {} . {}", user.getId(), usagePercentage.getPLanguage().toString(), usagePercentage.getTotal());
             if(usagePercentage.getTotal() > max) {

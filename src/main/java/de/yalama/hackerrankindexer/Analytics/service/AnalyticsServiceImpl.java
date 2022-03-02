@@ -61,7 +61,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public GeneralPercentage getGeneralPercentages(User user) {
-        if(!user.getGeneralPercentage().isCalculated()) {
+        if(user.getGeneralPercentage() == null || !user.getGeneralPercentage().isCalculated()) {
             this.generalPercentageService.calculateUsersGeneralPercentages(user);
         }
 

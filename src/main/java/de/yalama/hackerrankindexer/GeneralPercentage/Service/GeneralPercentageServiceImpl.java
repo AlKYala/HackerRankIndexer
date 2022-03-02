@@ -34,17 +34,29 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService{
 
     @Override
     public void calculateUsersGeneralPercentages(User user) {
-        if(user.getGeneralPercentage().isCalculated()) {
+        if(user.getGeneralPercentage() != null
+                && user.getGeneralPercentage().isCalculated()
+                && user.getGeneralPercentage().getFavouriteLanguage() != null) {
             return;
         }
         double challengesSolvedPercentage = this.calculateChallengesSolvedPercentage(user) * 100;
         double submissionsPassedPercentage = this.calculateSubmissionsSolvedPercentage(user) * 100;
 
-        GeneralPercentage generalPercentage = user.getGeneralPercentage();
+        PLanguage favoritePLanguage = this.userService.getFavouriteLanguage(user);
+
+        GeneralPercentage generalPercentage = new GeneralPercentage();
+
         generalPercentage.setPercentageChallengesSolved(challengesSolvedPercentage);
         generalPercentage.setPercentageSubmissionsPassed(submissionsPassedPercentage);
         generalPercentage.setCalculated(true);
+        generalPercentage.setFavouriteLanguage(favoritePLanguage);
+
+        generalPercentage.setUser(user);
+
+        user.setGeneralPercentage(generalPercentage);
+
         this.generalPercentageRepository.save(generalPercentage);
+        this.userService.update(user.getId(), user);
     }
 
     private Double calculateChallengesSolvedPercentage(User user) {

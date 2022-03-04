@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
     }
 
     @Override
-    public byte[] generateDocumentBytesFromSubmission(Submission submission) {
+    public byte[] submissionCodeToBytes(Submission submission) {
         return String.format("%s\n\n%s", generateInfo(submission), submission.getCode()).getBytes();
     }
 
@@ -52,8 +53,9 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
     }
 
     @Override
-    public String getDocumentBase64String(byte[] byteArr) {
-        return Base64Util.byteArrayToBase64(byteArr);
+    public List<DownloadFile> downloadSubmissionsFromCollection(Collection<Long> submissionIDs) {
+        Collection <Submission> submissions = this.submissionService.getSubmissionsFromIDs(submissionIDs);
+        return this.downloadSubmissionCollection(submissions);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     @Override
     public String getSubmissionAsBase64(Submission submission) {
-        byte[] submissionBase64 = this.generateDocumentBytesFromSubmission(submission);
-        return this.getDocumentBase64String(submissionBase64);
+        byte[] submissionBytes = this.submissionCodeToBytes(submission);
+        return Base64Util.byteArrayToBase64(submissionBytes);
     }
 }

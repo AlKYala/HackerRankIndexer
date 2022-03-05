@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.DocumentGenerator.Controller;
 
 import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.DocumentGenerator.Service.DocumentGeneratorService;
+import de.yalama.hackerrankindexer.Security.model.CollectionWrapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -20,7 +21,7 @@ public class DocumentGeneratorController {
     }
 
     @PostMapping
-    public List<DownloadFile> downloadSubmissions(Collection<Long> submissionIDs) {
-        return this.documentGeneratorService.downloadSubmissionsFromCollection(submissionIDs);
+    public List<DownloadFile> downloadSubmissions(CollectionWrapper<Long> submissionIDs) {
+        return this.documentGeneratorService.downloadSubmissionsFromCollection(submissionIDs.getCollection());
     }
 }

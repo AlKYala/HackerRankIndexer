@@ -11,5 +11,6 @@ import lombok.Setter;
 public class DownloadFile {
 
     private String fileName;
+    private String challengeName;
     private String base64;
 }

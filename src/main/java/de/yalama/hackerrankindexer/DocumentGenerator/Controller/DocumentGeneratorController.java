@@ -5,7 +5,6 @@ import de.yalama.hackerrankindexer.DocumentGenerator.Service.DocumentGeneratorSe
 import de.yalama.hackerrankindexer.Security.model.CollectionWrapper;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,7 @@ public class DocumentGeneratorController {
     }
 
     @PostMapping
-    public List<DownloadFile> downloadSubmissions(CollectionWrapper<Long> submissionIDs) {
+    public List<DownloadFile> downloadSubmissions(@RequestBody CollectionWrapper<Long> submissionIDs) {
         return this.documentGeneratorService.downloadSubmissionsFromCollection(submissionIDs.getCollection());
     }
 }

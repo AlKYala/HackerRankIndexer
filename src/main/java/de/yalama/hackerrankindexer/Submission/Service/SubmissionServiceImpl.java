@@ -106,6 +106,14 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
+    public Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
+        return this.findAll()
+                .stream()
+                .filter(submission -> submissionIDs.contains(submission.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Submission> getAllPassed(User user) {
         return this.findAllByUser(user)
                 .stream()

@@ -12,6 +12,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class SubmissionService implements BaseService<Submission> {
+
+    public abstract Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissions);
+
     public abstract List<Submission> getAllPassed(User user);
     public abstract Collection<Submission> getLastPassedFromAll(User user);
     public abstract Collection<Submission> getAllFailed(User user);

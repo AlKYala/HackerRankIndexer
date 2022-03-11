@@ -6,10 +6,9 @@ import de.yalama.hackerrankindexer.Security.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static de.yalama.hackerrankindexer.Security.SecurityConstants.SIGN_UP_ENDPOINT;
 
@@ -32,5 +31,11 @@ public class LoginController {
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         return this.loginService.createAuthenticationToken(authenticationRequest);
+    }
+
+    @GetMapping("isloggedin")
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<?> checkIsLoggedIn(HttpServletRequest httpServletRequest) {
+        return this.loginService.checkisLoggedIn(httpServletRequest);
     }
 }

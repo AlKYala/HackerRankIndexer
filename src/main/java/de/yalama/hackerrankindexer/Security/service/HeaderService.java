@@ -21,7 +21,7 @@ public class HeaderService {
         this.userService = userService;
     }
 
-    private String extractJWTTokenFromRequest(HttpServletRequest request) {
+    public String extractJWTTokenFromRequest(HttpServletRequest request) {
         log.info(request.getHeader("Authorization"));
         return request.getHeader("Authorization");
     }

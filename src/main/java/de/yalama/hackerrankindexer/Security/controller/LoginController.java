@@ -33,7 +33,7 @@ public class LoginController {
         return this.loginService.createAuthenticationToken(authenticationRequest);
     }
 
-    @GetMapping("isloggedin")
+    @GetMapping("isLoginValid")
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<?> checkIsLoggedIn(HttpServletRequest httpServletRequest) {
         return this.loginService.checkisLoggedIn(httpServletRequest);

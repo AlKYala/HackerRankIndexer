@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.Security.service;
 import de.yalama.hackerrankindexer.Security.model.AuthenticationRequest;
 import de.yalama.hackerrankindexer.Security.model.AuthenticationResponse;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,13 @@ public class LoginService {
 
     public ResponseEntity<?> checkisLoggedIn(HttpServletRequest httpServletRequest) {
         String jwtToken = httpServletRequest.getHeader("Authorization");
-        boolean isExpired = this.jwtTokenUtil.isTokenExpired(jwtToken);
-        return (isExpired) ? ResponseEntity.status(500).build() : ResponseEntity.ok().build();
+        //catch so we dont get errors in console
+        try {
+            this.jwtTokenUtil.isTokenExpired(jwtToken);
+        } catch (ExpiredJwtException expiredJwtException) {
+            return ResponseEntity.status(500).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     private void checkIfPasswordIsCorrect(String username, String password) {

@@ -3,6 +3,8 @@ package de.yalama.hackerrankindexer.Security.service;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.exceptions.JWTException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -42,12 +44,15 @@ public class JwtService {
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
+        if(claims == null) {
+            throw new JWTException("Claims sind null");
+        }
         return claimsResolver.apply(claims);
     }
 
     public Claims extractAllClaims(String token) {
         if(token == null || token.isEmpty()) {
-            //TODO - not logged in!
+            return null;
         }
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }

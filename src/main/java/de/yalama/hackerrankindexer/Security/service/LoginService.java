@@ -38,7 +38,7 @@ public class LoginService {
         //catch so we dont get errors in console
         try {
             this.jwtTokenUtil.isTokenExpired(jwtToken);
-        } catch (ExpiredJwtException expiredJwtException) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
         return ResponseEntity.ok().build();

@@ -52,8 +52,5 @@ public class User extends BaseEntity {
      */
     private String token;
 
-    /* better: just use JWT
-    private String resetPasswordToken;
-
-    private boolean resetPasswordFlag;*/
+    private String permalinkToken;
 }

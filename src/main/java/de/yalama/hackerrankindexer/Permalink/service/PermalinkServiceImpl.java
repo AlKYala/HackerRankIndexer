@@ -31,13 +31,8 @@ public class PermalinkServiceImpl extends PermalinkService{
 
 
     @Override
-    public User resolveUserFromLink(String val) throws InvalidAlgorithmParameterException, NoSuchPaddingException,
-            IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
-            BadPaddingException, InvalidKeyException {
-        String valDecoded = encodeDecodeService.decrypt(val);
-        int length = valDecoded.length();
-        String email = valDecoded.substring(0, length-10);
-        return this.userService.findByEmail(email);
+    public User resolveUserFromLink(String val) {
+        return this.userService.findByPermalinkToken(val);
     }
 
     @Override
@@ -48,7 +43,15 @@ public class PermalinkServiceImpl extends PermalinkService{
         String key          = String.format("%s%s", user.getEmail(), salt);
         String arg          =  encodeDecodeService.encryptString(key);
         String env          = "localhost:8080"; //TODO
-        String controller   = "TODO"; //TODO
-        return String.format("%s/%s/5s", env, controller, arg);
+        String controller   = "permalink";
+
+        while(arg.contains("/")) {
+            arg = encodeDecodeService.encryptString(key);
+        }
+
+        user.setPermalinkToken(arg);
+        this.userService.update(user.getId(), user);
+
+        return String.format("%s/%s/%s", env, controller, arg);
     }
 }

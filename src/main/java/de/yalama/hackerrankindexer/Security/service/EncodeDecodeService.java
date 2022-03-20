@@ -28,7 +28,7 @@ public class EncodeDecodeService {
         String salt = SecurityConstants.SECRET_KEY.substring(0, 10);
         byte[] valueAsBytes = value.getBytes();
         IvParameterSpec initVector   = this.getInitVector();
-        SecretKey sk    = this.getKeyWithSalt(value, salt, 32);
+        SecretKey sk    = this.getKeyWithSalt(SecurityConstants.SECRET_KEY, salt, 256);
         Cipher cipher   = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, sk, initVector);
         byte[] cipherBytes = cipher.doFinal(value.getBytes());
@@ -42,7 +42,7 @@ public class EncodeDecodeService {
         String salt = SecurityConstants.SECRET_KEY.substring(0, 10);
         byte[] valueAsBytes = encrypted.getBytes();
         IvParameterSpec initVector   = this.getInitVector();
-        SecretKey sk    = this.getKeyWithSalt(encrypted, salt, 32);
+        SecretKey sk    = this.getKeyWithSalt(SecurityConstants.SECRET_KEY, salt, 256);
         Cipher cipher   = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, sk, initVector);
         byte[] plainBytes = cipher.doFinal(Base64.getDecoder().decode(encrypted));
@@ -56,10 +56,12 @@ public class EncodeDecodeService {
         return secretKey;
     }*/
 
-    private SecretKey getKeyWithSalt(String value, String salt, int keyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private SecretKey getKeyWithSalt(String key, String salt, int keyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         SecretKeyFactory    factory         = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        KeySpec             keySpec         = new PBEKeySpec(value.toCharArray(), salt.getBytes(), 65536, keyLength);
+        KeySpec             keySpec         = new PBEKeySpec(key.toCharArray(), salt.getBytes(), 65536, keyLength);
+        System.out.printf("Key: %s\n", keySpec.hashCode());
+
         byte[]              factorySecret   = factory.generateSecret(keySpec).getEncoded();
         SecretKey           secretKey       = new SecretKeySpec(factorySecret, "AES");
         return secretKey;

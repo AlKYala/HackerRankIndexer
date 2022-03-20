@@ -51,7 +51,6 @@ public abstract class UserService implements BaseService<User> {
      * Triggers an update for password of given user.
      * When this is triggered but the user does not update his password, the user is still allowed to login
      * with exisiting credentials
-     * @param id id of the instance to reset password for
      * @return A string as confirmation message
      */
     public abstract String triggerPasswordReset(String email);
@@ -62,4 +61,11 @@ public abstract class UserService implements BaseService<User> {
      * @return A message about the result
      */
     public abstract ResponseString verifyUser(String token);
+
+    /**
+     * A method that finds a user by permalink token.
+     * @param token The permalink token
+     * @return The found  persisted user instance with token match
+     */
+    public abstract User findByPermalinkToken(String token);
 }

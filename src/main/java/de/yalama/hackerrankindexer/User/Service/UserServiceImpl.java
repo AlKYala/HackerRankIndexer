@@ -142,6 +142,14 @@ public class UserServiceImpl extends UserService {
         return new ResponseString(String.format("User %s verified successfully", userToVerify.getEmail()));
     }
 
+    @Override
+    public User findByPermalinkToken(String token) {
+        return this.findAll().stream()
+                .filter(user -> user.getPermalinkToken().equals(token))
+                .findFirst()
+                .get();
+    }
+
     private String generatePasswordResetToken(User user) {
 
         Map<String, Object> claims = new HashMap<String, Object>();

@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Permalink.controller;
 
+import de.yalama.hackerrankindexer.Permalink.Model.PermalinkInformation;
 import de.yalama.hackerrankindexer.Permalink.service.PermalinkService;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -29,7 +30,6 @@ public class PermalinkController {
 
     /**
      * Used to generate a Permalink
-     * TODO: Protect this endpoint
      * @param httpServletRequest
      * @return
      */
@@ -41,16 +41,19 @@ public class PermalinkController {
         return this.permalinkService.getPermalinkForUser(user);
     }
 
-    //TODO: Dont protect this endpoint
-
+    /**
+     * Endpoint to access User data - used for permalinks
+     * @param token
+     * @return
+     */
     @GetMapping("/{token}")
-    public User resolveUserFromPermalink(@PathVariable String token) throws InvalidAlgorithmParameterException,
+    public PermalinkInformation resolveUserFromPermalink(@PathVariable String token) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException {
         System.out.println("firing");
         System.out.println(token);
-        User user = this.permalinkService.resolveUserFromLink(token);
-        return user;
+        PermalinkInformation permalinkInformation = this.permalinkService.resolveUserFromLink(token);
+        return permalinkInformation;
     }
 
 }

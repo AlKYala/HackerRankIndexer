@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Permalink.service;
 
+import de.yalama.hackerrankindexer.Permalink.Model.PermalinkInformation;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
 
@@ -14,7 +15,7 @@ import java.security.spec.InvalidKeySpecException;
 
 public abstract class PermalinkService {
 
-    public abstract User resolveUserFromLink(String link) throws InvalidAlgorithmParameterException,
+    public abstract PermalinkInformation resolveUserFromLink(String link) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException;
 

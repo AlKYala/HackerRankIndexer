@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Permalink.service;
 
+import de.yalama.hackerrankindexer.Permalink.Model.PermalinkInformation;
 import de.yalama.hackerrankindexer.Security.SecurityConstants;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -34,8 +35,9 @@ public class PermalinkServiceImpl extends PermalinkService {
 
 
     @Override
-    public User resolveUserFromLink(String val) {
-        return this.userService.findByPermalinkToken(val);
+    public PermalinkInformation resolveUserFromLink(String val) {
+        User user = this.userService.findByPermalinkToken(val);
+        return new PermalinkInformation(user);
     }
 
     @Override

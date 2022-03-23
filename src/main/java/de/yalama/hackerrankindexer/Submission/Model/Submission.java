@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Submission.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Contest.Model.Contest;
@@ -24,6 +25,7 @@ public class Submission extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @NotNull
     @JoinColumn
+    @JsonIgnore
     private User writer;
 
     @ManyToOne

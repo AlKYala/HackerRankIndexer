@@ -50,7 +50,7 @@ public class PermalinkServiceImpl extends PermalinkService {
             return String.format("%s/%s/%s", env, controller, user.getPermalinkToken());
         }
 
-        String salt         = SecurityConstants.SECRET_KEY.substring(0, 10);
+        String salt         = Integer.toString(user.hashCode());
         String key          = String.format("%s%s", user.getEmail(), salt);
         String arg          =  encodeDecodeService.hashValue(key, HashingAlgorithm.SHA256);
 

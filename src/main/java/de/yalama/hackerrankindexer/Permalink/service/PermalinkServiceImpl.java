@@ -4,20 +4,23 @@ import de.yalama.hackerrankindexer.Security.SecurityConstants;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
+import javax.xml.bind.DatatypeConverter;
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 @Service
-public class PermalinkServiceImpl extends PermalinkService{
+public class PermalinkServiceImpl extends PermalinkService {
 
     BCryptPasswordEncoder   bCryptPasswordEncoder;
     EncodeDecodeService     encodeDecodeService;
@@ -38,15 +41,22 @@ public class PermalinkServiceImpl extends PermalinkService{
     @Override
     public String getPermalinkForUser(User user) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException, BadPaddingException,
-            InvalidKeyException {
-        String salt         = SecurityConstants.SECRET_KEY.substring(0, 10);
-        String key          = String.format("%s%s", user.getEmail(), salt);
-        String arg          =  encodeDecodeService.encryptString(key);
+            InvalidKeyException, IOException {
+
         String env          = "localhost:8080"; //TODO
         String controller   = "permalink";
 
+        if(user.getPermalinkToken() != null && user.getPermalinkToken().length() > 0) {
+            return String.format("%s/%s/%s", env, controller, user.getPermalinkToken());
+        }
+
+        String salt         = SecurityConstants.SECRET_KEY.substring(0, 10);
+        String key          = String.format("%s%s", user.getEmail(), salt);
+        String arg          =  encodeDecodeService.hashValue(key, HashingAlgorithm.SHA256);
+
+
         while(arg.contains("/")) {
-            arg = encodeDecodeService.encryptString(key);
+            arg = encodeDecodeService.hashValue(key, HashingAlgorithm.SHA256);
         }
 
         user.setPermalinkToken(arg);

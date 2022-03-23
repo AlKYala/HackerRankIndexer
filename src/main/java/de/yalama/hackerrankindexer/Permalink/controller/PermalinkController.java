@@ -10,6 +10,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -28,16 +29,19 @@ public class PermalinkController {
 
     /**
      * Used to generate a Permalink
+     * TODO: Protect this endpoint
      * @param httpServletRequest
      * @return
      */
     @PostMapping("/generate")
     public String getPermalinkForUser(HttpServletRequest httpServletRequest) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
-            BadPaddingException, InvalidKeyException {
+            BadPaddingException, InvalidKeyException, IOException {
         User user = this.headerService.getUserFromHeader(httpServletRequest);
         return this.permalinkService.getPermalinkForUser(user);
     }
+
+    //TODO: Dont protect this endpoint
 
     @GetMapping("/{token}")
     public User resolveUserFromPermalink(@PathVariable String token) throws InvalidAlgorithmParameterException,

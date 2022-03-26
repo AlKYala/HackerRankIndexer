@@ -96,6 +96,7 @@ public class UserServiceImpl extends UserService {
         this.emailSendService.sendConfirmationEmail(instance);
 
         String permalink = this.permalinkService.getPermalinkForUser(instance);
+        permalink = this.resolvePermalinkToken(permalink);
         instance.setPermalinkToken(permalink);
 
         return this.save(instance);
@@ -251,5 +252,10 @@ public class UserServiceImpl extends UserService {
     public UserData resolveUserFromLink(String val) {
         User user = this.findByPermalinkToken(val);
         return new UserData(user);
+    }
+
+    private String resolvePermalinkToken(String permalink) {
+        String[] pathNodes = permalink.split("/");
+        return pathNodes[pathNodes.length-1];
     }
 }

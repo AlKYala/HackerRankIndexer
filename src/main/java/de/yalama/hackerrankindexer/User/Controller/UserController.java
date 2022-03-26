@@ -11,8 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.xml.bind.ValidationException;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 @RequestMapping("/user")
@@ -47,7 +54,9 @@ public class UserController implements BaseController<User, Long> {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) throws HackerrankIndexerException, NoSuchAlgorithmException {
+    public User register(@RequestBody User user) throws HackerrankIndexerException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,
+            InvalidKeySpecException, BadPaddingException, IOException, InvalidKeyException {
         return this.userService.register(user);
     }
 

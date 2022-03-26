@@ -17,12 +17,12 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class PermalinkInformation {
+public class UserData {
 
     private List<Submission> submissionList;
     private User user;
 
-    public PermalinkInformation(User user) {
+    public UserData(User user) {
         this.user = user;
         this.submissionList = user.getSubmittedEntries();
     }

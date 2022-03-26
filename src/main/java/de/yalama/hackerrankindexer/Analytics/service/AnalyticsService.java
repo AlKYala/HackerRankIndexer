@@ -1,15 +1,11 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
-import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
-import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
-import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
+import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.UsageData;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 public abstract class AnalyticsService {
@@ -49,4 +45,12 @@ public abstract class AnalyticsService {
     public abstract Long getNumberOfUsers();
 
     public abstract Long getNumberOfSubmissions();
+
+    /**
+     * This method returns all user data found
+     * first implemented with permalink Information
+     * UserData.class used for this in frontEnd
+     * @return
+     */
+    public abstract UserData getUserData();
 }

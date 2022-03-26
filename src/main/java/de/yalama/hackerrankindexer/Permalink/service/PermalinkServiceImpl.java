@@ -1,7 +1,6 @@
 package de.yalama.hackerrankindexer.Permalink.service;
 
-import de.yalama.hackerrankindexer.Permalink.Model.PermalinkInformation;
-import de.yalama.hackerrankindexer.Security.SecurityConstants;
+import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
@@ -12,11 +11,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -35,9 +32,9 @@ public class PermalinkServiceImpl extends PermalinkService {
 
 
     @Override
-    public PermalinkInformation resolveUserFromLink(String val) {
+    public UserData resolveUserFromLink(String val) {
         User user = this.userService.findByPermalinkToken(val);
-        return new PermalinkInformation(user);
+        return new UserData(user);
     }
 
     @Override

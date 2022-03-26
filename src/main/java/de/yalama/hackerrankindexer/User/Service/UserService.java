@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -8,8 +9,15 @@ import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import de.yalama.hackerrankindexer.shared.services.BaseService;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.xml.bind.ValidationException;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Set;
 
 public abstract class UserService implements BaseService<User> {
@@ -38,7 +46,7 @@ public abstract class UserService implements BaseService<User> {
      * @param user The user to persist
      * @return the persisted User instance
      */
-    public abstract User register(User user) throws HackerrankIndexerException, NoSuchAlgorithmException;
+    public abstract User register(User user) throws HackerrankIndexerException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException, BadPaddingException, IOException, InvalidKeyException;
 
     /**
      * Updates an exisiting user - overrides password
@@ -68,4 +76,13 @@ public abstract class UserService implements BaseService<User> {
      * @return The found  persisted user instance with token match
      */
     public abstract User findByPermalinkToken(String token);
+
+    /**
+     * Resovles user from permalink
+     * @param link the link as string
+     * @return user if exists
+     */
+    public abstract UserData resolveUserFromLink(String link) throws InvalidAlgorithmParameterException,
+            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
+            BadPaddingException, InvalidKeyException;
 }

@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Permalink.service.PermalinkService;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.User.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,9 @@ public class PermalinkController {
 
     @Autowired
     private PermalinkService permalinkService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private HeaderService headerService;
@@ -52,7 +56,7 @@ public class PermalinkController {
             BadPaddingException, InvalidKeyException {
         System.out.println("firing");
         System.out.println(token);
-        UserData permalinkInformation = this.permalinkService.resolveUserFromLink(token);
+        UserData permalinkInformation = this.userService.resolveUserFromLink(token);
         return permalinkInformation;
     }
 

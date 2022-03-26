@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.Permalink.service;
 import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,19 +23,10 @@ public class PermalinkServiceImpl extends PermalinkService {
 
     BCryptPasswordEncoder   bCryptPasswordEncoder;
     EncodeDecodeService     encodeDecodeService;
-    UserService             userService;
 
-    public PermalinkServiceImpl(EncodeDecodeService encodeDecodeService, UserService userService) {
+    public PermalinkServiceImpl(EncodeDecodeService encodeDecodeService, UserRepository userRepository) {
         this.bCryptPasswordEncoder  = new BCryptPasswordEncoder();
         this.encodeDecodeService    = encodeDecodeService;
-        this.userService            = userService;
-    }
-
-
-    @Override
-    public UserData resolveUserFromLink(String val) {
-        User user = this.userService.findByPermalinkToken(val);
-        return new UserData(user);
     }
 
     @Override
@@ -59,7 +51,6 @@ public class PermalinkServiceImpl extends PermalinkService {
         }
 
         user.setPermalinkToken(arg);
-        this.userService.update(user.getId(), user);
 
         return String.format("%s/%s/%s", env, controller, arg);
     }

@@ -9,6 +9,7 @@ import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.PassPercentage.Service.PassPercentageService;
+import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
@@ -118,5 +119,10 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     @Override
     public Long getNumberOfSubmissions() {
         return this.submissionRepository.count();
+    }
+
+    @Override
+    public UserData getUserData() {
+        return null;
     }
 }

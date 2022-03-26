@@ -14,10 +14,6 @@ import java.security.spec.InvalidKeySpecException;
 
 public abstract class PermalinkService {
 
-    public abstract UserData resolveUserFromLink(String link) throws InvalidAlgorithmParameterException,
-            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
-            BadPaddingException, InvalidKeyException;
-
     public abstract String getPermalinkForUser(User user) throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,
             InvalidKeySpecException, BadPaddingException, InvalidKeyException, IOException;

@@ -5,6 +5,8 @@ import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
 import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.Permalink.Model.UserData;
+import de.yalama.hackerrankindexer.Permalink.service.PermalinkService;
 import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
@@ -24,8 +26,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.xml.bind.ValidationException;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,11 +52,13 @@ public class UserServiceImpl extends UserService {
     private SubmissionService submissionService;
     private ChallengeService challengeService;
     private GeneralPercentageRepository generalPercentageRepository;
+    private PermalinkService permalinkService;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                            EmailSendService emailSendService, TokenGenerationService tokenGenerationService,
                            JwtService jwtService, SubmissionService submissionService,
-                           ChallengeService challengeService, GeneralPercentageRepository generalPercentageRepository) {
+                           ChallengeService challengeService, GeneralPercentageRepository generalPercentageRepository,
+                           PermalinkService permalinkService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
@@ -58,6 +69,7 @@ public class UserServiceImpl extends UserService {
         this.submissionService = submissionService;
         this.challengeService = challengeService;
         this.generalPercentageRepository = generalPercentageRepository;
+        this.permalinkService = permalinkService;
     }
 
     @Override
@@ -76,10 +88,16 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public User register(User instance) throws HackerrankIndexerException, NoSuchAlgorithmException {
+    public User register(User instance) throws HackerrankIndexerException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,
+            InvalidKeySpecException, BadPaddingException, IOException, InvalidKeyException {
         instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
         this.emailSendService.sendConfirmationEmail(instance);
+
+        String permalink = this.permalinkService.getPermalinkForUser(instance);
+        instance.setPermalinkToken(permalink);
+
         return this.save(instance);
     }
 
@@ -227,5 +245,11 @@ public class UserServiceImpl extends UserService {
                 .stream()
                 .filter(submission -> submission.getLanguage().getId() == language.getId())
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public UserData resolveUserFromLink(String val) {
+        User user = this.findByPermalinkToken(val);
+        return new UserData(user);
     }
 }

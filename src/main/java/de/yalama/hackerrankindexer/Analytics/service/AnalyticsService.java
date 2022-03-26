@@ -6,6 +6,13 @@ import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.UsageData;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Set;
 
 public abstract class AnalyticsService {
@@ -49,8 +56,8 @@ public abstract class AnalyticsService {
     /**
      * This method returns all user data found
      * first implemented with permalink Information
-     * UserData.class used for this in frontEnd
+     *
      * @return
      */
-    public abstract UserData getUserData();
+    public abstract UserData getUserData(String permalinkToken) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, BadPaddingException, InvalidKeyException;
 }

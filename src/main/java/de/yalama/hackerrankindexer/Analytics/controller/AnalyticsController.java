@@ -7,6 +7,7 @@ import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
+import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -16,7 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Set;
 
 @RestController
@@ -65,6 +73,13 @@ public class AnalyticsController {
     @GetMapping("/numberSubmissions")
     public Long getNumberOfSubmissions() {
         return this.analyticsService.getNumberOfSubmissions();
+    }
+
+    @GetMapping("/userData/{token}")
+    public UserData getUserData(@PathVariable String token) throws InvalidAlgorithmParameterException,
+            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
+            InvalidKeySpecException, BadPaddingException, InvalidKeyException {
+        return this.analyticsService.getUserData(token);
     }
 
     private User resolveUser(HttpServletRequest request) {

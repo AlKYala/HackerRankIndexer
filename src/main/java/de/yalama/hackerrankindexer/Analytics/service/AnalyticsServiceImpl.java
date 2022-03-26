@@ -20,8 +20,15 @@ import de.yalama.hackerrankindexer.shared.models.UsageData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -122,7 +129,9 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public UserData getUserData() {
-        return null;
+    public UserData getUserData(String permalinkToken) throws InvalidAlgorithmParameterException,
+            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
+            BadPaddingException, InvalidKeyException {
+        return this.userService.resolveUserFromLink(permalinkToken);
     }
 }

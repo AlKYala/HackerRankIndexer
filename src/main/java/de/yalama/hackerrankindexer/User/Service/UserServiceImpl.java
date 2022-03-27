@@ -93,9 +93,9 @@ public class UserServiceImpl extends UserService {
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
         this.emailSendService.sendConfirmationEmail(instance);
 
-        String permalink = this.userDataService.getUserDataLinkForUser(instance);
-        permalink = this.resolvePermalinkToken(permalink);
-        instance.setPermalinkToken(permalink);
+        String userDataLink  = this.userDataService.getUserDataLinkForUser(instance);
+        String userDataToken = this.resolvePermalinkToken(userDataLink);
+        instance.setUserDataToken(userDataToken);
 
         return this.save(instance);
     }
@@ -162,7 +162,7 @@ public class UserServiceImpl extends UserService {
     @Override
     public User findByPermalinkToken(String token) {
         return this.findAll().stream()
-                .filter(user -> user.getPermalinkToken().equals(token))
+                .filter(user -> user.getUserDataToken().equals(token))
                 .findFirst()
                 .get();
     }

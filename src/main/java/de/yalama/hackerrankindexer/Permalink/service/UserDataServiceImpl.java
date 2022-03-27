@@ -35,20 +35,17 @@ public class UserDataServiceImpl extends UserDataService {
         String env          = "localhost:8080"; //TODO
         String controller   = "permalink";
 
-        if(user.getPermalinkToken() != null && user.getPermalinkToken().length() > 0) {
-            return String.format("%s/%s/%s", env, controller, user.getPermalinkToken());
+        if(user.getUserDataToken() != null && user.getUserDataToken().length() > 0) {
+            return String.format("%s/%s/%s", env, controller, user.getUserDataToken());
         }
 
         String salt         = Integer.toString(user.hashCode());
         String key          = String.format("%s%s", user.getEmail(), salt);
         String arg          =  encodeDecodeService.hashValue(key, HashingAlgorithm.SHA256);
 
-
         while(arg.contains("/")) {
             arg = encodeDecodeService.hashValue(key, HashingAlgorithm.SHA256);
         }
-
-        user.setPermalinkToken(arg);
 
         return String.format("%s/%s/%s", env, controller, arg);
     }

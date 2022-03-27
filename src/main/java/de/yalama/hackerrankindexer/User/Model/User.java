@@ -52,5 +52,5 @@ public class User extends BaseEntity {
      */
     private String token;
 
-    private String permalinkToken;
+    private String userDataToken;
 }

@@ -1,7 +1,7 @@
 package de.yalama.hackerrankindexer.Permalink.controller;
 
 import de.yalama.hackerrankindexer.Permalink.Model.UserData;
-import de.yalama.hackerrankindexer.Permalink.service.PermalinkService;
+import de.yalama.hackerrankindexer.Permalink.service.UserDataService;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
@@ -19,12 +19,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 @RestController
-@RequestMapping("/permalink")
+@RequestMapping("/userdata")
 @CrossOrigin(origins = "http://localhost:4200")
-public class PermalinkController {
+public class UserDataController {
 
     @Autowired
-    private PermalinkService permalinkService;
+    private UserDataService userDataService;
 
     @Autowired
     private UserService userService;
@@ -42,7 +42,7 @@ public class PermalinkController {
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException, IOException {
         User user = this.headerService.getUserFromHeader(httpServletRequest);
-        return this.permalinkService.getPermalinkForUser(user);
+        return this.userDataService.getPermalinkForUser(user);
     }
 
     /**

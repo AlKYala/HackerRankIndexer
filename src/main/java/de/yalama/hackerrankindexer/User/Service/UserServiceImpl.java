@@ -1,12 +1,10 @@
 package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
-import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
-import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Permalink.Model.UserData;
-import de.yalama.hackerrankindexer.Permalink.service.PermalinkService;
+import de.yalama.hackerrankindexer.Permalink.service.UserDataService;
 import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
@@ -52,13 +50,13 @@ public class UserServiceImpl extends UserService {
     private SubmissionService submissionService;
     private ChallengeService challengeService;
     private GeneralPercentageRepository generalPercentageRepository;
-    private PermalinkService permalinkService;
+    private UserDataService userDataService;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                            EmailSendService emailSendService, TokenGenerationService tokenGenerationService,
                            JwtService jwtService, SubmissionService submissionService,
                            ChallengeService challengeService, GeneralPercentageRepository generalPercentageRepository,
-                           PermalinkService permalinkService) {
+                           UserDataService userDataService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
@@ -69,7 +67,7 @@ public class UserServiceImpl extends UserService {
         this.submissionService = submissionService;
         this.challengeService = challengeService;
         this.generalPercentageRepository = generalPercentageRepository;
-        this.permalinkService = permalinkService;
+        this.userDataService = userDataService;
     }
 
     @Override
@@ -95,7 +93,7 @@ public class UserServiceImpl extends UserService {
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
         this.emailSendService.sendConfirmationEmail(instance);
 
-        String permalink = this.permalinkService.getPermalinkForUser(instance);
+        String permalink = this.userDataService.getPermalinkForUser(instance);
         permalink = this.resolvePermalinkToken(permalink);
         instance.setPermalinkToken(permalink);
 

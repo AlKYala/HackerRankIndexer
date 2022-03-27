@@ -1,10 +1,8 @@
 package de.yalama.hackerrankindexer.Permalink.service;
 
-import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
-import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,12 +17,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 @Service
-public class PermalinkServiceImpl extends PermalinkService {
+public class UserDataServiceImpl extends UserDataService {
 
     BCryptPasswordEncoder   bCryptPasswordEncoder;
     EncodeDecodeService     encodeDecodeService;
 
-    public PermalinkServiceImpl(EncodeDecodeService encodeDecodeService, UserRepository userRepository) {
+    public UserDataServiceImpl(EncodeDecodeService encodeDecodeService, UserRepository userRepository) {
         this.bCryptPasswordEncoder  = new BCryptPasswordEncoder();
         this.encodeDecodeService    = encodeDecodeService;
     }

@@ -12,7 +12,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
-public abstract class PermalinkService {
+public abstract class UserDataService {
 
     public abstract String getPermalinkForUser(User user) throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,

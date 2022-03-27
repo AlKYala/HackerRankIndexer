@@ -14,7 +14,7 @@ import java.security.spec.InvalidKeySpecException;
 
 public abstract class UserDataService {
 
-    public abstract String getPermalinkForUser(User user) throws NoSuchAlgorithmException,
+    public abstract String getUserDataLinkForUser(User user) throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,
             InvalidKeySpecException, BadPaddingException, InvalidKeyException, IOException;
 }

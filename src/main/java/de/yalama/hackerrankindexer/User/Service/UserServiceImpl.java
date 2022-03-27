@@ -93,7 +93,7 @@ public class UserServiceImpl extends UserService {
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
         this.emailSendService.sendConfirmationEmail(instance);
 
-        String permalink = this.userDataService.getPermalinkForUser(instance);
+        String permalink = this.userDataService.getUserDataLinkForUser(instance);
         permalink = this.resolvePermalinkToken(permalink);
         instance.setPermalinkToken(permalink);
 

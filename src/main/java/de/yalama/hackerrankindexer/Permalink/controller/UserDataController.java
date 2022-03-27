@@ -42,7 +42,7 @@ public class UserDataController {
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException, IOException {
         User user = this.headerService.getUserFromHeader(httpServletRequest);
-        return this.userDataService.getPermalinkForUser(user);
+        return this.userDataService.getUserDataLinkForUser(user);
     }
 
     /**

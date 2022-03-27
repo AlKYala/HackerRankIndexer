@@ -28,7 +28,7 @@ public class UserDataServiceImpl extends UserDataService {
     }
 
     @Override
-    public String getPermalinkForUser(User user) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+    public String getUserDataLinkForUser(User user) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException, BadPaddingException,
             InvalidKeyException, IOException {
 

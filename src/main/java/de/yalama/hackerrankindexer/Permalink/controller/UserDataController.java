@@ -56,8 +56,22 @@ public class UserDataController {
             BadPaddingException, InvalidKeyException {
         System.out.println("firing");
         System.out.println(token);
-        UserData permalinkInformation = this.userService.resolveUserFromLink(token);
-        return permalinkInformation;
+        UserData userData = this.userService.getUserData(token);
+        return userData;
+    }
+
+    /**
+     * Endpoint to access User data - used for permalinks
+     * @param token
+     * @return
+     */
+    @GetMapping
+    public UserData resolveUserDataFromJWT(HttpServletRequest httpServletRequest) throws InvalidAlgorithmParameterException,
+            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
+            BadPaddingException, InvalidKeyException {
+        User user = this.headerService.getUserFromHeader(httpServletRequest);
+        String userDataToken = user.getUserDataToken();
+        return this.userService.getUserData(userDataToken);
     }
 
 }

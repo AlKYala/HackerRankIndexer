@@ -15,6 +15,7 @@ import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.Email.EmailSendService;
+import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
 import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
 import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
@@ -167,6 +168,22 @@ public class UserServiceImpl extends UserService {
                 .get();
     }
 
+    @Override
+    public UserData getUserData(String userDataToken) throws InvalidAlgorithmParameterException, NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
+            BadPaddingException, InvalidKeyException {
+        User foundUser = this.findAll()
+                .stream()
+                .filter(user -> user.getUserDataToken().equals(userDataToken))
+                .findFirst()
+                .get();
+        if(foundUser == null) {
+            throw new NotFoundException(String.format("No User found by Token %s", userDataToken));
+        }
+        UserData userData = new UserData(foundUser);
+        return userData;
+    }
+
     private String generatePasswordResetToken(User user) {
 
         Map<String, Object> claims = new HashMap<String, Object>();
@@ -244,12 +261,6 @@ public class UserServiceImpl extends UserService {
                 .stream()
                 .filter(submission -> submission.getLanguage().getId() == language.getId())
                 .collect(Collectors.toSet());
-    }
-
-    @Override
-    public UserData resolveUserFromLink(String val) {
-        User user = this.findByPermalinkToken(val);
-        return new UserData(user);
     }
 
     private String resolvePermalinkToken(String permalink) {

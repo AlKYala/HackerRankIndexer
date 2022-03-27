@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.Permalink.service;
 
+import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;

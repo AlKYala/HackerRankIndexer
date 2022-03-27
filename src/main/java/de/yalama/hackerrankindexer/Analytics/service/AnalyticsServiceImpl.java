@@ -129,9 +129,9 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     }
 
     @Override
-    public UserData getUserData(String permalinkToken) throws InvalidAlgorithmParameterException,
+    public UserData getUserData(String userDataToken) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException {
-        return this.userService.resolveUserFromLink(permalinkToken);
+        return this.userService.getUserData(userDataToken);
     }
 }

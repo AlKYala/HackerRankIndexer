@@ -82,7 +82,7 @@ public abstract class UserService implements BaseService<User> {
      * @param link the link as string
      * @return user if exists
      */
-    public abstract UserData resolveUserFromLink(String link) throws InvalidAlgorithmParameterException,
+    public abstract UserData getUserData(String userDataToken) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException;
 }

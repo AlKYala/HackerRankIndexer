@@ -159,27 +159,10 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public User findByPermalinkToken(String token) {
-        return this.findAll().stream()
-                .filter(user -> user.getUserDataToken().equals(token))
-                .findFirst()
-                .get();
-    }
-
-    @Override
-    public UserData getUserData(String userDataToken) throws InvalidAlgorithmParameterException, NoSuchPaddingException,
+    public List<UserData> getUserData(User user) throws InvalidAlgorithmParameterException, NoSuchPaddingException,
             IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException {
-        User foundUser = this.findAll()
-                .stream()
-                .filter(user -> user.getUserDataToken().equals(userDataToken))
-                .findFirst()
-                .get();
-        if(foundUser == null) {
-            throw new NotFoundException(String.format("No User found by Token %s", userDataToken));
-        }
-        UserData userData = new UserData(foundUser);
-        return userData;
+        return user.getUserData();
     }
 
     private String generatePasswordResetToken(User user) {
@@ -201,42 +184,8 @@ public class UserServiceImpl extends UserService {
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
         this.validator.throwIfNotExistsByID(id, 1);
-        this.findById(id).getSubmittedEntries().forEach(submission -> submission.setWriter(null));
+        //TODO delete userData
         return this.serviceHandler.deleteById(id);
-    }
-
-    @Override
-    public PLanguage getFavouriteLanguage(User user) {
-
-        if(user.getGeneralPercentage() != null
-                && user.getGeneralPercentage().getFavouriteLanguage() != null) {
-            return user.getGeneralPercentage().getFavouriteLanguage();
-        }
-
-        long max = -1;
-        PLanguage favourite = null;
-        log.info("looking for favouriote");
-
-        //TODO - er hat die usagePercentages noch nicht?
-
-        for(UsagePercentage usagePercentage: user.getUsagePercentages()) {
-            log.info("user {}: {} . {}", user.getId(), usagePercentage.getPLanguage().toString(), usagePercentage.getTotal());
-            if(usagePercentage.getTotal() > max) {
-                max = usagePercentage.getTotal();
-                favourite = usagePercentage.getPLanguage();
-            }
-        }
-        return favourite;
-    }
-
-    @Override
-    public double getGeneralSubmissionPassPercentage(User user) {
-        return user.getGeneralPercentage().getPercentageSubmissionsPassed();
-    }
-
-    @Override
-    public double getGeneralChallengePassPercentage(User user) {
-        return user.getGeneralPercentage().getPercentageChallengesSolved();
     }
 
     @Override
@@ -251,14 +200,6 @@ public class UserServiceImpl extends UserService {
             throw new UsernameNotFoundException("Username not found");
         }
         return found;
-    }
-
-    @Override
-    public Set<Submission> findSubmissionsOfUserOfLanguage(User user, PLanguage language) {
-        return user.getSubmittedEntries()
-                .stream()
-                .filter(submission -> submission.getLanguage().getId() == language.getId())
-                .collect(Collectors.toSet());
     }
 
     private String resolvePermalinkToken(String permalink) {

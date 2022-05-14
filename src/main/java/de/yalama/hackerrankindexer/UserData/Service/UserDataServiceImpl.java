@@ -1,6 +1,8 @@
 package de.yalama.hackerrankindexer.UserData.Service;
 
+import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
+import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
@@ -19,6 +21,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserDataServiceImpl extends UserDataService {
@@ -61,6 +64,12 @@ public class UserDataServiceImpl extends UserDataService {
     @Override
     public List<UserData> findByUser(User user) {
         return this.userDataRepository.getByUser(user.getId());
+    }
+
+    @Override
+    public Set<Submission> findSubmissionsOfUserOfLanguage(UserData userData, PLanguage language) {
+        //TODO Implement in Repo
+        return null;
     }
 
     @Override

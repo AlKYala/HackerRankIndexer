@@ -18,25 +18,12 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 import java.util.Set;
 
 public abstract class UserService implements BaseService<User> {
 
-    public abstract PLanguage getFavouriteLanguage(User user);
-
-    public abstract double getGeneralSubmissionPassPercentage(User user);
-
-    public abstract double getGeneralChallengePassPercentage(User user);
-
     public abstract User findByEmail(String email);
-
-    /**
-     * returns all submission instances linked to User that have the specified language as language
-     * @param user The user instance of the submission
-     * @param language The wanted langauge
-     * @return All submissions that of user that have specified language
-     */
-    public abstract Set<Submission> findSubmissionsOfUserOfLanguage(User user, PLanguage language);
 
     /**
      * An alternative to BaseService::save because NoSuchAlgorithmException needs to be thrown
@@ -71,18 +58,11 @@ public abstract class UserService implements BaseService<User> {
     public abstract ResponseString verifyUser(String token);
 
     /**
-     * A method that finds a user by permalink token.
-     * @param token The permalink token
-     * @return The found  persisted user instance with token match
-     */
-    public abstract User findByPermalinkToken(String token);
-
-    /**
-     * Resovles user from permalink
+     * TODO
      * @param link the link as string
      * @return user if exists
      */
-    public abstract UserData getUserData(String userDataToken) throws InvalidAlgorithmParameterException,
+    public abstract List<UserData> getUserData(User user) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException;
 }

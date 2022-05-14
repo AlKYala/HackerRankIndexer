@@ -57,21 +57,29 @@ public class ChallengeController implements BaseController<Challenge, Long> {
 
     @GetMapping("/{id}/submissions")
     public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpServletRequest request) {
-        return this.challengeService.getSubmissionsByChallengeId(id, this.headerService.getUserFromHeader(request));
+        //return this.challengeService.getSubmissionsByChallengeId(id, this.headerService.getUserFromHeader(request));
+        //TODO make by UserData
+        return null;
     }
 
     @GetMapping("/{id}/ispassed")
     public Boolean checkIsSubmissionPassed(@PathVariable Long id, HttpServletRequest request) {
-        return this.challengeService.checkIsChallengePassed(id, this.headerService.getUserFromHeader(request));
+        //return this.challengeService.checkIsChallengePassed(id, this.headerService.getUserFromHeader(request));
+        //TODO make by UserData
+        return null;
     }
 
     @GetMapping("/passed")
     public List<Challenge> getPassedChallenges(HttpServletRequest request) {
-        return this.challengeService.getAllPassedChallenges(this.headerService.getUserFromHeader(request));
+        //return this.challengeService.getAllPassedChallenges(this.headerService.getUserFromHeader(request));
+        //TODO make by UserData
+        return null;
     }
 
     @GetMapping("/failed")
     public List<Challenge> getFailedChallenges(HttpServletRequest request) {
-        return this.challengeService.getAllFailedChallenges(this.headerService.getUserFromHeader(request));
+        //return this.challengeService.getAllFailedChallenges(this.headerService.getUserFromHeader(request));
+        //TODO make by UserData
+        return null;
     }
 }

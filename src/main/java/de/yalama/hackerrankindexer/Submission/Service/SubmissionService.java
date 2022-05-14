@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.Submission.Service;
 import de.yalama.hackerrankindexer.Submission.Model.FilterRequest;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.services.BaseService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +16,11 @@ public abstract class SubmissionService implements BaseService<Submission> {
 
     public abstract Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissions);
 
-    public abstract List<Submission> getAllPassed(User user);
-    public abstract Collection<Submission> getLastPassedFromAll(User user);
-    public abstract Collection<Submission> getAllFailed(User user);
+    public abstract List<Submission> getAllPassed(UserData userData);
+    public abstract List<Submission> getLastPassedFromAll(UserData userData);
+    public abstract List<Submission> getAllFailed(UserData userData);
 
-    public abstract Collection<Submission> getByFilterRequest(FilterRequest filterRequest, User user);
+    public abstract Collection<Submission> getByFilterRequest(FilterRequest filterRequest, UserData userData);
 
-    public abstract Collection<Submission> findAllByUser(User user);
+    public abstract Collection<Submission> findAllByUserData(UserData userData);
 }

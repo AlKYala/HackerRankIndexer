@@ -25,8 +25,10 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
     }
 
     public int createAll(UserData userdata) {
-        userdata.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
+        /*userdata.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
         this.userService.update(user.getId(), user);
+        return 1;*/
+        //TODO
         return 1;
     }
 
@@ -36,8 +38,8 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
     }
 
     @Override
-    public UsagePercentage create(User user, PLanguage pLanguage) {
-        UsagePercentage usagePercentage = new UsagePercentage();
+    public UsagePercentage create(UserData userData, PLanguage pLanguage) {
+        /*UsagePercentage usagePercentage = new UsagePercentage();
         long numAllSubmissions = user.getSubmittedEntries().size();
         long numSubmissionsINLanguage = this.userService.findSubmissionsOfUserOfLanguage(user, pLanguage).size();
         double percentage = ((double) numSubmissionsINLanguage) / ((double) numAllSubmissions);
@@ -47,6 +49,8 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
         usagePercentage.setPercentage(percentage);
         UsagePercentage result = this.usagePercentageRepository.save(usagePercentage);
         user.getUsagePercentages().add(usagePercentage);
-        return result;
+        return result;*/
+        //TODO
+        return null;
     }
 }

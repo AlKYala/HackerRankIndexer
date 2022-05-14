@@ -17,6 +17,7 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.UsagePercentage.Service.UsagePercentageService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class HackerrankJSONService {
     private PassPercentageService passPercentageService;
 
     public Integer parse(HackerrankJSON hackerrankJSON, User user) {
-        Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
+        /*Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
         Map<String, Challenge> foundChallenges = new HashMap<String, Challenge>();
         Map<String, Contest> foundContests = new HashMap<String, Contest>();
         this.createMapData(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
@@ -82,7 +83,9 @@ public class HackerrankJSONService {
 
         this.userService.update(user.getId(), user);
         log.info("Parsing complete, user now has {} submissions", user.getSubmittedEntries().size());
-        return 1;
+        return 1;*/
+        //TODO
+        return null;
     }
 
     private void gatherInfoFromSubmissions(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
@@ -135,28 +138,28 @@ public class HackerrankJSONService {
 
     private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, Map<String, Challenge> challengeMap,
                                                    Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                                   User user) {
+                                                    UserData userData) {
         Submission[] submissions = new Submission[submissionJSONS.length];
         for(int i = 0; i < submissions.length; i++) {
             Submission submission =
-                    this.createSubmissionFromJSON(submissionJSONS[i], challengeMap, pLanguageMap, contestMap, user);
+                    this.createSubmissionFromJSON(submissionJSONS[i], challengeMap, pLanguageMap, contestMap, userData);
             this.submissionService.save(submission);
         }
     }
 
     private Submission createSubmissionFromJSON(SubmissionJSON json, Map<String, Challenge> challengeMap,
                                                 Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                                User user) {
+                                                UserData userData) {
         Submission submission = new Submission();
         submission.setId(0L);
         submission.setCode(json.getCode());
         submission.setScore(json.getScore());
-        submission.setWriter(user);
         submission.setLanguage(pLanguageMap.get(json.getLanguage()));
         submission.setChallenge(challengeMap.get(json.getChallenge()));
         submission.setContest(contestMap.get(json.getContest()));
+        submission.setUserData(userData);
 
-        this.userService.findById(user.getId()).getUsedPLanguages().add(pLanguageMap.get(json.getLanguage()));
+        //TODO ADD TO USERDATA
         return submission;
     }
 }

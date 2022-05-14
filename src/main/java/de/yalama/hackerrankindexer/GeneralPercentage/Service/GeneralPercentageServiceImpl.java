@@ -8,6 +8,7 @@ import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +34,8 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService{
     }
 
     @Override
-    public void calculateUsersGeneralPercentages(User user) {
-        if(user.getGeneralPercentage() != null
+    public void calculatePercentageForUserData(UserData userData) {
+        /*if(user.getGeneralPercentage() != null
                 && user.getGeneralPercentage().isCalculated()
                 && user.getGeneralPercentage().getFavouriteLanguage() != null) {
             return;
@@ -56,19 +57,18 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService{
         user.setGeneralPercentage(generalPercentage);
 
         this.generalPercentageRepository.save(generalPercentage);
-        this.userService.update(user.getId(), user);
+        this.userService.update(user.getId(), user);*/
+        //TODO again
     }
 
     private Double calculateChallengesSolvedPercentage(User user) {
-        double challengesPassed = this.challengeService.getAllPassedChallenges(user).size();
-        double challengesAttempted = this.challengeService.getAllFailedChallenges(user).size() + challengesPassed;
-
-        return challengesPassed / challengesAttempted;
+        //TODO
+        return null;
     }
 
-    private Double calculateSubmissionsSolvedPercentage(User user) {
-        double submissionsPassed = this.submissionService.getAllPassed(user).size();
-        double allSubmissions = user.getSubmittedEntries().size() + submissionsPassed;
+    private Double calculateSubmissionsSolvedPercentage(UserData userData) {
+        double submissionsPassed = 0; //TODO
+        double allSubmissions = userData.getSubmissionList().size() + submissionsPassed;
 
         return submissionsPassed / allSubmissions;
     }

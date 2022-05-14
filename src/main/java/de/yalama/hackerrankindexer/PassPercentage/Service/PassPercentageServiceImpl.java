@@ -6,6 +6,7 @@ import de.yalama.hackerrankindexer.PassPercentage.Repository.PassPercentageRepos
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 @Service
 @Slf4j
-public class PassPercentageServiceImpl extends PassPercentageService{
+public class PassPercentageServiceImpl extends PassPercentageService {
 
     private PassPercentageRepository passPercentageRepository;
 
@@ -32,15 +33,18 @@ public class PassPercentageServiceImpl extends PassPercentageService{
     }
 
     @Override
-    public int createAll(User user) {
-        user.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
-        this.userService.update(user.getId(), user);
+    public int createAll(UserData userData) {
+
+        //TODO
+        /*user.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
+        this.userService.update(user.getId(), user);*/
         return 1;
     }
 
     @Override
-    public PassPercentage create(User user, PLanguage pLanguage) {
-        PassPercentage passPercentage = this.findByUserAndLanguage(user, pLanguage);
+    public PassPercentage create(UserData userData, PLanguage pLanguage) {
+        //TODO
+        /*PassPercentage passPercentage = this.findByUserAndLanguage(user, pLanguage);
         if(passPercentage != null) {
             return passPercentage;
         }
@@ -54,7 +58,8 @@ public class PassPercentageServiceImpl extends PassPercentageService{
         passPercentage.setPassed(passed);
         PassPercentage result = this.passPercentageRepository.save(passPercentage);
         user.getPassPercentages().add(result);
-        return passPercentage;
+        return passPercentage;*/
+        return null;
     }
 
     @Override
@@ -78,7 +83,9 @@ public class PassPercentageServiceImpl extends PassPercentageService{
     }
 
     private boolean checkPassPercentageIsOfUserAndLanguage(User user, PLanguage pLanguage, PassPercentage percentage) {
-        return percentage.getUser().getId() == user.getId()
-                && percentage.getPLanguage().getId() == pLanguage.getId();
+        /*return percentage.getUser().getId() == user.getId()
+                && percentage.getPLanguage().getId() == pLanguage.getId();*/
+        //TODO needed?
+        return false;
     }
 }

@@ -12,6 +12,7 @@ import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
@@ -101,53 +102,39 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     private void removeSubmissionFromUser(Submission toDelete) {
-        User user = this.userRepository.getById(toDelete.getId());
-        user.getSubmittedEntries().removeIf(submission -> submission.getId() == toDelete.getId());
+        //TODO - do I need this?
     }
 
     @Override
     public Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
-        return this.findAll()
-                .stream()
-                .filter(submission -> submissionIDs.contains(submission.getId()))
-                .collect(Collectors.toList());
+        //TODO use repo
+        return null;
     }
 
     @Override
-    public List<Submission> getAllPassed(User user) {
-        return this.findAllByUser(user)
-                .stream()
-                .filter(submission -> submission.getScore() >= 1)
-                .collect(Collectors.toList());
+    public List<Submission> getAllPassed(UserData userData) {
+        //TODO use repo
+        return null;
     }
 
     @Override
-    public Collection<Submission> getLastPassedFromAll(User user) {
+    public List<Submission> getLastPassedFromAll(UserData userData) {
         //ChallengeID : Submission
-        Map<Long, Submission> submissionsByChallengeId = new HashMap<Long, Submission>();
-        this.getAllPassed(user)
-                .forEach(submission -> submissionsByChallengeId.put(submission.getChallenge().getId(), submission));
-        return submissionsByChallengeId.values().stream().collect(Collectors.toList());
+        //Map
+        //TODO
+        return null;
     }
 
     @Override
-    public Collection<Submission> getAllFailed(User user) {
-        return this.findAllByUser(user)
-                .stream()
-                .filter(submission ->  submission.getScore() < 1)
-                .collect(Collectors.toList());
+    public List<Submission> getAllFailed(UserData userData) {
+        //TODO
+        return null;
     }
 
     @Override
-    public Collection<Submission> getByFilterRequest(FilterRequest filterRequest, User user) {
-        Collection<Submission> submissions = null;
-        switch (filterRequest.getMode()) {
-            case 1:     submissions = this.getAllPassed(user);          break;
-            case 2:     submissions = this.getAllFailed(user);          break;
-            case 3:     submissions = this.getLastPassedFromAll(user);  break;
-            default:    submissions = this.findAllByUser(user);
-        }
-        return this.filterByLanguage(filterRequest, submissions);
+    public Collection<Submission> getByFilterRequest(FilterRequest filterRequest, UserData userData) {
+        //TODO do I need this?
+        return null;
     }
 
     private Collection<Submission> filterByLanguage(FilterRequest filterRequest, Collection<Submission> submissions) {
@@ -162,7 +149,8 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public Collection<Submission> findAllByUser(User user) {
-        return user.getSubmittedEntries();
+    public Collection<Submission> findAllByUserData(UserData userData) {
+        //TODO
+        return null;
     }
 }

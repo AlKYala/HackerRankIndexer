@@ -31,17 +31,14 @@ public class SubmissionController implements BaseController<Submission, Long> {
 
     @GetMapping
     public Collection<Submission> findAllByUser(HttpServletRequest request) {
-        return this.submissionService.findAllByUser(this.headerService.getUserFromHeader(request));
+        //TODO make findByUserData
+        return null;
     }
 
     @GetMapping("/{id}")
     public Submission findByIdByUser(@PathVariable Long id, HttpServletRequest request) throws HackerrankIndexerException {
-        User user = this.headerService.getUserFromHeader(request);
-        Submission found =  this.submissionService.findById(id);
-        if(found.getWriter().getId() != user.getId()) {
-            throw new NotFoundException("User ID does not Match submission ID");
-        }
-        return found;
+        //TODO or delete
+        return null;
     }
 
     @Override
@@ -74,7 +71,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
 
     @PostMapping("/filter")
     public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, @RequestBody FilterRequest filterRequest) {
-        User user = this.headerService.getUserFromHeader(httpServletRequest);
-        return this.submissionService.getByFilterRequest(filterRequest, user);
+        //TODO needed?
+        return null;
     }
 }

@@ -30,7 +30,7 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     private String generateInfo(Submission submission) {
         return String.format("/**\nPowered by HackerrankIndexer by Ali Yalama 2021-2022\nhttps://github.com/AlKYala/HackerRankIndexer\nFile created: %s\nChallenge name: %s\nAuthor: %s\n*/\n",
-                getCurrentDateAsString(), submission.getChallenge().getChallengeName(), submission.getWriter().getEmail());
+                getCurrentDateAsString(), submission.getChallenge().getChallengeName(), submission.getUserData().getUser().getEmail());
     }
 
     private String getCurrentDateAsString() {
@@ -41,7 +41,8 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     @Override
     public List<DownloadFile> downloadAllSubmissionsFromUser(User user) {
-        return this.downloadSubmissionCollection(user.getSubmittedEntries());
+        //TODO
+        return null;
     }
 
     @Override

@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Repository.ChallengeRepository;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
 import de.yalama.hackerrankindexer.shared.services.Validator;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -57,35 +57,26 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public Set<Submission> getSubmissionsByChallengeId(Long challengeId, User user) {
-        return user.getSubmittedEntries()
-                .stream()
-                .filter(submission -> submission.getChallenge().getId().longValue() == challengeId)
-                .collect(Collectors.toSet());
+    public Set<Submission> getSubmissionsByChallengeId(Long challengeId, UserData userdata) {
+        //TODO
+        return null;
     }
 
     @Override
-    public Boolean checkIsChallengePassed(Long challengeId, User user) {
-        return this.getSubmissionsByChallengeId(challengeId, user)
-                .stream()
-                .filter(submission -> submission.getScore() >= 1)
-                .findAny()
-                .isPresent();
+    public Boolean checkIsChallengePassed(Long challengeId, UserData userData) {
+        //TODO
+        return null;
     }
 
     @Override
-    public List<Challenge> getAllPassedChallenges(User user) {
-        return this.findAll()
-                .stream()
-                .filter(challenge -> this.checkIsChallengePassed(challenge.getId(), user))
-                .collect(Collectors.toList());
+    public List<Challenge> getAllPassedChallenges(UserData userData) {
+        //TODO
+        return null;
     }
 
     @Override
-    public List<Challenge> getAllFailedChallenges(User user) {
-        return this.findAll()
-                .stream()
-                .filter(challenge -> !this.checkIsChallengePassed(challenge.getId(), user))
-                .collect(Collectors.toList());
+    public List<Challenge> getAllFailedChallenges(UserData userData) {
+        //TODO
+        return null;
     }
 }

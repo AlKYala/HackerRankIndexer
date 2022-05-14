@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.PassPercentage.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,7 @@ public class PassPercentage extends BaseEntity {
 
     @OneToOne
     @JsonIgnore
-    private User user;
+    private UserData userData;
 
     private long total;
 
@@ -31,11 +32,11 @@ public class PassPercentage extends BaseEntity {
     private boolean created;
 
     public String toString() {
-        return String.format("Language: %s, User: %s,  Total: %d, Passed: %d", pLanguage.toString(), user.getEmail(), total, passed);
+        return String.format("Language: %s, User: %s,  Total: %d, Passed: %d", pLanguage.toString(), userData.getUser().getEmail(), total, passed);
     }
 
     public boolean equals(PassPercentage other) {
         return other.getPLanguage().getId() == this.getPLanguage().getId()
-                && other.getUser().getId() == this.getUser().getId();
+                && other.getUserData().getId() == this.getUserData().getId();
     }
 }

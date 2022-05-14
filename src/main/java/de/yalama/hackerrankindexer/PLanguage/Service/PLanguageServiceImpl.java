@@ -66,12 +66,4 @@ public class PLanguageServiceImpl extends PLanguageService {
         this.findById(id).getSubmissions().forEach(submission -> submission.setLanguage(null));
         return this.serviceHandler.deleteById(id);
     }
-
-    @Override
-    public Set<Submission> findSubmissionsOfLanguageByUser(Set<Long> ids, User user) {
-        return user.getSubmittedEntries()
-                .stream()
-                .filter(submission -> ids.contains(submission.getLanguage().getId()))
-                .collect(Collectors.toSet());
-    }
 }

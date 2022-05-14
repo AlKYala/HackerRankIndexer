@@ -55,55 +55,36 @@ public class AnalyticsServiceImpl extends AnalyticsService {
 
     @Override
     public boolean checkSubmissionsExist(User user) {
-        return !user.getSubmittedEntries().isEmpty();
+        //TODO
+        return false;
     }
 
     @Override
     public GeneralPercentage getGeneralPercentages(User user) {
-        if(user.getGeneralPercentage() == null || !user.getGeneralPercentage().isCalculated()) {
-            this.generalPercentageService.calculateUsersGeneralPercentages(user);
-        }
-
-        return user.getGeneralPercentage();
+        //TODO
+        return null;
     }
 
     @Override
     public Set<UsageData> getUsagePercentages(User user) {
-        return this.getUsageDataOfUser(user);
+        //TODO
+        return null;
     }
 
     private Set<UsageData> getUsageDataOfUser(User user) {
-        Set<UsagePercentage> usagePercentages   = user.getUsagePercentages();
-        Set<UsageData> usageData                = new HashSet<UsageData>();
-
-        Map<Long, PassPercentage> passPercentageMap = this.getPassPercentagesMapOfUser(user);
-
-        for(UsagePercentage usagePercentage : usagePercentages) {
-
-            Long passed = passPercentageMap.get(usagePercentage.getPLanguage().getId()).getPassed(); //always returns 0 because passPercentage is never initiated
-
-            UsageData converted = new UsageData(usagePercentage.getPLanguage(), usagePercentage.getTotal(), passed);
-            usageData.add(converted);
-        }
-
-        return usageData;
+        //TODO
+        return null;
     }
 
     private Map<Long, PassPercentage> getPassPercentagesMapOfUser(User user) {
-
-        this.passPercentageService.createAll(user);
-        Map<Long, PassPercentage> passPercentages = new HashMap<Long, PassPercentage>();
-
-        for(PassPercentage percentage: user.getPassPercentages()) {
-            passPercentages.put(percentage.getPLanguage().getId(), percentage);
-        }
-
-        return passPercentages;
+        //TODO
+        return null;
     }
 
     @Override
     public Set<PassPercentage> getPassPercentages(User user) {
-        return user.getPassPercentages();
+        //TODO
+        return null;
     }
 
 
@@ -121,6 +102,7 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     public UserData getUserData(String userDataToken) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException {
-        return this.userService.getUserData(userDataToken);
+        //TODO - needed?
+        return null;
     }
 }

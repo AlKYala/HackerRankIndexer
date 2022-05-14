@@ -5,6 +5,7 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.UsagePercentage.Repository.UsagePercentageRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,8 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
         this.usagePercentageRepository = usagePercentageRepository;
     }
 
-    public int createAll(User user) {
-        user.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
+    public int createAll(UserData userdata) {
+        userdata.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
         this.userService.update(user.getId(), user);
         return 1;
     }

@@ -1,7 +1,7 @@
-package de.yalama.hackerrankindexer.Permalink.controller;
+package de.yalama.hackerrankindexer.UserData.Controller;
 
-import de.yalama.hackerrankindexer.Permalink.Model.UserData;
-import de.yalama.hackerrankindexer.Permalink.service.UserDataService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.service.UserDataService;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
@@ -62,7 +62,6 @@ public class UserDataController {
 
     /**
      * Endpoint to access User data - used for permalinks
-     * @param token
      * @return
      */
     @GetMapping
@@ -73,5 +72,4 @@ public class UserDataController {
         String userDataToken = user.getUserDataToken();
         return this.userService.getUserData(userDataToken);
     }
-
 }

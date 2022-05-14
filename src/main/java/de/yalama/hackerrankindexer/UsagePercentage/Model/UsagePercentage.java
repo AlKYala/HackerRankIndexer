@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.UsagePercentage.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,7 @@ public class UsagePercentage extends BaseEntity {
 
     @OneToOne
     @JsonIgnore
-    private User user;
+    private UserData userData;
 
     private Double percentage;
 

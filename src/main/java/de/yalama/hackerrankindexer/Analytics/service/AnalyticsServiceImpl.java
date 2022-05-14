@@ -1,17 +1,11 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
-import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
-import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
-import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
-import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.PassPercentage.Service.PassPercentageService;
-import de.yalama.hackerrankindexer.Permalink.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
-import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
@@ -23,8 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -33,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j

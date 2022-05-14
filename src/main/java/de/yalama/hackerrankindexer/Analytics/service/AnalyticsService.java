@@ -2,7 +2,7 @@ package de.yalama.hackerrankindexer.Analytics.service;
 
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
-import de.yalama.hackerrankindexer.Permalink.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.UsageData;
 

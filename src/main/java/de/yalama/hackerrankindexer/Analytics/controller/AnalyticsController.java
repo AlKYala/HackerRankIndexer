@@ -1,15 +1,11 @@
 package de.yalama.hackerrankindexer.Analytics.controller;
 
 
-import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
-import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
 import de.yalama.hackerrankindexer.Analytics.service.AnalyticsService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
-import de.yalama.hackerrankindexer.Permalink.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
-import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.UsageData;
 import lombok.RequiredArgsConstructor;

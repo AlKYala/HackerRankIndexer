@@ -5,7 +5,7 @@ import com.sun.istack.NotNull;
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class Submission extends BaseEntity {
     @NotNull
     @JoinColumn
     @JsonIgnore
-    private User writer;
+    private UserData userData;
 
     @ManyToOne
     @EqualsAndHashCode.Exclude

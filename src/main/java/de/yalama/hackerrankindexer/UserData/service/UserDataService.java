@@ -1,6 +1,5 @@
-package de.yalama.hackerrankindexer.Permalink.service;
+package de.yalama.hackerrankindexer.UserData.service;
 
-import de.yalama.hackerrankindexer.Permalink.Model.UserData;
 import de.yalama.hackerrankindexer.User.Model.User;
 
 import javax.crypto.BadPaddingException;

@@ -54,8 +54,6 @@ public class UserDataController {
     public UserData resolveUserFromPermalink(@PathVariable String token) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException {
-        System.out.println("firing");
-        System.out.println(token);
         UserData userData = this.userService.getUserData(token);
         return userData;
     }

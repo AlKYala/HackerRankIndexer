@@ -72,7 +72,6 @@ public class UserController implements BaseController<User, Long> {
 
     @PostMapping("/resetPassword")
     public String triggerPasswordReset(@RequestBody String email) {
-        System.out.println(email);
         return this.userService.triggerPasswordReset(email);
     }
 
@@ -89,7 +88,6 @@ public class UserController implements BaseController<User, Long> {
 
     @PostMapping("/verify")
     public ResponseString verifyUser(@RequestBody String token) {
-        System.out.println(token);
         return this.userService.verifyUser(token);
     }
 }

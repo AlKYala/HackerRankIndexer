@@ -98,8 +98,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
             passPercentages.put(percentage.getPLanguage().getId(), percentage);
         }
 
-        //System.out.println(passPercentages);
-
         return passPercentages;
     }
 

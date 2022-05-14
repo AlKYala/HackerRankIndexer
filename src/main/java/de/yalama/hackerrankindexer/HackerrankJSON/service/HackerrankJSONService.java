@@ -62,8 +62,6 @@ public class HackerrankJSONService {
     private PassPercentageService passPercentageService;
 
     public Integer parse(HackerrankJSON hackerrankJSON, User user) {
-        //debug
-        System.out.println("start");
         Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
         Map<String, Challenge> foundChallenges = new HashMap<String, Challenge>();
         Map<String, Contest> foundContests = new HashMap<String, Contest>();

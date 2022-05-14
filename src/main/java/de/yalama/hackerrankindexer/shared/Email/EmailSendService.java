@@ -44,8 +44,6 @@ public class EmailSendService {
 
         message.setText(sb.toString());
 
-        System.out.println(sb);
-
         this.mailSender.send(message);
     }
 

@@ -4,7 +4,7 @@ import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
-import de.yalama.hackerrankindexer.UserData.service.UserDataService;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;

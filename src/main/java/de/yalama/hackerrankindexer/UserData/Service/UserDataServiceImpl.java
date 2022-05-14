@@ -1,9 +1,12 @@
-package de.yalama.hackerrankindexer.UserData.service;
+package de.yalama.hackerrankindexer.UserData.Service;
 
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Repository.UserDataRepository;
 import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
+import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +18,21 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 @Service
 public class UserDataServiceImpl extends UserDataService {
 
     BCryptPasswordEncoder   bCryptPasswordEncoder;
     EncodeDecodeService     encodeDecodeService;
+    UserDataRepository      userDataRepository;
 
-    public UserDataServiceImpl(EncodeDecodeService encodeDecodeService, UserRepository userRepository) {
+    public UserDataServiceImpl(EncodeDecodeService encodeDecodeService,
+                               UserRepository userRepository,
+                               UserDataRepository userDataRepository) {
         this.bCryptPasswordEncoder  = new BCryptPasswordEncoder();
         this.encodeDecodeService    = encodeDecodeService;
+        this.userDataRepository     = userDataRepository;
     }
 
     @Override
@@ -48,5 +56,45 @@ public class UserDataServiceImpl extends UserDataService {
         }
 
         return String.format("%s/%s/%s", env, controller, arg);
+    }
+
+    @Override
+    public List<UserData> findByUser(User user) {
+        return this.userDataRepository.getByUser(user.getId());
+    }
+
+    @Override
+    public UserData findById(Long id) throws HackerrankIndexerException {
+        return this.userDataRepository.findById(id).get();
+    }
+
+    @Override
+    public List<UserData> findAll() throws HackerrankIndexerException {
+        return this.userDataRepository.findAll();
+    }
+
+    @Override
+    public UserData save(UserData instance) throws HackerrankIndexerException {
+        return this.userDataRepository.save(instance);
+    }
+
+    @Override
+    public UserData update(Long id, UserData instance) throws HackerrankIndexerException {
+        UserData toUpdate = this.findById(id);
+
+        toUpdate.setGeneralPercentage(instance.getGeneralPercentage());
+        toUpdate.setPassPercentages(instance.getPassPercentages());
+        toUpdate.setUsagePercentages(instance.getUsagePercentages());
+
+        toUpdate.setUsedPLanguages(instance.getUsedPLanguages());
+        toUpdate.setSubmissionList(instance.getSubmissionList());
+
+        return toUpdate;
+    }
+
+    @Override
+    public Long deleteById(Long id) throws HackerrankIndexerException {
+        this.userDataRepository.deleteById(id);
+        return id;
     }
 }

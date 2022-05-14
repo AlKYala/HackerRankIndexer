@@ -1,7 +1,7 @@
 package de.yalama.hackerrankindexer.UserData.Controller;
 
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
-import de.yalama.hackerrankindexer.UserData.service.UserDataService;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;

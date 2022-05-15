@@ -9,4 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class PLanguageService implements BaseService<PLanguage> {
+
+    public abstract List<PLanguage> getUsedPLanguagesByUserId(Long userDataId);
 }

@@ -66,4 +66,9 @@ public class PLanguageServiceImpl extends PLanguageService {
         this.findById(id).getSubmissions().forEach(submission -> submission.setLanguage(null));
         return this.serviceHandler.deleteById(id);
     }
+
+    @Override
+    public List<PLanguage> getUsedPLanguagesByUserId(Long userDataId) {
+        return this.pLangaugeRepository.getLanguageByUserDataId(userDataId);
+    }
 }

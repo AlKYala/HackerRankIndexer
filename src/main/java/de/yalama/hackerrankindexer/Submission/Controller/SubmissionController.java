@@ -74,4 +74,10 @@ public class SubmissionController implements BaseController<Submission, Long> {
         //TODO needed?
         return null;
     }
+
+    @GetMapping("/pLanguage")
+    public Set<Submission> getSubmissionsByLanguages(@RequestBody Long[] ids, HttpServletRequest request) {
+        //TODO make by UserData and languages
+        return null;
+    }
 }

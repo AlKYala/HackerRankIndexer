@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.DocumentGenerator.Service;
 import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,15 +16,6 @@ public abstract class DocumentGeneratorService {
      * @return A byte Array of the submission instance
      */
     public abstract byte[] submissionCodeToBytes(Submission submission);
-
-    /**
-     * A method that returns a list of DonwloadFile instances from all submissions of a user
-     * This method really just calls DocumentGeneratorService::downloadSubmissionCollection
-     * after getting all submissions from user
-     * @param user The user in question - taken from header in the controller
-     * @return list of DonwloadFile instances from all submissions of a user
-     */
-    public abstract List<DownloadFile> downloadAllSubmissionsFromUser(User user);
 
     /**
      * A method that takes a collection of sumbmissions and generates a list of

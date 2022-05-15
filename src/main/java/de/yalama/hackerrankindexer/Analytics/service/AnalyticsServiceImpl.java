@@ -48,17 +48,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.generalPercentageService = generalPercentageService;
     }
 
-    private Set<UsageData> getUsageDataOfUser(User user) {
-        //TODO
-        return null;
-    }
-
-    private Map<Long, PassPercentage> getPassPercentagesMapOfUser(User user) {
-        //TODO
-        return null;
-    }
-
-
     @Override
     public boolean checkSubmissionsExist(User user) {
         return user.getUserData() != null && user.getUserData().size() > 0;

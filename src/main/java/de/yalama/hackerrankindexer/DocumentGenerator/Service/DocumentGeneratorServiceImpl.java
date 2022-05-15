@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.Util.Base64Util;
 import org.springframework.stereotype.Service;
 
@@ -37,12 +38,6 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime creationDate = LocalDateTime.now();
         return formatter.format(creationDate);
-    }
-
-    @Override
-    public List<DownloadFile> downloadAllSubmissionsFromUser(User user) {
-        //TODO
-        return null;
     }
 
     @Override

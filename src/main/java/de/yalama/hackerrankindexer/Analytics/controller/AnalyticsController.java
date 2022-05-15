@@ -38,7 +38,8 @@ public class AnalyticsController {
 
     @GetMapping("/exists")
     public boolean checkSubmissionsExist(HttpServletRequest request) {
-        return this.analyticsService.checkSubmissionsExist(this.headerService.getUserFromHeader(request));
+        User user = this.headerService.getUserFromHeader(request);
+        return this.analyticsService.checkSubmissionsExist(user);
     }
 
     @GetMapping("/numberUsers")
@@ -49,9 +50,5 @@ public class AnalyticsController {
     @GetMapping("/numberSubmissions")
     public Long getNumberOfSubmissions() {
         return this.analyticsService.getNumberOfSubmissions();
-    }
-
-    private User resolveUser(HttpServletRequest request) {
-        return this.headerService.getUserFromHeader(request);
     }
 }

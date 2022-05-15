@@ -36,17 +36,28 @@ public class AnalyticsController {
     @Autowired
     private HeaderService headerService;
 
+    /**
+     * An endpoint to Check if a user has existing user data
+     * @return If User from request header has exisiting user data
+     */
     @GetMapping("/exists")
     public boolean checkSubmissionsExist(HttpServletRequest request) {
         User user = this.headerService.getUserFromHeader(request);
         return this.analyticsService.checkSubmissionsExist(user);
     }
 
+    /**
+     * Returns the total number of registered users
+     * @return the total number of registered users
+     */
     @GetMapping("/numberUsers")
     public Long getNumberOfUsers() {
         return this.analyticsService.getNumberOfUsers();
     }
 
+    /**
+     * @return The total number of saved submissions
+     */
     @GetMapping("/numberSubmissions")
     public Long getNumberOfSubmissions() {
         return this.analyticsService.getNumberOfSubmissions();

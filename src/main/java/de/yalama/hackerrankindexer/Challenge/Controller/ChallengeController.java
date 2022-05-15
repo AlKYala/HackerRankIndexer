@@ -56,7 +56,7 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     }
 
     @GetMapping("/{id}/submissions")
-    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpServletRequest request) {
+    public List<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpServletRequest request) {
         //return this.challengeService.getSubmissionsByChallengeId(id, this.headerService.getUserFromHeader(request));
         //TODO make by UserData
         return null;

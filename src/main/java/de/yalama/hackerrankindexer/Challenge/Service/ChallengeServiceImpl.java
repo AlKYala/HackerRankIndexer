@@ -57,8 +57,7 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public Set<Submission> getSubmissionsByChallengeId(Long challengeId, UserData userdata) {
-        //TODO
+    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, UserData userData) {
         return null;
     }
 

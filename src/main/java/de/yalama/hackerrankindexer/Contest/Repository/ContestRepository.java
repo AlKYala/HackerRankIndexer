@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContestRepository extends JpaRepository<Contest, Long> {
+
+    public Contest findContestByName(String name);
 }

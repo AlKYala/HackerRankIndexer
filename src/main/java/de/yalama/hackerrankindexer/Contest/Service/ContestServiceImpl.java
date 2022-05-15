@@ -62,14 +62,6 @@ public class ContestServiceImpl extends ContestService {
 
     @Override
     public Contest findByName(String contestName) {
-        for(Contest contest: this.findAll()) {
-            return contest;
-        }
-        return null;
-    }
-
-    @Override
-    public boolean checkExistsByName(String contestName) {
-        return this.findByName(contestName) != null;
+        return this.contestRepository.findContestByName(contestName);
     }
 }

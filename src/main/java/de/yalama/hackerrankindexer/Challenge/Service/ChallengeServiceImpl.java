@@ -57,12 +57,12 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public List<Challenge> getAllPassedChallenges(UserData userData) {
-        return this.challengeRepository.getPassedChallengesByUserDataId(userData.getId());
+    public List<Challenge> getAllPassedChallenges(Long userDataId) {
+        return this.challengeRepository.getPassedChallengesByUserDataId(userDataId);
     }
 
     @Override
-    public List<Challenge> getAllFailedChallenges(UserData userData) {
-        return this.challengeRepository.getFailedChallengesByUserDataId(userData.getId());
+    public List<Challenge> getAllFailedChallenges(Long userDataId) {
+        return this.challengeRepository.getFailedChallengesByUserDataId(userDataId);
     }
 }

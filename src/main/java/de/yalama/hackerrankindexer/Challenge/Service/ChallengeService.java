@@ -17,12 +17,12 @@ public abstract class ChallengeService implements BaseService<Challenge> {
      * @param userData The userData instance
      * @return A List of Challenges that are passed
      */
-    public abstract List<Challenge> getAllPassedChallenges(UserData userData);
+    public abstract List<Challenge> getAllPassedChallenges(Long userDataId);
 
     /**
      * Returns all challenges that have no passed submission in the userData
      * @param userData The user Data instance where the Data is saved
      * @return A List of challenges that have no passed submission
      */
-    public abstract List<Challenge> getAllFailedChallenges(UserData userData);
+    public abstract List<Challenge> getAllFailedChallenges(Long userDataId);
 }

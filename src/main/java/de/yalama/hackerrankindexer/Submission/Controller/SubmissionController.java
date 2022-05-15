@@ -80,4 +80,11 @@ public class SubmissionController implements BaseController<Submission, Long> {
         //TODO make by UserData and languages
         return null;
     }
+
+    @GetMapping("/{id}/submissions")
+    public List<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpServletRequest request) {
+        //return this.challengeService.getSubmissionsByChallengeId(id, this.headerService.getUserFromHeader(request));
+        //TODO make by UserData
+        return null;
+    }
 }

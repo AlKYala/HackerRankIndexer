@@ -7,13 +7,20 @@ import de.yalama.hackerrankindexer.UserData.Model.UserData;
 
 public abstract class PassPercentageService {
 
-    public abstract PassPercentage findById(long id);
-
+    /**
+     * Creates all PassPercentages for found languages in the UserDataInstance
+     * Calls PassPercentageSerivce::create
+     * @param userData The UserData Instance to create PassPercentage for
+     * @return An integer: 1 if sucess, else 0
+     */
     public abstract int createAll(UserData userData);
 
-    //TODO
+    /**
+     * Creates a pass Percentage instance and links it with PLanguage and UserData
+     * @param userData The userdata instance to link the Passpercentage with
+     * @param pLanguage The PLanguage the Passpercentage is for
+     * @return A created PassPercentage instance
+     */
     public abstract PassPercentage create(UserData userData, PLanguage pLanguage);
 
-    //TODO
-    public abstract PassPercentage findByUserAndLanguage(UserData userData, PLanguage pLanguage);
 }

@@ -28,73 +28,43 @@ public class PassPercentageServiceImpl extends PassPercentageService {
     }
 
     @Override
-    public PassPercentage findById(long id) {
-        return passPercentageRepository.findById(id).get();
-    }
-
-    @Override
     public int createAll(UserData userData) {
-
-        //TODO
-        /*user.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
-        this.userService.update(user.getId(), user);*/
+        userData.getUsedPLanguages().stream().forEach(pLanguage -> this.create(userData, pLanguage));
+        this.userDataService.update(userData.getId(), userData);
         return 1;
     }
 
     @Override
     public PassPercentage create(UserData userData, PLanguage pLanguage) {
-        //TODO
-        /*PassPercentage passPercentage = this.findByUserAndLanguage(user, pLanguage);
-        if(passPercentage != null) {
-            return passPercentage;
-        }
-        passPercentage = new PassPercentage();
-        passPercentage.setUser(user);
-        passPercentage.setPLanguage(pLanguage);
-        Set<Submission> submissions = this.userService.findSubmissionsOfUserOfLanguage(user, pLanguage);
-        long total = submissions.size();
-        long passed = submissions.stream().filter(submission -> submission.getScore() >= 1).count();
-        passPercentage.setTotal(total);
-        passPercentage.setPassed(passed);
-        PassPercentage result = this.passPercentageRepository.save(passPercentage);
-        user.getPassPercentages().add(result);
-        return passPercentage;*/
-        return null;
+        PassPercentage percentage = this.findByUserDataAndPLanguage(userData, pLanguage);
+
+        if(percentage != null)
+            return percentage;
+
+        percentage = new PassPercentage();
+        percentage.setUserData(userData);
+        percentage.setPLanguage(pLanguage);
+
+        long total = findNumberOfSubmissionsOfUserDataAndLanguage(userData, pLanguage);
+        long passed = findNumberOfPassedSubmissionsOfUserDataAndLanguage(userData, pLanguage);
+        percentage.setTotal(total);
+        percentage.setPassed(passed);
+
+        percentage = this.passPercentageRepository.save(percentage);
+        return percentage;
     }
 
-    @Override
-    public PassPercentage findByUserAndLanguage(UserData userData, PLanguage pLanguage) {
-        return null;
+    private PassPercentage findByUserDataAndPLanguage(UserData ud, PLanguage pLanguage) {
+        return this.passPercentageRepository.findByUserAndLanguage(ud.getId(), pLanguage.getId());
     }
 
-    @Override
-    public boolean existsByUserAndPLanguage(UserData userData, PLanguage pLanguage) {
-        return false;
+    private long findNumberOfPassedSubmissionsOfUserDataAndLanguage(UserData ud, PLanguage pLanguage) {
+        return this.passPercentageRepository
+                .findNumberOfPassedSubmissionsOfUserDataAndLanguage(ud.getId(), pLanguage.getId());
     }
 
-    /*@Override
-    public PassPercentage findByUserAndLanguage(User user, PLanguage pLanguage) {
-        PassPercentage found = null;
-        try {
-            found = this.passPercentageRepository.findAll()
-                    .stream()
-                    .filter(passPercentage -> this.checkPassPercentageIsOfUserAndLanguage(user, pLanguage, passPercentage))
-                    .findFirst().get();
-        } catch (Exception e) {
-            //do nothing
-        }
-
-        return found;
-    }
-
-    @Override
-    public boolean existsByUserAndPLanguage(User user, PLanguage pLanguage) {
-        return this.findByUserAndLanguage(user, pLanguage) != null;
-    }*/
-
-    private boolean checkPassPercentageIsOfUserAndLanguage(User user, PLanguage pLanguage, PassPercentage percentage) {
-        /*return percentage.getUser().getId() == user.getId()
-                && percentage.getPLanguage().getId() == pLanguage.getId();*/
-        return false;
+    private long findNumberOfSubmissionsOfUserDataAndLanguage(UserData ud, PLanguage pLanguage) {
+        return this.passPercentageRepository
+                .findNumberOfSubmissionsOfUserDataAndLanguage(ud.getId(), pLanguage.getId());
     }
 }

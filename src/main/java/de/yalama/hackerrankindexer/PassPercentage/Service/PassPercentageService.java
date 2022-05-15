@@ -15,8 +15,5 @@ public abstract class PassPercentageService {
     public abstract PassPercentage create(UserData userData, PLanguage pLanguage);
 
     //TODO
-    public abstract PassPercentage findByUserAndLanguage(User user, PLanguage pLanguage);
-
-    //TODO
-    public abstract boolean existsByUserAndPLanguage(User user, PLanguage pLanguage);
+    public abstract PassPercentage findByUserAndLanguage(UserData userData, PLanguage pLanguage);
 }

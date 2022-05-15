@@ -7,6 +7,7 @@ import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,12 @@ import java.util.Set;
 public class PassPercentageServiceImpl extends PassPercentageService {
 
     private PassPercentageRepository passPercentageRepository;
-
-    private UserService userService;
+    public UserDataService userDataService;
 
     public PassPercentageServiceImpl(PassPercentageRepository passPercentageRepository,
-                                     UserService userService) {
+                                     UserDataService userDataService) {
         this.passPercentageRepository = passPercentageRepository;
-        this.userService = userService;
+        this.userDataService = userDataService;
     }
 
     @Override
@@ -63,6 +63,16 @@ public class PassPercentageServiceImpl extends PassPercentageService {
     }
 
     @Override
+    public PassPercentage findByUserAndLanguage(UserData userData, PLanguage pLanguage) {
+        return null;
+    }
+
+    @Override
+    public boolean existsByUserAndPLanguage(UserData userData, PLanguage pLanguage) {
+        return false;
+    }
+
+    /*@Override
     public PassPercentage findByUserAndLanguage(User user, PLanguage pLanguage) {
         PassPercentage found = null;
         try {
@@ -80,12 +90,11 @@ public class PassPercentageServiceImpl extends PassPercentageService {
     @Override
     public boolean existsByUserAndPLanguage(User user, PLanguage pLanguage) {
         return this.findByUserAndLanguage(user, pLanguage) != null;
-    }
+    }*/
 
     private boolean checkPassPercentageIsOfUserAndLanguage(User user, PLanguage pLanguage, PassPercentage percentage) {
         /*return percentage.getUser().getId() == user.getId()
                 && percentage.getPLanguage().getId() == pLanguage.getId();*/
-        //TODO needed?
         return false;
     }
 }

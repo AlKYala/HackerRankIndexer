@@ -86,46 +86,24 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
 
     @Override
     public Integer getSubmissionsPassedPercentage(UserData userData) {
-        Long numberAllSubmissions       = this.countAllSubmissionsByUserData(userData.getId());
-        Long numberPassedSubmissions    = this.countPassedSubmissionsByUserData(userData.getId());
+        Long numberAllSubmissions       = this.generalPercentageRepository.countAllSubmissionsByUserData(userData.getId());
+        Long numberPassedSubmissions    = this.generalPercentageRepository.countPassedSubmissionsByUserData(userData.getId());
 
-        double percentage =  (double) numberPassedSubmissions / (double) numberAllSubmissions;
-        percentage *= 100;
-        return Integer.valueOf((int) percentage);
-    }
-
-    private Long countAllSubmissionsByUserData(Long userDataId) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<Submission> submissionRoot = cq.from(Submission.class);
-
-        cq.select(cb.count(cq.from(Submission.class))); //PREPARE COUNT FOR Submissions
-        cq.where(
-                cb.equal(submissionRoot.get("userDataId"), userDataId)
-        );
-
-        return em.createQuery(cq).getSingleResult();
-    }
-
-    private Long countPassedSubmissionsByUserData(Long userDataId) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<Submission> submissionRoot = cq.from(Submission.class);
-
-        cq.select(cb.count(cq.from(Submission.class))); //PREPARE COUNT FOR Submissions
-        cq.where(
-                cb.and(
-                        cb.equal(submissionRoot.get("userDataId"), userDataId),
-                        cb.equal(submissionRoot.get("score"), 1)
-                )
-        );
-
-        return em.createQuery(cq).getSingleResult();
+        return getPercentage(numberPassedSubmissions, numberAllSubmissions);
     }
 
     @Override
     public Integer getChallengesPassedPercentage(UserData userData) {
-        return null;
+        Long numberAllChallenges        = this.generalPercentageRepository.countAllChallengesByUserDataId(userData.getId());
+        Long numberPassedChallenges     = this.generalPercentageRepository.countAllPassedChallengesByUserDataId(userData.getId());
+
+        return getPercentage(numberPassedChallenges, numberAllChallenges);
+    }
+
+    private Integer getPercentage(Long a, Long b) {
+        double percentage =  (double) a / (double) b;
+        percentage *= 100;
+        return Integer.valueOf((int) percentage);
     }
 
     @Override

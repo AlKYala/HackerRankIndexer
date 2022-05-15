@@ -45,22 +45,4 @@ public abstract class GeneralPercentageService {
      * @return The percentage of passed challenges - integer for flooring reasons
      */
     public abstract Integer getChallengesPassedPercentage(UserData userData);
-
-    /*
-
-    SELECT p.*
-    from planguage p
-    where p.id in (
-    select x.id
-    from (
-    SELECT p.id, count(s.id)
-    FROM user_data ud
-    inner join submission s on s.user_data_id = ud.id
-    inner join planguage p on p.id = s.language_id
-    where ud.id in (ud_id)
-    group by p.id
-    limit 1) x
-    );
- */
-    public abstract PLanguage getMostUsedLanguage(Long userDataId);
 }

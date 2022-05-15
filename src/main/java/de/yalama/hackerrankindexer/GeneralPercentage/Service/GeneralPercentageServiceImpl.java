@@ -10,6 +10,8 @@ import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Repository.UserDataRepository;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,62 +28,49 @@ import java.util.Set;
 @Slf4j
 public class GeneralPercentageServiceImpl extends GeneralPercentageService {
 
-    private UserService userService;
-    private GeneralPercentageRepository generalPercentageRepository;
-    private ChallengeService challengeService;
-    private SubmissionService submissionService;
-    private PLanguageRepository pLanguageRepository;
-    private EntityManager em;
 
-    public GeneralPercentageServiceImpl(UserService userService,
+    private GeneralPercentageRepository generalPercentageRepository;
+    private UserDataService             userDataService;
+    private EntityManager               em;
+
+    public GeneralPercentageServiceImpl(UserDataService userDataService,
                                         GeneralPercentageRepository generalPercentageRepository,
-                                        SubmissionService submissionService, ChallengeService challengeService,
-                                        EntityManager entityManager, PLanguageRepository pLanguageRepository) {
-        this.userService = userService;
+                                        EntityManager entityManager) {
         this.generalPercentageRepository = generalPercentageRepository;
-        this.submissionService = submissionService;
-        this.challengeService = challengeService;
         this.em = entityManager;
-        this.pLanguageRepository = pLanguageRepository;
+        this.userDataService = userDataService;
     }
 
     @Override
     public void calculatePercentageForUserData(UserData userData) {
-        /*if(user.getGeneralPercentage() != null
-                && user.getGeneralPercentage().isCalculated()
-                && user.getGeneralPercentage().getFavouriteLanguage() != null) {
-            return;
-        }
-        double challengesSolvedPercentage = this.calculateChallengesSolvedPercentage(user) * 100;
-        double submissionsPassedPercentage = this.calculateSubmissionsSolvedPercentage(user) * 100;
-
-        PLanguage favoritePLanguage = this.userService.getFavouriteLanguage(user);
-
-        GeneralPercentage generalPercentage = new GeneralPercentage();
-
-        generalPercentage.setPercentageChallengesSolved(challengesSolvedPercentage);
-        generalPercentage.setPercentageSubmissionsPassed(submissionsPassedPercentage);
-        generalPercentage.setCalculated(true);
-        generalPercentage.setFavouriteLanguage(favoritePLanguage);
-
-        generalPercentage.setUser(user);
-
-        user.setGeneralPercentage(generalPercentage);
-
-        this.generalPercentageRepository.save(generalPercentage);
-        this.userService.update(user.getId(), user);*/
 
         GeneralPercentage found = userData.getGeneralPercentage();
 
         if(found != null && found.isCalculated() && found.getFavouriteLanguage() != null) {
             return;
         }
-        //TODO again
+
+        PLanguage favoritePLanguage = this.findFavouriteLanguageForUserData(userData);
+
+        GeneralPercentage generalPercentage = new GeneralPercentage();
+
+        generalPercentage.setUserdata(userData);
+
+        Integer challengesPassedPercentage = this.getChallengesPassedPercentage(userData);
+        Integer submissionsPassedPercentage = this.getSubmissionsPassedPercentage(userData);
+
+        generalPercentage.setPercentageChallengesSolved(challengesPassedPercentage);
+        generalPercentage.setPercentageSubmissionsPassed(submissionsPassedPercentage);
+        generalPercentage.setCalculated(true);
+        generalPercentage.setFavouriteLanguage(favoritePLanguage);
+
+        this.generalPercentageRepository.save(generalPercentage);
+        this.userDataService.update(userData.getId(), userData);
     }
 
     @Override
     public PLanguage findFavouriteLanguageForUserData(UserData userData) {
-        return null;
+        return this.getMostUsedLanguage(userData.getId());
     }
 
     @Override
@@ -106,9 +95,9 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
         return Integer.valueOf((int) percentage);
     }
 
-    @Override
     public PLanguage getMostUsedLanguage(Long userDataId) {
-        TypedQuery<PLanguage> query = em.createQuery("select p from PLanguage p inner join Submission s on s.language.id = p.id inner join UserData ud on ud.id = s.userData.id group by (p) order by count (p) DESC", PLanguage.class);
+        TypedQuery<PLanguage> query =
+                em.createQuery("select p from PLanguage p inner join Submission s on s.language.id = p.id inner join UserData ud on ud.id = s.userData.id group by (p) order by count (p) DESC", PLanguage.class);
         query.setMaxResults(1);
         return query.getSingleResult();
     }

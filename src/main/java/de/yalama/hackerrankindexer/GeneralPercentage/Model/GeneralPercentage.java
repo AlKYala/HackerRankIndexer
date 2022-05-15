@@ -26,9 +26,9 @@ public class GeneralPercentage extends BaseEntity {
     @JsonIgnore
     private UserData userdata;
 
-    private Double percentageChallengesSolved;
+    private Integer percentageChallengesSolved;
 
-    private Double percentageSubmissionsPassed;
+    private Integer percentageSubmissionsPassed;
 
     private boolean calculated;
 

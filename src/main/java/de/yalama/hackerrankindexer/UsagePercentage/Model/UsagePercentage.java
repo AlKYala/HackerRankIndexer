@@ -25,7 +25,7 @@ public class UsagePercentage extends BaseEntity {
     @JsonIgnore
     private UserData userData;
 
-    private Double percentage;
+    private Integer percentage;
 
     private Long total;
 }

@@ -153,4 +153,9 @@ public class SubmissionServiceImpl extends SubmissionService {
         //TODO
         return null;
     }
+
+    @Override
+    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, UserData userData) {
+        return null;
+    }
 }

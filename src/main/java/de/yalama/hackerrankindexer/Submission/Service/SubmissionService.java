@@ -23,4 +23,12 @@ public abstract class SubmissionService implements BaseService<Submission> {
     public abstract Collection<Submission> getByFilterRequest(FilterRequest filterRequest, UserData userData);
 
     public abstract Collection<Submission> findAllByUserData(UserData userData);
+
+    /**
+     * A method that finds a challenge by userDataId and challenge Id
+     * @param challengeId The challengeId
+     * @param userData The userId
+     * @return A challenge instance (can be null)
+     */
+    public abstract List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, UserData userData);
 }

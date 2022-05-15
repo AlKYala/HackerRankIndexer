@@ -159,6 +159,8 @@ public class HackerrankJSONService {
         submission.setContest(contestMap.get(json.getContest()));
         submission.setUserData(userData);
 
+        //TODO CHECK IF PASSED!
+
         //TODO ADD TO USERDATA
         return submission;
     }

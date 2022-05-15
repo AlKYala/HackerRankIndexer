@@ -57,25 +57,12 @@ public class ChallengeServiceImpl extends ChallengeService {
     }
 
     @Override
-    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, UserData userData) {
-        return null;
-    }
-
-    @Override
-    public Boolean checkIsChallengePassed(Long challengeId, UserData userData) {
-        //TODO
-        return null;
-    }
-
-    @Override
     public List<Challenge> getAllPassedChallenges(UserData userData) {
-        //TODO
-        return null;
+        return this.challengeRepository.getPassedChallengesByUserDataId(userData.getId());
     }
 
     @Override
     public List<Challenge> getAllFailedChallenges(UserData userData) {
-        //TODO
-        return null;
+        return this.challengeRepository.getFailedChallengesByUserDataId(userData.getId());
     }
 }

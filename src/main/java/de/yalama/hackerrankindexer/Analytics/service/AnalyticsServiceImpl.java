@@ -48,29 +48,6 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         this.generalPercentageService = generalPercentageService;
     }
 
-    @Override
-    public void clear(User user) {
-        this.userService.deleteById(user.getId());
-    }
-
-    @Override
-    public boolean checkSubmissionsExist(User user) {
-        //TODO
-        return false;
-    }
-
-    @Override
-    public GeneralPercentage getGeneralPercentages(User user) {
-        //TODO
-        return null;
-    }
-
-    @Override
-    public Set<UsageData> getUsagePercentages(User user) {
-        //TODO
-        return null;
-    }
-
     private Set<UsageData> getUsageDataOfUser(User user) {
         //TODO
         return null;
@@ -81,12 +58,11 @@ public class AnalyticsServiceImpl extends AnalyticsService {
         return null;
     }
 
-    @Override
-    public Set<PassPercentage> getPassPercentages(User user) {
-        //TODO
-        return null;
-    }
 
+    @Override
+    public boolean checkSubmissionsExist(User user) {
+        return user.getUserData() != null && user.getUserData().size() > 0;
+    }
 
     @Override
     public Long getNumberOfUsers() {
@@ -96,13 +72,5 @@ public class AnalyticsServiceImpl extends AnalyticsService {
     @Override
     public Long getNumberOfSubmissions() {
         return this.submissionRepository.count();
-    }
-
-    @Override
-    public UserData getUserData(String userDataToken) throws InvalidAlgorithmParameterException,
-            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
-            BadPaddingException, InvalidKeyException {
-        //TODO - needed?
-        return null;
     }
 }

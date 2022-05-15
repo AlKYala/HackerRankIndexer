@@ -36,26 +36,6 @@ public class AnalyticsController {
     @Autowired
     private HeaderService headerService;
 
-    @PostMapping("/clear")
-    public void clearStatistics(HttpServletRequest request) {
-        this.analyticsService.clear(this.headerService.getUserFromHeader(request));
-    }
-
-    @GetMapping("/general")
-    public GeneralPercentage getGeneralPercentages(HttpServletRequest request) {
-        return this.analyticsService.getGeneralPercentages(this.resolveUser(request));
-    }
-
-    @GetMapping("/usagepercentages")
-    public Set<UsageData> getUsagePercentages(HttpServletRequest request) {
-        return this.analyticsService.getUsagePercentages(this.resolveUser(request));
-    }
-
-    @GetMapping("/passpercentages")
-    public Set<PassPercentage> getPassPercentages(HttpServletRequest request) {
-        return this.analyticsService.getPassPercentages(this.resolveUser(request));
-    }
-
     @GetMapping("/exists")
     public boolean checkSubmissionsExist(HttpServletRequest request) {
         return this.analyticsService.checkSubmissionsExist(this.headerService.getUserFromHeader(request));
@@ -69,13 +49,6 @@ public class AnalyticsController {
     @GetMapping("/numberSubmissions")
     public Long getNumberOfSubmissions() {
         return this.analyticsService.getNumberOfSubmissions();
-    }
-
-    @GetMapping("/userData/{token}")
-    public UserData getUserData(@PathVariable String token) throws InvalidAlgorithmParameterException,
-            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
-            InvalidKeySpecException, BadPaddingException, InvalidKeyException {
-        return this.analyticsService.getUserData(token);
     }
 
     private User resolveUser(HttpServletRequest request) {

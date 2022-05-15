@@ -18,46 +18,13 @@ import java.util.Set;
 public abstract class AnalyticsService {
 
     /**
-     * A method to clear all cached statistics
-     * Fired when Dataset is manipulated
-     */
-    public abstract void clear(User user);
-
-    /**
-     * A method to check if submissions exist
+     * Checks if a user has existing user data.
+     * @param user The user instance to check for
+     * @return If a user has existing user data
      */
     public abstract boolean checkSubmissionsExist(User user);
-
-    /**
-     * A method to get the linked GeneralPercentage instance linked to a user
-     * @param User user
-     * @return
-     */
-    public abstract GeneralPercentage getGeneralPercentages(User user);
-
-    /**
-     * A method to get the usage percentages related to a user
-     * @param user the user
-     * @return usage percentages of a user
-     */
-    public abstract Set<UsageData> getUsagePercentages(User user);
-
-    /**
-     * A method to get the pass percentages of a user
-     * @param user the user
-     * @return the pass percentages of a user
-     */
-    public abstract Set<PassPercentage> getPassPercentages(User user);
 
     public abstract Long getNumberOfUsers();
 
     public abstract Long getNumberOfSubmissions();
-
-    /**
-     * This method returns all user data found
-     * first implemented with permalink Information
-     *
-     * @return
-     */
-    public abstract UserData getUserData(String permalinkToken) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, BadPaddingException, InvalidKeyException;
 }

@@ -78,84 +78,48 @@ public class SubmissionServiceImpl extends SubmissionService {
         this.validator.throwIfNotExistsByID(id, 1);
         Submission toDelete = this.submissionRepository.getById(id);
         this.removeSubmissionFromChallenge(toDelete);
-        this.removeSubmissionFromUser(toDelete);
         this.removeSubmissionFromPLanguage(toDelete);
         this.removeSubmissionFromContest(toDelete);
         return this.serviceHandler.deleteById(id);
     }
 
     private void removeSubmissionFromPLanguage(Submission toDelete) {
-        PLanguage pLanguage = this.pLanguageRepository.getById(toDelete.getLanguage().getId());
-        pLanguage.getSubmissions()
-                .removeIf(submission -> submission.getId() == toDelete.getId());
+        this.deleteById(toDelete.getId());
     }
 
     private void removeSubmissionFromContest(Submission toDelete) {
-        Contest contest = this.contestRepository.getById(toDelete.getContest().getId());
-        contest.getSubmissions().removeIf(submission -> submission.getId() == toDelete.getId());
+        this.deleteById(toDelete.getId());
     }
 
     private void removeSubmissionFromChallenge(Submission toDelete) {
-        Challenge challenge = this.challengeRepository.getById(toDelete.getChallenge().getId());
-        challenge.getSubmissions()
-                .removeIf(submission -> submission.getId() == toDelete.getId());
-    }
-
-    private void removeSubmissionFromUser(Submission toDelete) {
-        //TODO - do I need this?
+        this.deleteById(toDelete.getId());
     }
 
     @Override
     public Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
-        //TODO use repo
-        return null;
+        return this.submissionRepository.getSubmissionsFromIDs(submissionIDs);
     }
 
     @Override
     public List<Submission> getAllPassed(UserData userData) {
-        //TODO use repo
-        return null;
+        return this.submissionRepository.getAllPassed(userData.getId());
     }
 
     @Override
     public List<Submission> getLastPassedFromAll(UserData userData) {
-        //ChallengeID : Submission
-        //Map
-        //TODO
-        return null;
+        Map<Long, Submission> challengeIdToSubmission = new HashMap<Long, Submission>();
+        List<Submission> allPassed = this.getAllPassed(userData);
+        allPassed.forEach((submission -> challengeIdToSubmission.put(submission.getChallenge().getId(), submission)));
+        return new ArrayList<Submission>(challengeIdToSubmission.values());
     }
 
     @Override
     public List<Submission> getAllFailed(UserData userData) {
-        //TODO
-        return null;
-    }
-
-    @Override
-    public Collection<Submission> getByFilterRequest(FilterRequest filterRequest, UserData userData) {
-        //TODO do I need this?
-        return null;
-    }
-
-    private Collection<Submission> filterByLanguage(FilterRequest filterRequest, Collection<Submission> submissions) {
-        if(filterRequest.getLanguageIDs().isEmpty()) {
-            return submissions;
-        }
-
-        return submissions
-                .stream()
-                .filter(submission -> filterRequest.getLanguageIDs().contains(submission.getLanguage().getId()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<Submission> findAllByUserData(UserData userData) {
-        //TODO
-        return null;
+        return this.submissionRepository.getAllFailed(userData.getId());
     }
 
     @Override
     public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, UserData userData) {
-        return null;
+        return this.submissionRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userData.getId());
     }
 }

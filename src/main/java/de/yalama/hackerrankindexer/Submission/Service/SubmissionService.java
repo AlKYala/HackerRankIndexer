@@ -14,15 +14,33 @@ import java.util.stream.Collectors;
 
 public abstract class SubmissionService implements BaseService<Submission> {
 
-    public abstract Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissions);
+    /**
+     * Returns a collection of submissions by matching Ids
+     * @param submissionIDs The collection of submissions
+     * @return a collection of submissions by matching Ids
+     */
+    public abstract Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs);
 
+    /**
+     * Gets all passed submissions found in userData
+     * @param userData The user Data instance (parent element of submission)
+     * @return All passed submissions of user data
+     */
     public abstract List<Submission> getAllPassed(UserData userData);
+
+    /**
+     * For every passed challenge, this function returns the submission that has the highest id and is passed
+     * @param userData The user Data instance (parent element of submission)
+     * @return All passed submissions of user data
+     */
     public abstract List<Submission> getLastPassedFromAll(UserData userData);
+
+    /**
+     * Gets all failed submissions found in userData
+     * @param userData The user Data instance (parent element of submission)
+     * @return All failed submissions of user data
+     */
     public abstract List<Submission> getAllFailed(UserData userData);
-
-    public abstract Collection<Submission> getByFilterRequest(FilterRequest filterRequest, UserData userData);
-
-    public abstract Collection<Submission> findAllByUserData(UserData userData);
 
     /**
      * A method that finds a challenge by userDataId and challenge Id

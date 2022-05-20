@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PassPercentageRepository extends JpaRepository<PassPercentage, Long> {
 
-    @Query("select p from PassPercentage p where p.userData.id in (:userdataId) and p.pLanguage.id in (:pLanguageId)")
+    @Query("select p from PassPercentage p where p.userData.id in (:userDataId) and p.pLanguage.id in (:pLanguageId)")
     public PassPercentage findByUserAndLanguage(Long userDataId, Long pLanguageId);
 
     @Query("select count(s.id) from Submission s where s.score = 1 and s.userData.id in (:userDataId) and s.language.id in (:pLanguageId)")

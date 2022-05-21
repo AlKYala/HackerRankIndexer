@@ -25,9 +25,14 @@ public class UsagePercentage extends BaseEntity {
     @JsonIgnore
     private UserData userData;
 
-    private Integer percentage;
+    private Double percentage;
 
     private Long total;
+
+    public void setPercentage(Integer total, Integer freq) {
+        Double percentage = (double) freq / (double) total;
+        this.setPercentage(percentage);
+    }
 }
 
 /**

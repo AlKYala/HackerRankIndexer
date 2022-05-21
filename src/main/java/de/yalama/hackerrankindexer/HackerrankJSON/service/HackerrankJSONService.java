@@ -20,6 +20,7 @@ import de.yalama.hackerrankindexer.UsagePercentage.Service.UsagePercentageServic
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.shared.services.ColorPickerUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -68,19 +67,28 @@ public class HackerrankJSONService {
     @Autowired
     private PLanguageInfoService pLanguageInfoService;
 
-    //TODO: Return UserData?
+    @Autowired
+    private UserDataService userDataService;
+
+
     public Integer parse(HackerrankJSON hackerrankJSON, User user) {
 
-        if
+        if(user.getUserData().size() > 2) {
+            return 0;
+        }
 
-        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), user);
+        UserData userData = new UserData();
+        userData.setUser(user);
+        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), userData);
+
         this.userService.update(user.getId(), user);
+        this.userDataService.save(userData);
         return 1;
     }
 
     /**
      * TODO
-     * @param language
+     * @param pLanguageName
      * @return
      */
     private PLanguage getPlanguageFromDB(String pLanguageName) {
@@ -136,15 +144,13 @@ public class HackerrankJSONService {
         return this.contestService.save(contest);
     }
 
+    /**
+     * TODO
+     * step 1
+     * @param submissionJSONS
+     * @param userData
+     */
     private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, UserData userData) {
-
-        UsagePercentage usagePercentageForUser  = new UsagePercentage();
-        PassPercentage passPercentage           = new PassPercentage();
-        GeneralPercentage generalPercentage     = new GeneralPercentage();
-
-        //CollectionsToHelp
-        Map<String, Integer> languageNamesMappedToTimesUsed = new HashMap<String, Integer>();
-        double[] passedVsAll = new double[2];
 
         //MAPS for faster access - so is not always called from DB
         Map<String, Challenge> seenChallenges   = new HashMap<String, Challenge>();
@@ -153,29 +159,34 @@ public class HackerrankJSONService {
 
         for(SubmissionJSON submissionJSON : submissionJSONS) {
 
+            //Challenge
             String tempChallengeName    = submissionJSON.getChallenge();
-            String tempPlanguageName     = submissionJSON.getLanguage();
-            String tempContestName      = submissionJSON.getContest();
 
             boolean isChallengeMapped   = seenChallenges.containsKey(tempChallengeName);
-            boolean isPlanguageMapped   = seenPlanguages.containsKey(tempPlanguageName);
-            boolean isContestMapped     = seenContests.containsKey(tempContestName);
 
             Challenge tempChallenge = (isChallengeMapped)
                     ? seenChallenges.get(tempChallengeName)
                     : this.getChallengeFromDB(tempChallengeName);
 
+            //PLanguage
+            String tempPlanguageName     = submissionJSON.getLanguage();
+
+            boolean isPlanguageMapped   = seenPlanguages.containsKey(tempPlanguageName);
 
             PLanguage tempPLanguage = (isPlanguageMapped)
                     ? seenPlanguages.get(tempPlanguageName)
                     : this.getPlanguageFromDB(tempPlanguageName);
 
+            //Contest
+            String tempContestName      = submissionJSON.getContest();
+
+            boolean isContestMapped     = seenContests.containsKey(tempContestName);
 
             Contest tempContest     = (isContestMapped)
                     ? seenContests.get(tempContestName)
                     : this.getContestFromDB(submissionJSON.getContest());
 
-            //for challenge, language, Plangage - if not exists - add to map
+            //Submission
 
             Submission submission =
                     this.createSubmissionFromJSON(submissionJSON, tempChallenge, tempPLanguage, tempContest, userData);
@@ -186,9 +197,7 @@ public class HackerrankJSONService {
             this.submissionService.save(submission);
         }
 
-        //setUsagePercentage
-        //setGeneralPercentage
-        //setPassPercentage
+        this.createStatisticsData(userData, seenPlanguages.values());
     }
 
     private Submission createSubmissionFromJSON(SubmissionJSON json, Challenge challenge,
@@ -204,5 +213,16 @@ public class HackerrankJSONService {
 
         submission.setUserData(userData);
         return submission;
+    }
+
+    private void createStatisticsData(UserData userData,
+                                      Collection<PLanguage> languagesUsed) {
+        for(PLanguage pLanguage : languagesUsed) {
+            UsagePercentage usagePercentage = this.usagePercentageService.create(userData, pLanguage);
+            PassPercentage passPercentage = this.passPercentageService.create(userData, pLanguage);
+            userData.getUsagePercentages().add(usagePercentage);
+            userData.getPassPercentages().add(passPercentage);
+        }
+        this.generalPercentageService.calculatePercentageForUserData(userData);
     }
 }

@@ -71,4 +71,11 @@ public class PLanguageServiceImpl extends PLanguageService {
     public List<PLanguage> getUsedPLanguagesByUserId(Long userDataId) {
         return this.pLangaugeRepository.getLanguageByUserDataId(userDataId);
     }
+
+    @Override
+    public PLanguage findByName(String pLanguageName) {
+        return this.pLangaugeRepository.findByName(pLanguageName);
+    }
+
+
 }

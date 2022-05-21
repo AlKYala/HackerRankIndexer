@@ -65,4 +65,9 @@ public class ChallengeServiceImpl extends ChallengeService {
     public List<Challenge> getAllFailedChallenges(Long userDataId) {
         return this.challengeRepository.getFailedChallengesByUserDataId(userDataId);
     }
+
+    @Override
+    public Challenge findByChallengeName(String challengeName) {
+        return this.challengeRepository.findByName(challengeName);
+    }
 }

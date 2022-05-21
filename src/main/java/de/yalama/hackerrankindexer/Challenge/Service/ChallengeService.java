@@ -25,4 +25,11 @@ public abstract class ChallengeService implements BaseService<Challenge> {
      * @return A List of challenges that have no passed submission
      */
     public abstract List<Challenge> getAllFailedChallenges(Long userDataId);
+
+    /**
+     * TODO
+     * @param challengeName
+     * @return
+     */
+    public abstract Challenge findByChallengeName(String challengeName);
 }

@@ -4,8 +4,9 @@ import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.shared.services.BaseService;
 
-public abstract class PassPercentageService {
+public abstract class PassPercentageService implements BaseService<PassPercentage> {
 
     /**
      * Creates all PassPercentages for found languages in the UserDataInstance

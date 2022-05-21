@@ -5,8 +5,9 @@ import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentag
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.shared.services.BaseService;
 
-public abstract class GeneralPercentageService {
+public abstract class GeneralPercentageService implements BaseService<GeneralPercentage> {
 
     /**
      * Calculates the general Percentage for a user Data instance, based on

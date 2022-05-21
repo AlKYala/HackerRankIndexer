@@ -9,12 +9,11 @@ import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ import java.util.Set;
 public class UserData extends BaseEntity {
 
     @OneToMany
-    private List<Submission> submissionList;
+    private List<Submission> submissionList = new ArrayList<Submission>();
 
     @ManyToOne
     @EqualsAndHashCode.Exclude
@@ -45,14 +44,14 @@ public class UserData extends BaseEntity {
     //unidirectional n:m
     @ManyToMany
     @JsonIgnore
-    private Set<PLanguage> usedPLanguages;
+    private Set<PLanguage> usedPLanguages = new HashSet<PLanguage>();
 
     @OneToOne
     private GeneralPercentage generalPercentage;
 
     @OneToMany
-    private Set<UsagePercentage> usagePercentages;
+    private Set<UsagePercentage> usagePercentages = new HashSet<UsagePercentage>();
 
     @OneToMany
-    private Set<PassPercentage> passPercentages;
+    private Set<PassPercentage> passPercentages = new HashSet<PassPercentage>();
 }

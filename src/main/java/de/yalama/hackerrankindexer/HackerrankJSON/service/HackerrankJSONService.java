@@ -79,10 +79,11 @@ public class HackerrankJSONService {
 
         UserData userData = new UserData();
         userData.setUser(user);
+        userData = this.userDataService.save(userData);
         this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), userData);
 
         this.userService.update(user.getId(), user);
-        this.userDataService.save(userData);
+        this.userDataService.update(userData.getId(), userData);
         return 1;
     }
 
@@ -157,6 +158,8 @@ public class HackerrankJSONService {
         Map<String, PLanguage> seenPlanguages   = new HashMap<String, PLanguage>();
         Map<String, Contest> seenContests       = new HashMap<String, Contest>();
 
+        List<Submission> submissions = new ArrayList<Submission>();
+
         for(SubmissionJSON submissionJSON : submissionJSONS) {
 
             //Challenge
@@ -192,11 +195,10 @@ public class HackerrankJSONService {
                     this.createSubmissionFromJSON(submissionJSON, tempChallenge, tempPLanguage, tempContest, userData);
 
             userData.getUsedPLanguages().add(tempPLanguage);
-            userData.getSubmissionList().add(submission);
-
-            this.submissionService.save(submission);
+            submission = this.submissionService.save(submission);
+            submissions.add(submission);
         }
-
+        //userData.getSubmissionList().addAll(submissions); needed?
         this.createStatisticsData(userData, seenPlanguages.values());
     }
 
@@ -217,12 +219,19 @@ public class HackerrankJSONService {
 
     private void createStatisticsData(UserData userData,
                                       Collection<PLanguage> languagesUsed) {
+
+        List<PassPercentage> passPercentages    = new ArrayList<PassPercentage>();
+        List<UsagePercentage> usagePercentages  = new ArrayList<UsagePercentage>();
+
         for(PLanguage pLanguage : languagesUsed) {
             UsagePercentage usagePercentage = this.usagePercentageService.create(userData, pLanguage);
             PassPercentage passPercentage = this.passPercentageService.create(userData, pLanguage);
-            userData.getUsagePercentages().add(usagePercentage);
-            userData.getPassPercentages().add(passPercentage);
+            passPercentages.add(passPercentage);
+            usagePercentages.add(usagePercentage);
         }
+        userData.getPassPercentages().addAll(passPercentages);
+        userData.getUsagePercentages().addAll(usagePercentages);
         this.generalPercentageService.calculatePercentageForUserData(userData);
+        this.userDataService.update(userData.getId(), userData);
     }
 }

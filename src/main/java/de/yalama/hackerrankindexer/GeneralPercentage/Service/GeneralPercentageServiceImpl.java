@@ -12,6 +12,7 @@ import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Repository.UserDataRepository;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
+import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -98,7 +100,34 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
     public PLanguage getMostUsedLanguage(Long userDataId) {
         TypedQuery<PLanguage> query =
                 em.createQuery("select p from PLanguage p inner join Submission s on s.language.id = p.id inner join UserData ud on ud.id = s.userData.id group by (p) order by count (p) DESC", PLanguage.class);
-        query.setMaxResults(1);
-        return query.getSingleResult();
+        return query.getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public GeneralPercentage findById(Long id) throws HackerrankIndexerException {
+        return this.generalPercentageRepository.findById(id).get();
+    }
+
+    @Override
+    public List<GeneralPercentage> findAll() throws HackerrankIndexerException {
+        return this.generalPercentageRepository.findAll();
+    }
+
+    @Override
+    public GeneralPercentage save(GeneralPercentage instance) throws HackerrankIndexerException {
+        return this.generalPercentageRepository.save(instance);
+    }
+
+    @Override
+    public GeneralPercentage update(Long id, GeneralPercentage instance) throws HackerrankIndexerException {
+        //TODO
+        return this.generalPercentageRepository.save(instance);
+    }
+
+    @Override
+    public Long deleteById(Long id) throws HackerrankIndexerException {
+        //TODO
+        this.generalPercentageRepository.deleteById(id);
+        return id;
     }
 }

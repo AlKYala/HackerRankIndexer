@@ -8,10 +8,12 @@ import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
+import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -66,5 +68,33 @@ public class PassPercentageServiceImpl extends PassPercentageService {
     private long findNumberOfSubmissionsOfUserDataAndLanguage(UserData ud, PLanguage pLanguage) {
         return this.passPercentageRepository
                 .findNumberOfSubmissionsOfUserDataAndLanguage(ud.getId(), pLanguage.getId());
+    }
+
+    @Override
+    public PassPercentage findById(Long id) throws HackerrankIndexerException {
+        return this.passPercentageRepository.findById(id).get();
+    }
+
+    @Override
+    public List<PassPercentage> findAll() throws HackerrankIndexerException {
+        return this.passPercentageRepository.findAll();
+    }
+
+    @Override
+    public PassPercentage save(PassPercentage instance) throws HackerrankIndexerException {
+        return this.passPercentageRepository.save(instance);
+    }
+
+    @Override
+    public PassPercentage update(Long id, PassPercentage instance) throws HackerrankIndexerException {
+        //TODO check
+        return this.passPercentageRepository.save(instance);
+    }
+
+    @Override
+    public Long deleteById(Long id) throws HackerrankIndexerException {
+        //TODO
+        this.passPercentageRepository.deleteById(id);
+        return id;
     }
 }

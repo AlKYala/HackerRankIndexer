@@ -31,27 +31,25 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserData extends BaseEntity {
 
-    @OneToMany
+    @OneToMany(mappedBy = "userData") //have to add how column where parent (this) is referenced to prevent creation of relation table
     private List<Submission> submissionList = new ArrayList<Submission>();
 
     @ManyToOne
     @EqualsAndHashCode.Exclude
     @NotNull
-    @JoinColumn
     @JsonIgnore
     private User user;
 
     //unidirectional n:m
     @ManyToMany
-    @JsonIgnore
     private Set<PLanguage> usedPLanguages = new HashSet<PLanguage>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "userData") //children have column that shows at parent - value is the name of column for parent
     private GeneralPercentage generalPercentage;
 
-    @OneToMany
+    @OneToMany(mappedBy = "userData")
     private Set<UsagePercentage> usagePercentages = new HashSet<UsagePercentage>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "userData")
     private Set<PassPercentage> passPercentages = new HashSet<PassPercentage>();
 }

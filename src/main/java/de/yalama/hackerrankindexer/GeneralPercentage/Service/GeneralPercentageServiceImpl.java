@@ -56,7 +56,7 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
 
         GeneralPercentage generalPercentage = new GeneralPercentage();
 
-        generalPercentage.setUserdata(userData);
+        generalPercentage.setUserData(userData);
 
         Integer challengesPassedPercentage = this.getChallengesPassedPercentage(userData);
         Integer submissionsPassedPercentage = this.getSubmissionsPassedPercentage(userData);

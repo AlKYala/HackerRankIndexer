@@ -24,7 +24,7 @@ public class GeneralPercentage extends BaseEntity {
     @NotNull
     @JoinColumn
     @JsonIgnore
-    private UserData userdata;
+    private UserData userData;
 
     private Integer percentageChallengesSolved;
 

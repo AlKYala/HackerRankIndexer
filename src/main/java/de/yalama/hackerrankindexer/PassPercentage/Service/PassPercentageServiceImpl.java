@@ -53,6 +53,7 @@ public class PassPercentageServiceImpl extends PassPercentageService {
         percentage.setPassed(passed);
 
         percentage = this.passPercentageRepository.save(percentage);
+        userData.getPassPercentages().add(percentage);
         return percentage;
     }
 

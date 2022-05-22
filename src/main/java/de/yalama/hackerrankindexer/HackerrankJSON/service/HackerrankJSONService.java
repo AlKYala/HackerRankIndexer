@@ -198,8 +198,7 @@ public class HackerrankJSONService {
             submission = this.submissionService.save(submission);
             submissions.add(submission);
         }
-        //userData.getSubmissionList().addAll(submissions); needed?
-        this.createStatisticsData(userData, seenPlanguages.values());
+        this.createStatisticsData(userData, userData.getUsedPLanguages());
     }
 
     private Submission createSubmissionFromJSON(SubmissionJSON json, Challenge challenge,
@@ -219,19 +218,13 @@ public class HackerrankJSONService {
 
     private void createStatisticsData(UserData userData,
                                       Collection<PLanguage> languagesUsed) {
-
-        List<PassPercentage> passPercentages    = new ArrayList<PassPercentage>();
-        List<UsagePercentage> usagePercentages  = new ArrayList<UsagePercentage>();
-
         for(PLanguage pLanguage : languagesUsed) {
             UsagePercentage usagePercentage = this.usagePercentageService.create(userData, pLanguage);
             PassPercentage passPercentage = this.passPercentageService.create(userData, pLanguage);
-            passPercentages.add(passPercentage);
-            usagePercentages.add(usagePercentage);
+            this.passPercentageService.save(passPercentage);
+            this.usagePercentageService.save(usagePercentage);
         }
-        userData.getPassPercentages().addAll(passPercentages);
-        userData.getUsagePercentages().addAll(usagePercentages);
         this.generalPercentageService.calculatePercentageForUserData(userData);
-        this.userDataService.update(userData.getId(), userData);
+        userData = this.userDataService.update(userData.getId(), userData);
     }
 }

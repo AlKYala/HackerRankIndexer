@@ -73,7 +73,9 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
         usagePercentage.setTotal(numSubmissionsINLanguage);
         usagePercentage.setPercentage((int) numAllSubmissions, (int) numSubmissionsINLanguage);
 
-        return this.usagePercentageRepository.save(usagePercentage);
+        usagePercentage = this.usagePercentageRepository.save(usagePercentage);
+        usagePercentage.getUserData().getUsagePercentages().add(usagePercentage);
+        return usagePercentage;
     }
 
     private Integer getPercentage(Long a, Long b) {

@@ -60,7 +60,6 @@ public class EncodeDecodeService {
 
         SecretKeyFactory    factory         = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         KeySpec             keySpec         = new PBEKeySpec(key.toCharArray(), salt.getBytes(), 65536, keyLength);
-        System.out.printf("Key: %s\n", keySpec.hashCode());
 
         byte[]              factorySecret   = factory.generateSecret(keySpec).getEncoded();
         SecretKey           secretKey       = new SecretKeySpec(factorySecret, "AES");

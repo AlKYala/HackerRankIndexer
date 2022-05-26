@@ -88,9 +88,10 @@ public class HackerrankJSONService {
     }
 
     /**
-     * TODO
-     * @param pLanguageName
-     * @return
+     * Gets a pLanguage-Instnace from DB
+     * If it does not exist, instantiate Instance, give it needed attributes and persist
+     * @param pLanguageName the name to search by in pLanguage table
+     * @return The found or persisted instance of DB
      */
     private PLanguage getPlanguageFromDB(String pLanguageName) {
         PLanguage pLanguage = this.pLanguageService.findByName(pLanguageName);
@@ -110,9 +111,10 @@ public class HackerrankJSONService {
     }
 
     /**
-     * TODO
-     * @param challengeName
-     * @return
+     * Gets a challenge-Instnace from DB
+     * If it does not exist, instantiate Instance, give it needed attributes and persist
+     * @param challengeName the name to search by in challenge table
+     * @return The found or persisted instance of DB
      */
     private Challenge getChallengeFromDB(String challengeName) {
 
@@ -128,9 +130,10 @@ public class HackerrankJSONService {
     }
 
     /**
-     * TODO
-     * @param contestName
-     * @return
+     * Gets a contest-Instnace from DB
+     * If it does not exist, instantiate Instance, give it needed attributes and persist
+     * @param contestName the name to search by in contest table
+     * @return The found or persisted instance of DB
      */
     private Contest getContestFromDB(String contestName) {
         Contest contest = this.contestService.findByName(contestName);
@@ -146,10 +149,13 @@ public class HackerrankJSONService {
     }
 
     /**
-     * TODO
-     * step 1
-     * @param submissionJSONS
-     * @param userData
+     * Creates Submissions and persists them in DB from given SubmissionJSON instances
+     * Assigns or creates challenges, pLanguages and contests not found in DB
+     * After creating submissions, creates percentage data
+     *
+     * All Data assigned to userdata
+     * @param submissionJSONS The Array of submissionJSON instances
+     * @param userData The User data to link the results
      */
     private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, UserData userData) {
 
@@ -201,6 +207,13 @@ public class HackerrankJSONService {
         this.createStatisticsData(userData, userData.getUsedPLanguages());
     }
 
+    /**
+     * Creates a Submission instance from a submissionJSON
+     * All attributes from the sumbissionJson are used for attributes in the submission insntance
+     * Challenges, PLanguages, Contests and the UserData instance are set for submission
+     * @param json The Submssion JSON instance
+     * @return a submission instance with all attributes filled
+     */
     private Submission createSubmissionFromJSON(SubmissionJSON json, Challenge challenge,
                                                 PLanguage pLanguage, Contest contest,
                                                 UserData userData) {
@@ -216,6 +229,12 @@ public class HackerrankJSONService {
         return submission;
     }
 
+    /**
+     * Creates statistics based on passed UserData and the languages from userData (collected in createSubmissions)
+     * Creates a PassPercentage, UsagePercentage and GeneralPercentage instance for UserData
+     * @param userData      The userData to associate the Percentages to
+     * @param languagesUsed The languages used in the submitted json
+     */
     private void createStatisticsData(UserData userData,
                                       Collection<PLanguage> languagesUsed) {
         for(PLanguage pLanguage : languagesUsed) {

@@ -13,8 +13,6 @@ public class UsageData {
     private Long        totalSubmissions;
     private Long        passedSubmissions;
 
-    //TODO: Replace percentage with passed submissions and close PassPercentageEndpoint
-
     public UsageData() {}
 
     public UsageData(PLanguage pLanguage, Long totalSubmissions, Long passedSubmissions) {

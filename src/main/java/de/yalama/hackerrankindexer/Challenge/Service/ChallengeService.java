@@ -27,9 +27,9 @@ public abstract class ChallengeService implements BaseService<Challenge> {
     public abstract List<Challenge> getAllFailedChallenges(Long userDataId);
 
     /**
-     * TODO
-     * @param challengeName
-     * @return
+     * Gets a challenge instance with matching name from the DB
+     * @param challengeName The name of the challenge to query
+     * @return The found query, else null
      */
     public abstract Challenge findByChallengeName(String challengeName);
 }

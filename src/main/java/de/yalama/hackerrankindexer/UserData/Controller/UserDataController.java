@@ -62,7 +62,7 @@ public class UserDataController implements BaseController<UserData, Long> {
         return null;
     }
 
-    //TODO change to userData
+    //TODO change to userData - restore?
     /**
      * Endpoint to access User data - used for permalinks
      * @return

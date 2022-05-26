@@ -14,6 +14,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -27,9 +28,9 @@ public abstract class UserDataService implements BaseService<UserData> {
 
     /**
      * returns all submission instances linked of language in userData
-     * @param user The user instance of the submission
+     * @param userData The userData instance of the submission
      * @param language The wanted langauge
      * @return All submissions that of user that have specified language
      */
-    public abstract Set<Submission> findSubmissionsOfUserOfLanguage(UserData userData, PLanguage language);
+    public abstract Collection<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage language);
 }

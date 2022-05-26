@@ -1,8 +1,10 @@
 package de.yalama.hackerrankindexer.UserData.Service;
 
+import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
@@ -26,16 +28,19 @@ import java.util.Set;
 @Service
 public class UserDataServiceImpl extends UserDataService {
 
-    BCryptPasswordEncoder   bCryptPasswordEncoder;
-    EncodeDecodeService     encodeDecodeService;
-    UserDataRepository      userDataRepository;
+    private BCryptPasswordEncoder   bCryptPasswordEncoder;
+    private EncodeDecodeService     encodeDecodeService;
+    private UserDataRepository      userDataRepository;
+    private SubmissionRepository    submissionRepository;
 
     public UserDataServiceImpl(EncodeDecodeService encodeDecodeService,
                                UserRepository userRepository,
-                               UserDataRepository userDataRepository) {
+                               UserDataRepository userDataRepository,
+                               SubmissionRepository submissionRepository) {
         this.bCryptPasswordEncoder  = new BCryptPasswordEncoder();
         this.encodeDecodeService    = encodeDecodeService;
         this.userDataRepository     = userDataRepository;
+        this.submissionRepository   = submissionRepository;
     }
 
     @Override
@@ -67,9 +72,8 @@ public class UserDataServiceImpl extends UserDataService {
     }
 
     @Override
-    public Set<Submission> findSubmissionsOfUserOfLanguage(UserData userData, PLanguage language) {
-        //TODO
-        return null;
+    public List<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage pLanguage) {
+        return this.submissionRepository.getSubmissionsByPlanguageIdAndUserDataId(pLanguage.getId(), userData.getId());
     }
 
     @Override

@@ -8,6 +8,8 @@ import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +21,13 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
 
     private UserDataService userDataService;
     private UsagePercentageRepository usagePercentageRepository;
+    private Validator<UsagePercentage, UsagePercentageRepository> validator;
 
     public UsagePercentageServiceImpl(UsagePercentageRepository usagePercentageRepository,
                                       UserDataService userDataService) {
         this.userDataService = userDataService;
         this.usagePercentageRepository = usagePercentageRepository;
+        this.validator = new Validator<>("UsagePercentage", usagePercentageRepository);
     }
 
     public int createAll(UserData userdata) {
@@ -49,7 +53,7 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
 
     @Override
     public UsagePercentage update(Long id, UsagePercentage instance) throws HackerrankIndexerException {
-        //TODO check
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
         return this.usagePercentageRepository.save(instance);
     }
 

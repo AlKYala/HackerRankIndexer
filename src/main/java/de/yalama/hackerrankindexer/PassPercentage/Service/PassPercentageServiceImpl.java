@@ -9,6 +9,8 @@ import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -22,11 +24,13 @@ public class PassPercentageServiceImpl extends PassPercentageService {
 
     private PassPercentageRepository passPercentageRepository;
     public UserDataService userDataService;
+    private Validator<PassPercentage, PassPercentageRepository> validator;
 
     public PassPercentageServiceImpl(PassPercentageRepository passPercentageRepository,
                                      UserDataService userDataService) {
         this.passPercentageRepository = passPercentageRepository;
         this.userDataService = userDataService;
+        this.validator = new Validator<>("PassPercentage", passPercentageRepository);
     }
 
     @Override
@@ -88,13 +92,12 @@ public class PassPercentageServiceImpl extends PassPercentageService {
 
     @Override
     public PassPercentage update(Long id, PassPercentage instance) throws HackerrankIndexerException {
-        //TODO check
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
         return this.passPercentageRepository.save(instance);
     }
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        //TODO
         this.passPercentageRepository.deleteById(id);
         return id;
     }

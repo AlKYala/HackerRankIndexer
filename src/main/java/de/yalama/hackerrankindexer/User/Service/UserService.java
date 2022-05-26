@@ -58,9 +58,8 @@ public abstract class UserService implements BaseService<User> {
     public abstract ResponseString verifyUser(String token);
 
     /**
-     * TODO
-     * @param link the link as string
-     * @return user if exists
+     * Gets all UserData instances by User
+     * @return A Collection of found userData instances
      */
     public abstract List<UserData> getUserData(User user) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,

@@ -180,7 +180,7 @@ public class UserServiceImpl extends UserService {
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
         this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
-        //TODO delete userData
+        this.userDataService.deleteById(id);
         return this.serviceHandler.deleteById(id);
     }
 

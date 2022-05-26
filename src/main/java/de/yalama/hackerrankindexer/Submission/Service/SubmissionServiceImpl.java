@@ -100,8 +100,8 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public List<Submission> findAllByUserDataId(UserData userData) {
-        return this.submissionRepository.findAllByUserDataId(userData.getId());
+    public List<Submission> findAllByUserDataId(Long userDataId) {
+        return this.submissionRepository.findAllByUserDataId(userDataId);
     }
 
     @Override
@@ -118,7 +118,12 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, UserData userData) {
-        return this.submissionRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userData.getId());
+    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId) {
+        return this.submissionRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
+    }
+
+    @Override
+    public Set<Submission> getSubmissionsByLanguagesAndUserDataId(List<Long> pLanguageIds, Long userDataId) {
+        return null;
     }
 }

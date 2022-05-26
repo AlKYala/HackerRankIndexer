@@ -14,6 +14,9 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     @Query("select s from Submission s where s.id in (:submissionIDs)")
     public abstract Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs);
 
+    @Query("select s from Submission s where s.userData.id in (:userDataId)")
+    public abstract List<Submission> findAllByUserDataId(Long userDataId);
+
     @Query("select s from Submission s where s.userData.id in (:userDataId) and s.score = 1")
     public abstract List<Submission> getAllPassed(Long userDataId);
 
@@ -22,4 +25,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
     @Query("select s from Submission s where s.userData.id in (:userDataId) and s.challenge.id in (:challengeId)")
     public abstract List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId);
+
+    @Query("select s from Submission s where s.userData.id in (:userDataId) and s.language in (:langaugeId)")
+    public abstract List<Submission> getSubmissionsByPlanguageIdAndUserDataId(Long pLanguageId, Long userDataId);
 }

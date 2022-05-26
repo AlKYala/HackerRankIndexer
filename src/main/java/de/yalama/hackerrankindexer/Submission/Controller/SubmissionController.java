@@ -26,19 +26,10 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @Autowired
     private SubmissionService submissionService;
 
-    @Autowired
-    private HeaderService headerService;
-
     @GetMapping
-    public Collection<Submission> findAllByUser(HttpServletRequest request) {
-        //TODO make findByUserData
-        return null;
-    }
-
-    @GetMapping("/{id}")
-    public Submission findByIdByUser(@PathVariable Long id, HttpServletRequest request) throws HackerrankIndexerException {
-        //TODO or delete
-        return null;
+    public Collection<Submission> findAllByUserData(HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getParameter("userDataId"));
+        return this.submissionService.findAllByUserDataId(userDataId);
     }
 
     @Override
@@ -69,22 +60,15 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.deleteById(id);
     }
 
-    @PostMapping("/filter")
-    public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, @RequestBody FilterRequest filterRequest) {
-        //TODO needed?
-        return null;
-    }
-
     @GetMapping("/pLanguage")
-    public Set<Submission> getSubmissionsByLanguages(@RequestBody Long[] ids, HttpServletRequest request) {
-        //TODO make by UserData and languages
-        return null;
+    public Set<Submission> getSubmissionsByLanguagesAndUserDataId(@RequestBody List<Long> ids, HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getParameter("userDataId"));
+        return this.submissionService.getSubmissionsByLanguagesAndUserDataId(ids, userDataId);
     }
 
-    @GetMapping("/{id}/submissions")
-    public List<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpServletRequest request) {
-        //return this.challengeService.getSubmissionsByChallengeId(id, this.headerService.getUserFromHeader(request));
-        //TODO make by UserData
-        return null;
+    @GetMapping("/{challengeId}/submissions")
+    public List<Submission> findSubmissionsByChallengeId(@PathVariable Long challengeId, HttpServletRequest request) {
+        Long userDataId = (Long) request.getAttribute("userDataId");
+        return this.submissionService.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
     }
 }

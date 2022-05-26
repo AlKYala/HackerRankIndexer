@@ -1,4 +1,4 @@
-package de.yalama.hackerrankindexer.shared.services;
+package de.yalama.hackerrankindexer.shared.services.validator;
 
 import de.yalama.hackerrankindexer.shared.exceptions.*;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
@@ -62,15 +62,15 @@ public class Validator<E extends BaseEntity, T extends JpaRepository> {
      * @param operation 0 for save, 1 for delete, 2 for findById
      * @throws HackerrankIndexerException NotSavedException, NotDeletedException, NotFoundException
      */
-    public void throwIfNotExistsByID(Long id, int operation) throws HackerrankIndexerException {
+    public void throwIfNotExistsByID(Long id, ValidatorOperations operation) throws HackerrankIndexerException {
         if(!this.repository.existsById(id)) {
             String[] messageWrapper = new String[] {"%s! A %s instance with ID %d cannot be found!"};
             HackerrankIndexerException exception = null;
 
             switch(operation) {
-                case 0: this.wrapMessage(messageWrapper, "Saving failed!", id);
+                case SAVE: this.wrapMessage(messageWrapper, "Saving failed!", id);
                     exception = new NotSavedException(messageWrapper[0]); break;
-                case 1: this.wrapMessage(messageWrapper, "Deletion failed!", id);
+                case DELETE: this.wrapMessage(messageWrapper, "Deletion failed!", id);
                     exception = new NotDeletedException(messageWrapper[0]); break;
                 default: this.wrapMessage(messageWrapper, "Update failed!", id);
                     exception = new NotFoundException(messageWrapper[0]);

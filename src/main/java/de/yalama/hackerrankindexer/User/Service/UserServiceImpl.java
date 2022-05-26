@@ -2,24 +2,21 @@ package de.yalama.hackerrankindexer.User.Service;
 
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
-import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.Email.EmailSendService;
-import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
 import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
 import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
-import de.yalama.hackerrankindexer.shared.services.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +32,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -183,7 +179,7 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        this.validator.throwIfNotExistsByID(id, 1);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
         //TODO delete userData
         return this.serviceHandler.deleteById(id);
     }

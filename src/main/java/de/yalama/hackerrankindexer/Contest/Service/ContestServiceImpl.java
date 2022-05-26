@@ -4,7 +4,8 @@ import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
-import de.yalama.hackerrankindexer.shared.services.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ public class ContestServiceImpl extends ContestService {
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        this.validator.throwIfNotExistsByID(id, 1);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
         this.findById(id).getSubmissions().forEach(submission -> submission.setContest(null));
         return this.serviceHandler.deleteById(id);
     }

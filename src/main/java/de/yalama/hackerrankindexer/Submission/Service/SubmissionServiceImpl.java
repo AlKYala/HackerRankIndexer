@@ -1,27 +1,21 @@
 package de.yalama.hackerrankindexer.Submission.Service;
 
-import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Repository.ChallengeRepository;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
-import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.FilterRequest;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
-import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
-import de.yalama.hackerrankindexer.shared.services.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -75,7 +69,7 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        this.validator.throwIfNotExistsByID(id, 1);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
         Submission toDelete = this.submissionRepository.getById(id);
         this.removeSubmissionFromChallenge(toDelete);
         this.removeSubmissionFromPLanguage(toDelete);
@@ -103,6 +97,11 @@ public class SubmissionServiceImpl extends SubmissionService {
     @Override
     public List<Submission> getAllPassed(UserData userData) {
         return this.submissionRepository.getAllPassed(userData.getId());
+    }
+
+    @Override
+    public List<Submission> findAllByUserDataId(UserData userData) {
+        return this.submissionRepository.findAllByUserDataId(userData.getId());
     }
 
     @Override

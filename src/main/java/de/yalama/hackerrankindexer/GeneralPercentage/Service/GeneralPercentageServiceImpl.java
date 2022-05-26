@@ -1,30 +1,19 @@
 package de.yalama.hackerrankindexer.GeneralPercentage.Service;
 
-import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
-import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
-import de.yalama.hackerrankindexer.User.Model.User;
-import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
-import de.yalama.hackerrankindexer.UserData.Repository.UserDataRepository;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -34,6 +23,7 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
     private GeneralPercentageRepository generalPercentageRepository;
     private UserDataService             userDataService;
     private EntityManager               em;
+    private Validator<GeneralPercentage, GeneralPercentageRepository> validator;
 
     public GeneralPercentageServiceImpl(UserDataService userDataService,
                                         GeneralPercentageRepository generalPercentageRepository,
@@ -41,6 +31,7 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
         this.generalPercentageRepository = generalPercentageRepository;
         this.em = entityManager;
         this.userDataService = userDataService;
+        this.validator = new Validator<>("GeneralPercentage", generalPercentageRepository);
     }
 
     @Override
@@ -120,13 +111,12 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
 
     @Override
     public GeneralPercentage update(Long id, GeneralPercentage instance) throws HackerrankIndexerException {
-        //TODO
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
         return this.generalPercentageRepository.save(instance);
     }
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        //TODO
         this.generalPercentageRepository.deleteById(id);
         return id;
     }

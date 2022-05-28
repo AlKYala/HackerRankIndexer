@@ -52,4 +52,7 @@ public class UserData extends BaseEntity {
 
     @OneToMany(mappedBy = "userData")
     private Set<PassPercentage> passPercentages = new HashSet<PassPercentage>();
+
+    @Column(nullable = true)
+    private String token;
 }

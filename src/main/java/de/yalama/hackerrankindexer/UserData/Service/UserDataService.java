@@ -20,10 +20,11 @@ import java.util.Set;
 
 public abstract class UserDataService implements BaseService<UserData> {
 
-    public abstract String getUserDataLinkForUser(User user) throws NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,
-            InvalidKeySpecException, BadPaddingException, InvalidKeyException, IOException;
-
+    /**
+     * Returns a list of all userData instances submitted by user
+     * @param user the user
+     * @return A list of all userDataInstances
+     */
     public abstract List<UserData> findByUser(User user);
 
     /**
@@ -33,4 +34,11 @@ public abstract class UserDataService implements BaseService<UserData> {
      * @return All submissions that of user that have specified language
      */
     public abstract Collection<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage language);
+
+    /**
+     * Returns a userService Instance by token
+     * @param token The token to identify the userData Instance with
+     * @return UserData instance with matching token or else null
+     */
+    public abstract UserData findUserDataByToken(String token);
 }

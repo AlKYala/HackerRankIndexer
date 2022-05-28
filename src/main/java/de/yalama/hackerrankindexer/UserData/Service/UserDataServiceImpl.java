@@ -28,42 +28,13 @@ import java.util.Set;
 @Service
 public class UserDataServiceImpl extends UserDataService {
 
-    private BCryptPasswordEncoder   bCryptPasswordEncoder;
-    private EncodeDecodeService     encodeDecodeService;
     private UserDataRepository      userDataRepository;
     private SubmissionRepository    submissionRepository;
 
-    public UserDataServiceImpl(EncodeDecodeService encodeDecodeService,
-                               UserRepository userRepository,
-                               UserDataRepository userDataRepository,
+    public UserDataServiceImpl(UserDataRepository userDataRepository,
                                SubmissionRepository submissionRepository) {
-        this.bCryptPasswordEncoder  = new BCryptPasswordEncoder();
-        this.encodeDecodeService    = encodeDecodeService;
         this.userDataRepository     = userDataRepository;
         this.submissionRepository   = submissionRepository;
-    }
-
-    @Override
-    public String getUserDataLinkForUser(User user) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-            NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException, BadPaddingException,
-            InvalidKeyException, IOException {
-
-        String env          = "localhost:8080"; //TODO
-        String controller   = "permalink";
-
-        if(user.getUserDataToken() != null && user.getUserDataToken().length() > 0) {
-            return String.format("%s/%s/%s", env, controller, user.getUserDataToken());
-        }
-
-        String salt         = Integer.toString(user.hashCode());
-        String key          = String.format("%s%s", user.getEmail(), salt);
-        String arg          =  encodeDecodeService.hashValue(key, HashingAlgorithm.SHA256);
-
-        while(arg.contains("/")) {
-            arg = encodeDecodeService.hashValue(key, HashingAlgorithm.SHA256);
-        }
-
-        return String.format("%s/%s/%s", env, controller, arg);
     }
 
     @Override
@@ -74,6 +45,11 @@ public class UserDataServiceImpl extends UserDataService {
     @Override
     public List<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage pLanguage) {
         return this.submissionRepository.getSubmissionsByPlanguageIdAndUserDataId(pLanguage.getId(), userData.getId());
+    }
+
+    @Override
+    public UserData findUserDataByToken(String token) {
+        return this.userDataRepository.getByUserDataToken(token);
     }
 
     @Override

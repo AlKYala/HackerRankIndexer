@@ -17,7 +17,7 @@ public class EmailSendService {
         message.setFrom("hello@hello.com"); //see application.properties
         message.setSubject("Your registration with Hackerrank Indexer");
         message.setTo(user.getEmail());
-        String confirmAdress = String.format("%s/verify/%s", EmailConstants.WEBSITE, user.getToken()); //TODO;
+        String confirmAdress = String.format("%s/verify/%s", EmailConstants.WEBSITE, user.getToken());
 
         String messageBody = String.format("Thanks for signing up at Hackerrank Indexer\nTo complete your registration click on this link:\n%s\nregards,\nHackerrank Indexer Team", confirmAdress);
 

@@ -12,4 +12,7 @@ public interface UserDataRepository extends JpaRepository<UserData, Long> {
 
     @Query(value = "select ud FROM UserData ud where ud.user.id in (:userId)")
     public List<UserData> getByUser(Long userId);
+
+    @Query(value = "select ud FROM UserData ud where ud.token = :token")
+    public UserData getByUserDataToken(String token);
 }

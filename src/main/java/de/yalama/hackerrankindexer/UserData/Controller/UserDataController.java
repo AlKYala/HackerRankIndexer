@@ -30,9 +30,6 @@ public class UserDataController implements BaseController<UserData, Long> {
     private UserDataService userDataService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private HeaderService headerService;
 
     /**
@@ -44,34 +41,22 @@ public class UserDataController implements BaseController<UserData, Long> {
     public String getPermalinkForUserData(HttpServletRequest httpServletRequest) throws InvalidAlgorithmParameterException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
             BadPaddingException, InvalidKeyException, IOException {
-        //TODO change for single unit of data
-        return null;
+        Long userDataId = Long.parseLong(httpServletRequest.getParameter("userDataId"));
+        UserData userData = this.userDataService.findById(userDataId);
+        String tokenId = httpServletRequest.getSession().getId().replace("-", "");
+        userData.setToken(tokenId);
+        String domain = "localhost:8080"; //replace with env variable
+        return String.format("%s/userdata/%s", domain, tokenId);
     }
 
-    //TODO change to userData
     /**
      * Endpoint to access User data - used for permalinks
      * @param token
      * @return
      */
     @GetMapping("/{token}")
-    public UserData resolveUserDataFromPermalink(@PathVariable String token) throws InvalidAlgorithmParameterException,
-            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
-            BadPaddingException, InvalidKeyException {
-        //TODO - change for single unit of data
-        return null;
-    }
-
-    //TODO change to userData - restore?
-    /**
-     * Endpoint to access User data - used for permalinks
-     * @return
-     */
-    @GetMapping
-    public UserData resolveUserDataFromJWT(HttpServletRequest httpServletRequest) throws InvalidAlgorithmParameterException,
-            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
-            BadPaddingException, InvalidKeyException {
-        return null;
+    public UserData resolveUserDataFromPermalink(@PathVariable String token) {
+        return this.userDataService.findUserDataByToken(token);
     }
 
     //CLOSED

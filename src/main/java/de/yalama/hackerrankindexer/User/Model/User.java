@@ -15,8 +15,7 @@ import java.util.List;
 @Setter
 public class User extends BaseEntity {
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToMany(mappedBy = "user")
     private List<UserData> userData;
 
     @Column(unique = true)

@@ -26,6 +26,6 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     @Query("select s from Submission s where s.userData.id in (:userDataId) and s.challenge.id in (:challengeId)")
     public abstract List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId);
 
-    @Query("select s from Submission s where s.userData.id in (:userDataId) and s.language in (:langaugeId)")
+    @Query("select s from Submission s where s.userData.id in (:userDataId) and s.language in (:pLanguageId)")
     public abstract List<Submission> getSubmissionsByPlanguageIdAndUserDataId(Long pLanguageId, Long userDataId);
 }

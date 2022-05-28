@@ -90,10 +90,6 @@ public class UserServiceImpl extends UserService {
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
         this.emailSendService.sendConfirmationEmail(instance);
 
-        String userDataLink  = this.userDataService.getUserDataLinkForUser(instance);
-        String userDataToken = this.resolvePermalinkToken(userDataLink);
-        instance.setUserDataToken(userDataToken);
-
         return this.save(instance);
     }
 

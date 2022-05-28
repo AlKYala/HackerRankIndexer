@@ -32,6 +32,4 @@ public class User extends BaseEntity {
     Verification token for Email Verification
      */
     private String token;
-
-    private String userDataToken;
 }

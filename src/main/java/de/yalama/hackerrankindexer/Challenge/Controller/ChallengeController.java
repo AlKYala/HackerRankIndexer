@@ -66,6 +66,6 @@ public class ChallengeController implements BaseController<Challenge, Long> {
     }
 
     private Long getUserDataId(HttpServletRequest request) {
-        return Long.parseLong((String) request.getAttribute("userDataId"));
+        return Long.parseLong(request.getHeader("userDataId"));
     }
 }

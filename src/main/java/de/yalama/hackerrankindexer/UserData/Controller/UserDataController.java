@@ -1,5 +1,6 @@
 package de.yalama.hackerrankindexer.UserData.Controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
@@ -7,6 +8,7 @@ import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Enumeration;
 import java.util.List;
 
 @RestController
@@ -63,6 +66,12 @@ public class UserDataController implements BaseController<UserData, Long> {
     @Override
     public List<UserData> findAll() {
         return this.userDataService.findAll();
+    }
+
+    @GetMapping
+    public List<UserData> findAllbyUser(HttpServletRequest request) {
+        User user = this.headerService.getUserFromHeader(request);
+        return user.getUserData();
     }
 
     //CLOSED

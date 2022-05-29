@@ -61,7 +61,7 @@ public class PLanguageController implements BaseController<PLanguage, Long> {
 
     @GetMapping("/userData")
     public List<PLanguage> getLangaugesByUserData(HttpServletRequest request) {
-        Long userDataId = Long.parseLong(request.getAttribute("userDataId").toString());
+        Long userDataId = Long.parseLong(request.getHeader("userDataId"));
         return this.pLanguageService.getUsedPLanguagesByUserId(userDataId);
     }
 }

@@ -68,7 +68,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
 
     @GetMapping("/{challengeId}/submissions")
     public List<Submission> findSubmissionsByChallengeId(@PathVariable Long challengeId, HttpServletRequest request) {
-        Long userDataId = (Long) request.getAttribute("userDataId");
+        Long userDataId = Long.parseLong(request.getHeader("userDataId"));
         return this.submissionService.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
     }
 }

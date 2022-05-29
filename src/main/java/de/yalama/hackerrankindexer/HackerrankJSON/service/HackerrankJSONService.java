@@ -205,6 +205,7 @@ public class HackerrankJSONService {
             submissions.add(submission);
         }
         this.createStatisticsData(userData, userData.getUsedPLanguages());
+        userData.setDateCreated(new Date());
     }
 
     /**

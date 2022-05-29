@@ -8,6 +8,7 @@ import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;
 import de.yalama.hackerrankindexer.UserData.Repository.UserDataRepository;
 import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
@@ -22,6 +23,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +52,16 @@ public class UserDataServiceImpl extends UserDataService {
     @Override
     public UserData findUserDataByToken(String token) {
         return this.userDataRepository.getByUserDataToken(token);
+    }
+
+    @Override
+    public List<UserDataFlat> getUserDataFlat(User user) {
+        List<UserDataFlat> userDataFlat = new ArrayList<UserDataFlat>();
+        this.findByUser(user).forEach((userData -> {
+            UserDataFlat temp = new UserDataFlat(userData.getDateCreated(), userData.getToken());
+            userDataFlat.add(temp);
+        }));
+        return userDataFlat;
     }
 
     @Override

@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;
 import de.yalama.hackerrankindexer.shared.services.BaseService;
 
 import javax.crypto.BadPaddingException;
@@ -41,4 +42,10 @@ public abstract class UserDataService implements BaseService<UserData> {
      * @return UserData instance with matching token or else null
      */
     public abstract UserData findUserDataByToken(String token);
+
+    /**
+     * Returns how many user Data the user has + Date uploaded + token
+     * @return
+     */
+    public abstract List<UserDataFlat> getUserDataFlat(User user);
 }

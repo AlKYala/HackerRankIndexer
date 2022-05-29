@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.UserData.Controller;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;
 import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -101,5 +102,11 @@ public class UserDataController implements BaseController<UserData, Long> {
     @Override
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.userDataService.deleteById(id);
+    }
+
+    @GetMapping("/flat")
+    public List<UserDataFlat> getFlatUserData(HttpServletRequest request) {
+        User user = this.headerService.getUserFromHeader(request);
+        return this.userDataService.getUserDataFlat(user);
     }
 }

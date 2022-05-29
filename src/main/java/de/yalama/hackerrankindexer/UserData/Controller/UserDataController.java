@@ -74,6 +74,12 @@ public class UserDataController implements BaseController<UserData, Long> {
         return user.getUserData();
     }
 
+    @GetMapping("/single")
+    public UserData findSpecificUserData(HttpServletRequest request) {
+        int index = Integer.parseInt("userDataIndex");
+        return this.findAllbyUser(request).get(index);
+    }
+
     //CLOSED
     @Override
     public UserData findById(Long aLong) throws HackerrankIndexerException {

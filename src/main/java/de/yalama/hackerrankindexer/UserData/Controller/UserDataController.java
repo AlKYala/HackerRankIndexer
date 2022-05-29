@@ -74,9 +74,8 @@ public class UserDataController implements BaseController<UserData, Long> {
         return user.getUserData();
     }
 
-    @GetMapping("/single")
-    public UserData findSpecificUserData(HttpServletRequest request) {
-        int index = Integer.parseInt("userDataIndex");
+    @GetMapping("/single/{index}")
+    public UserData findSpecificUserData(@PathVariable Integer index, HttpServletRequest request) {
         return this.findAllbyUser(request).get(index);
     }
 

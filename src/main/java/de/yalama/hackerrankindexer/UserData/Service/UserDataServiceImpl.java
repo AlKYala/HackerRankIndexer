@@ -40,31 +40,6 @@ public class UserDataServiceImpl extends UserDataService {
     }
 
     @Override
-    public List<UserData> findByUser(User user) {
-        return this.userDataRepository.getByUser(user.getId());
-    }
-
-    @Override
-    public List<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage pLanguage) {
-        return this.submissionRepository.getSubmissionsByPlanguageIdAndUserDataId(pLanguage.getId(), userData.getId());
-    }
-
-    @Override
-    public UserData findUserDataByToken(String token) {
-        return this.userDataRepository.getByUserDataToken(token);
-    }
-
-    @Override
-    public List<UserDataFlat> getUserDataFlat(User user) {
-        List<UserDataFlat> userDataFlat = new ArrayList<UserDataFlat>();
-        this.findByUser(user).forEach((userData -> {
-            UserDataFlat temp = new UserDataFlat(userData.getDateCreated(), userData.getToken());
-            userDataFlat.add(temp);
-        }));
-        return userDataFlat;
-    }
-
-    @Override
     public UserData findById(Long id) throws HackerrankIndexerException {
         return this.userDataRepository.findById(id).get();
     }
@@ -97,5 +72,40 @@ public class UserDataServiceImpl extends UserDataService {
     public Long deleteById(Long id) throws HackerrankIndexerException {
         this.userDataRepository.deleteById(id);
         return id;
+    }
+
+    @Override
+    public List<UserData> findByUser(User user) {
+        return this.userDataRepository.getByUser(user.getId());
+    }
+
+    @Override
+    public List<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage pLanguage) {
+        return this.submissionRepository.getSubmissionsByPlanguageIdAndUserDataId(pLanguage.getId(), userData.getId());
+    }
+
+    @Override
+    public UserData findUserDataByToken(String token) {
+        return this.userDataRepository.getByUserDataToken(token);
+    }
+
+    @Override
+    public List<UserDataFlat> getUserDataFlat(User user) {
+        List<UserDataFlat> userDataFlat = new ArrayList<UserDataFlat>();
+        this.findByUser(user).forEach((userData -> {
+            UserDataFlat temp = new UserDataFlat(userData.getDateCreated(), userData.getToken());
+            userDataFlat.add(temp);
+        }));
+        return userDataFlat;
+    }
+
+    @Override
+    public UserData generateQRCode(Long userDataId) {
+        UserData userData = this.findById(userDataId);
+        if(userData == null)
+            return null;
+        String token = String.format("%d%d", userData.hashCode(), userData.getDateCreated().hashCode());
+        userData.setToken(token);
+        return this.update(userDataId, userData);
     }
 }

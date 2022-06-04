@@ -48,4 +48,11 @@ public abstract class UserDataService implements BaseService<UserData> {
      * @return
      */
     public abstract List<UserDataFlat> getUserDataFlat(User user);
+
+    /**
+     * Takes the ID of a userData instance and generates a QR-Code for it
+     * @param userDataId
+     * @return
+     */
+    public abstract UserData generateQRCode(Long userDataId);
 }

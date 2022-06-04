@@ -245,6 +245,6 @@ public class HackerrankJSONService {
             this.usagePercentageService.save(usagePercentage);
         }
         this.generalPercentageService.calculatePercentageForUserData(userData);
-        userData = this.userDataService.update(userData.getId(), userData);
+        this.userDataService.update(userData.getId(), userData);
     }
 }

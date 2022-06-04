@@ -109,4 +109,9 @@ public class UserDataController implements BaseController<UserData, Long> {
         User user = this.headerService.getUserFromHeader(request);
         return this.userDataService.getUserDataFlat(user);
     }
+
+    @PostMapping("/qr/generate/{id}")
+    public UserData generateQRCode(@PathVariable Long id) {
+        return this.userDataService.generateQRCode(id);
+    }
 }

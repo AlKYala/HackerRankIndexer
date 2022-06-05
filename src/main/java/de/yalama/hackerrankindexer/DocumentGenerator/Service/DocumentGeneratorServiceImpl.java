@@ -2,9 +2,10 @@ package de.yalama.hackerrankindexer.DocumentGenerator.Service;
 
 import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
-import de.yalama.hackerrankindexer.Submission.Repository.SubmissionFlatRepository;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.SubmissionFlat.Repository.SubmissionFlatRepository;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.SubmissionFlat.Service.SubmissionFlatService;
 import de.yalama.hackerrankindexer.shared.Util.Base64Util;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,12 @@ import java.util.List;
 public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     private SubmissionService submissionService;
-    private SubmissionFlatRepository submissionFlatRepository;
+    private SubmissionFlatService submissionFlatService;
 
     public DocumentGeneratorServiceImpl(SubmissionService submissionService,
-                                        SubmissionFlatRepository submissionFlatRepository) {
+                                        SubmissionFlatService submissionFlatService) {
         this.submissionService = submissionService;
-        this.submissionFlatRepository = submissionFlatRepository;
+        this.submissionFlatService = submissionFlatService;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
     }
 
     private String generateInfo(Submission submission) {
-        SubmissionFlat submissionFlat = this.submissionFlatRepository.findById(submission.getId()).get();
+        SubmissionFlat submissionFlat = this.submissionFlatService.findById(submission.getId());
         return String.format("/**\nPowered by HackerrankIndexer by Ali Yalama 2021-2022\nhttps://github.com/AlKYala/HackerRankIndexer\nFile created: %s\nChallenge name: %s\nAuthor: %s\n*/\n",
                getCurrentDateAsString(), submissionFlat.getChallenge().getChallengeName(), submissionFlat.getUserData().getUser().getEmail());
     }
@@ -53,7 +54,7 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     @Override
     public List<DownloadFile> downloadSubmissionsFromCollection(Collection<Long> submissionIDs) {
-        Collection <SubmissionFlat> submissions = this.submissionService.getSubmissionsFromIDs(submissionIDs);
+        Collection <SubmissionFlat> submissions = this.submissionFlatService.getSubmissionsFromIDs(submissionIDs);
         return this.downloadSubmissionCollection(submissions);
     }
 

@@ -1,4 +1,4 @@
-package de.yalama.hackerrankindexer.Submission.Model;
+package de.yalama.hackerrankindexer.SubmissionFlat.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;

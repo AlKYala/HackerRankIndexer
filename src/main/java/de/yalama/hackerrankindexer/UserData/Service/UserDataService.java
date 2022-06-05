@@ -1,7 +1,7 @@
 package de.yalama.hackerrankindexer.UserData.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;

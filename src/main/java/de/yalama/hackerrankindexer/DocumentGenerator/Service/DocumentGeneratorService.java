@@ -2,9 +2,7 @@ package de.yalama.hackerrankindexer.DocumentGenerator.Service;
 
 import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
-import de.yalama.hackerrankindexer.User.Model.User;
-import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 
 import java.util.Collection;
 import java.util.List;

@@ -90,7 +90,7 @@ public class GeneralPercentageServiceImpl extends GeneralPercentageService {
 
     public PLanguage getMostUsedLanguage(Long userDataId) {
         TypedQuery<PLanguage> query =
-                em.createQuery("select p from PLanguage p inner join Submission s on s.language.id = p.id inner join UserData ud on ud.id = s.userData.id group by (p) order by count (p) DESC", PLanguage.class);
+                em.createQuery("select p from PLanguage p inner join SubmissionFlat s on s.language.id = p.id inner join UserData ud on ud.id = s.userData.id group by (p) order by count (p) DESC", PLanguage.class);
         return query.getResultList().stream().findFirst().orElse(null);
     }
 

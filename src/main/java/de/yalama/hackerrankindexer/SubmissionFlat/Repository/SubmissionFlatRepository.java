@@ -1,6 +1,6 @@
-package de.yalama.hackerrankindexer.Submission.Repository;
+package de.yalama.hackerrankindexer.SubmissionFlat.Repository;
 
-import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

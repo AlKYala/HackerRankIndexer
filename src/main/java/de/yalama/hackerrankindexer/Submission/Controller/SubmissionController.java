@@ -1,14 +1,11 @@
 package de.yalama.hackerrankindexer.Submission.Controller;
 
-import de.yalama.hackerrankindexer.Security.service.HeaderService;
-import de.yalama.hackerrankindexer.Submission.Model.FilterRequest;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
-import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.SubmissionFlat.Service.SubmissionFlatService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
-import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +24,13 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @Autowired
     private SubmissionService submissionService;
 
+    @Autowired
+    private SubmissionFlatService submissionFlatService;
+
     @GetMapping
     public Collection<SubmissionFlat> findAllByUserData(HttpServletRequest request) {
         Long userDataId = Long.parseLong(request.getParameter("userDataId"));
-        return this.submissionService.findAllByUserDataId(userDataId);
+        return this.submissionFlatService.findAllByUserDataId(userDataId);
     }
 
     @Override
@@ -64,12 +64,12 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @GetMapping("/pLanguage")
     public Set<SubmissionFlat> getSubmissionsByLanguagesAndUserDataId(@RequestBody List<Long> ids, HttpServletRequest request) {
         Long userDataId = Long.parseLong(request.getParameter("userDataId"));
-        return this.submissionService.getSubmissionsByLanguagesAndUserDataId(ids, userDataId);
+        return this.submissionFlatService.getSubmissionsByLanguagesAndUserDataId(ids, userDataId);
     }
 
     @GetMapping("/{challengeId}/submissions")
     public List<SubmissionFlat> findSubmissionsByChallengeId(@PathVariable Long challengeId, HttpServletRequest request) {
         Long userDataId = Long.parseLong(request.getHeader("userDataId"));
-        return this.submissionService.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
+        return this.submissionFlatService.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
     }
 }

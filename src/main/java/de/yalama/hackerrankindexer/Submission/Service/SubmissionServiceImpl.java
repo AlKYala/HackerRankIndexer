@@ -5,8 +5,8 @@ import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
-import de.yalama.hackerrankindexer.Submission.Repository.SubmissionFlatRepository;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.SubmissionFlat.Repository.SubmissionFlatRepository;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
@@ -92,43 +92,5 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     private void removeSubmissionFromChallenge(Submission toDelete) {
         this.deleteById(toDelete.getId());
-    }
-
-    @Override
-    public Collection<SubmissionFlat> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
-        return this.submissionFlatRepository.getSubmissionsFromIDs(submissionIDs);
-    }
-
-    @Override
-    public List<SubmissionFlat> getAllPassed(UserData userData) {
-        return this.submissionFlatRepository.getAllPassed(userData.getId());
-    }
-
-    @Override
-    public List<SubmissionFlat> findAllByUserDataId(Long userDataId) {
-        return this.submissionFlatRepository.findAllByUserDataId(userDataId);
-    }
-
-    @Override
-    public List<SubmissionFlat> getLastPassedFromAll(UserData userData) {
-        Map<Long, SubmissionFlat> challengeIdToSubmission = new HashMap<Long, SubmissionFlat>();
-        List<SubmissionFlat> allPassed = this.getAllPassed(userData);
-        allPassed.forEach((submissionFlat -> challengeIdToSubmission.put(submissionFlat.getChallenge().getId(), submissionFlat)));
-        return new ArrayList<SubmissionFlat>(challengeIdToSubmission.values());
-    }
-
-    @Override
-    public List<SubmissionFlat> getAllFailed(UserData userData) {
-        return this.submissionFlatRepository.getAllFailed(userData.getId());
-    }
-
-    @Override
-    public List<SubmissionFlat> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId) {
-        return this.submissionFlatRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
-    }
-
-    @Override
-    public Set<SubmissionFlat> getSubmissionsByLanguagesAndUserDataId(List<Long> pLanguageIds, Long userDataId) {
-        return null;
     }
 }

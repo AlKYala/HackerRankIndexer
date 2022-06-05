@@ -9,6 +9,8 @@ import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;
 import de.yalama.hackerrankindexer.UserData.Repository.UserDataRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,15 +21,15 @@ import java.util.List;
 public class UserDataServiceImpl extends UserDataService {
 
     private UserDataRepository      userDataRepository;
-    private SubmissionRepository    submissionRepository;
     private SubmissionFlatRepository submissionFlatRepository;
+    private Validator<UserData, UserDataRepository> validator;
 
     public UserDataServiceImpl(UserDataRepository userDataRepository,
-                               SubmissionRepository submissionRepository,
                                SubmissionFlatRepository submissionFlatRepository) {
         this.userDataRepository     = userDataRepository;
-        this.submissionRepository   = submissionRepository;
         this.submissionFlatRepository = submissionFlatRepository;
+        this.validator =
+                new Validator<UserData, UserDataRepository>("UserData", userDataRepository);
     }
 
     @Override
@@ -47,16 +49,8 @@ public class UserDataServiceImpl extends UserDataService {
 
     @Override
     public UserData update(Long id, UserData instance) throws HackerrankIndexerException {
-        UserData toUpdate = this.findById(id);
-
-        toUpdate.setGeneralPercentage(instance.getGeneralPercentage());
-        toUpdate.setPassPercentages(instance.getPassPercentages());
-        toUpdate.setUsagePercentages(instance.getUsagePercentages());
-
-        toUpdate.setUsedPLanguages(instance.getUsedPLanguages());
-        toUpdate.setSubmissionList(instance.getSubmissionList());
-
-        return toUpdate;
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
+        return this.userDataRepository.save(instance);
     }
 
     @Override
@@ -98,5 +92,17 @@ public class UserDataServiceImpl extends UserDataService {
         String token = String.format("%d%d", userData.hashCode(), userData.getDateCreated().hashCode());
         userData.setToken(token);
         return this.update(userDataId, userData);
+    }
+
+    @Override
+    public List<UserDataFlat> removeEntryFromUserData(Integer index, User user) {
+        List<UserData> elements = this.findByUser(user);
+
+        if(index >= elements.size())
+            return null;
+
+        Long idToDelete = elements.get(index).getId();
+        this.deleteById(idToDelete);
+        return this.getUserDataFlat(user);
     }
 }

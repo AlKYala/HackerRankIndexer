@@ -46,4 +46,12 @@ public abstract class UserDataService implements BaseService<UserData> {
      * @return
      */
     public abstract UserData generateQRCode(Long userDataId);
+
+    /**
+     * Removes user data by user index
+     * @param index the index to delete for
+     * @param user the user
+     * @return the new user data flat list
+     */
+    public abstract List<UserDataFlat> removeEntryFromUserData(Integer index, User user);
 }

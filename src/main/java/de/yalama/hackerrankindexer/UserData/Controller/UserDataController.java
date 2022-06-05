@@ -114,4 +114,10 @@ public class UserDataController implements BaseController<UserData, Long> {
     public UserData generateQRCode(@PathVariable Long id) {
         return this.userDataService.generateQRCode(id);
     }
+
+    @DeleteMapping("/flat/delete/{index}")
+    public List<UserDataFlat> removeFlatUserDataEntry(@PathVariable Integer index, HttpServletRequest request) {
+        User user = this.headerService.getUserFromHeader(request);
+        return this.userDataService.removeEntryFromUserData(index, user);
+    }
 }

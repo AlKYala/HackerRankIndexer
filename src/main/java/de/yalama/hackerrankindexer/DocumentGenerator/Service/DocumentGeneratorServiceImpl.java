@@ -4,6 +4,7 @@ import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.Util.Base64Util;
 import org.springframework.stereotype.Service;
 
@@ -30,18 +31,13 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     private String generateInfo(Submission submission) {
         return String.format("/**\nPowered by HackerrankIndexer by Ali Yalama 2021-2022\nhttps://github.com/AlKYala/HackerRankIndexer\nFile created: %s\nChallenge name: %s\nAuthor: %s\n*/\n",
-                getCurrentDateAsString(), submission.getChallenge().getChallengeName(), submission.getWriter().getEmail());
+                getCurrentDateAsString(), submission.getChallenge().getChallengeName(), submission.getUserData().getUser().getEmail());
     }
 
     private String getCurrentDateAsString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime creationDate = LocalDateTime.now();
         return formatter.format(creationDate);
-    }
-
-    @Override
-    public List<DownloadFile> downloadAllSubmissionsFromUser(User user) {
-        return this.downloadSubmissionCollection(user.getSubmittedEntries());
     }
 
     @Override

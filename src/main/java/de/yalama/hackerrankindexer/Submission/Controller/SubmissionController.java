@@ -26,22 +26,10 @@ public class SubmissionController implements BaseController<Submission, Long> {
     @Autowired
     private SubmissionService submissionService;
 
-    @Autowired
-    private HeaderService headerService;
-
     @GetMapping
-    public Collection<Submission> findAllByUser(HttpServletRequest request) {
-        return this.submissionService.findAllByUser(this.headerService.getUserFromHeader(request));
-    }
-
-    @GetMapping("/{id}")
-    public Submission findByIdByUser(@PathVariable Long id, HttpServletRequest request) throws HackerrankIndexerException {
-        User user = this.headerService.getUserFromHeader(request);
-        Submission found =  this.submissionService.findById(id);
-        if(found.getWriter().getId() != user.getId()) {
-            throw new NotFoundException("User ID does not Match submission ID");
-        }
-        return found;
+    public Collection<Submission> findAllByUserData(HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getParameter("userDataId"));
+        return this.submissionService.findAllByUserDataId(userDataId);
     }
 
     @Override
@@ -72,9 +60,15 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.deleteById(id);
     }
 
-    @PostMapping("/filter")
-    public Collection<Submission> getFilterRequest(HttpServletRequest httpServletRequest, @RequestBody FilterRequest filterRequest) {
-        User user = this.headerService.getUserFromHeader(httpServletRequest);
-        return this.submissionService.getByFilterRequest(filterRequest, user);
+    @GetMapping("/pLanguage")
+    public Set<Submission> getSubmissionsByLanguagesAndUserDataId(@RequestBody List<Long> ids, HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getParameter("userDataId"));
+        return this.submissionService.getSubmissionsByLanguagesAndUserDataId(ids, userDataId);
+    }
+
+    @GetMapping("/{challengeId}/submissions")
+    public List<Submission> findSubmissionsByChallengeId(@PathVariable Long challengeId, HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getHeader("userDataId"));
+        return this.submissionService.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
     }
 }

@@ -1,26 +1,21 @@
 package de.yalama.hackerrankindexer.Submission.Service;
 
-import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Repository.ChallengeRepository;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
-import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.FilterRequest;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
-import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
-import de.yalama.hackerrankindexer.shared.services.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -74,95 +69,61 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        this.validator.throwIfNotExistsByID(id, 1);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
         Submission toDelete = this.submissionRepository.getById(id);
         this.removeSubmissionFromChallenge(toDelete);
-        this.removeSubmissionFromUser(toDelete);
         this.removeSubmissionFromPLanguage(toDelete);
         this.removeSubmissionFromContest(toDelete);
         return this.serviceHandler.deleteById(id);
     }
 
     private void removeSubmissionFromPLanguage(Submission toDelete) {
-        PLanguage pLanguage = this.pLanguageRepository.getById(toDelete.getLanguage().getId());
-        pLanguage.getSubmissions()
-                .removeIf(submission -> submission.getId() == toDelete.getId());
+        this.deleteById(toDelete.getId());
     }
 
     private void removeSubmissionFromContest(Submission toDelete) {
-        Contest contest = this.contestRepository.getById(toDelete.getContest().getId());
-        contest.getSubmissions().removeIf(submission -> submission.getId() == toDelete.getId());
+        this.deleteById(toDelete.getId());
     }
 
     private void removeSubmissionFromChallenge(Submission toDelete) {
-        Challenge challenge = this.challengeRepository.getById(toDelete.getChallenge().getId());
-        challenge.getSubmissions()
-                .removeIf(submission -> submission.getId() == toDelete.getId());
-    }
-
-    private void removeSubmissionFromUser(Submission toDelete) {
-        User user = this.userRepository.getById(toDelete.getId());
-        user.getSubmittedEntries().removeIf(submission -> submission.getId() == toDelete.getId());
+        this.deleteById(toDelete.getId());
     }
 
     @Override
     public Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
-        return this.findAll()
-                .stream()
-                .filter(submission -> submissionIDs.contains(submission.getId()))
-                .collect(Collectors.toList());
+        return this.submissionRepository.getSubmissionsFromIDs(submissionIDs);
     }
 
     @Override
-    public List<Submission> getAllPassed(User user) {
-        return this.findAllByUser(user)
-                .stream()
-                .filter(submission -> submission.getScore() >= 1)
-                .collect(Collectors.toList());
+    public List<Submission> getAllPassed(UserData userData) {
+        return this.submissionRepository.getAllPassed(userData.getId());
     }
 
     @Override
-    public Collection<Submission> getLastPassedFromAll(User user) {
-        //ChallengeID : Submission
-        Map<Long, Submission> submissionsByChallengeId = new HashMap<Long, Submission>();
-        this.getAllPassed(user)
-                .forEach(submission -> submissionsByChallengeId.put(submission.getChallenge().getId(), submission));
-        return submissionsByChallengeId.values().stream().collect(Collectors.toList());
+    public List<Submission> findAllByUserDataId(Long userDataId) {
+        return this.submissionRepository.findAllByUserDataId(userDataId);
     }
 
     @Override
-    public Collection<Submission> getAllFailed(User user) {
-        return this.findAllByUser(user)
-                .stream()
-                .filter(submission ->  submission.getScore() < 1)
-                .collect(Collectors.toList());
+    public List<Submission> getLastPassedFromAll(UserData userData) {
+        Map<Long, Submission> challengeIdToSubmission = new HashMap<Long, Submission>();
+        List<Submission> allPassed = this.getAllPassed(userData);
+        allPassed.forEach((submission -> challengeIdToSubmission.put(submission.getChallenge().getId(), submission)));
+        return new ArrayList<Submission>(challengeIdToSubmission.values());
     }
 
     @Override
-    public Collection<Submission> getByFilterRequest(FilterRequest filterRequest, User user) {
-        Collection<Submission> submissions = null;
-        switch (filterRequest.getMode()) {
-            case 1:     submissions = this.getAllPassed(user);          break;
-            case 2:     submissions = this.getAllFailed(user);          break;
-            case 3:     submissions = this.getLastPassedFromAll(user);  break;
-            default:    submissions = this.findAllByUser(user);
-        }
-        return this.filterByLanguage(filterRequest, submissions);
-    }
-
-    private Collection<Submission> filterByLanguage(FilterRequest filterRequest, Collection<Submission> submissions) {
-        if(filterRequest.getLanguageIDs().isEmpty()) {
-            return submissions;
-        }
-
-        return submissions
-                .stream()
-                .filter(submission -> filterRequest.getLanguageIDs().contains(submission.getLanguage().getId()))
-                .collect(Collectors.toList());
+    public List<Submission> getAllFailed(UserData userData) {
+        return this.submissionRepository.getAllFailed(userData.getId());
     }
 
     @Override
-    public Collection<Submission> findAllByUser(User user) {
-        return user.getSubmittedEntries();
+    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId) {
+        return this.submissionRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
+    }
+
+    @Override
+    public Set<Submission> getSubmissionsByLanguagesAndUserDataId(List<Long> pLanguageIds, Long userDataId) {
+        return null;
     }
 }

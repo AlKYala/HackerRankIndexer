@@ -26,7 +26,6 @@ public class LoggerServiceImpl extends LoggerService{
         String logMessage = String.format(message, objects);
         LogItem entry = new LogItem(logMessage);
         this.logItemList.add(entry);
-        System.out.println(entry);
     }
 
     @Override

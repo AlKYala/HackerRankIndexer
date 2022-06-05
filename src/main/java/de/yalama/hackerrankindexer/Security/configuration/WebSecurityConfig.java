@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.Security.configuration;
 
 import de.yalama.hackerrankindexer.Security.filter.JwtRequestFilter;
 import de.yalama.hackerrankindexer.Security.service.UserDetailsServiceImpl;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,7 @@ import static de.yalama.hackerrankindexer.Security.SecurityConstants.SIGN_UP_END
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -43,9 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * To ignore security checks on selected endpoints
      */
     public void configure(WebSecurity webSecurity) {
-        webSecurity.ignoring().antMatchers("/user/register", "/users/*/isTaken/*", "/ad", "/marke", "/category",
-                "/ad/filter",  "/ad/featured", "/category/*", "/marke/*", "/picture", "/ad/*", "/register",
-                "/picture/advertisement/*", "/authenticate", "/analytics/*", "/analytics/exists", "/user/verify/**", "/**");
+        webSecurity.ignoring().antMatchers("/authenticate", "/analytics/*", "/analytics/exists", "/user/verify/**", "/**");
     }
 
     /**

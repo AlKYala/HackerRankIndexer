@@ -59,14 +59,9 @@ public class PLanguageController implements BaseController<PLanguage, Long> {
         return this.pLanguageService.deleteById(id);
     }
 
-    @GetMapping("/submissions")
-    public Set<Submission> getSubmissionsByLanguage(@RequestBody Long[] ids, HttpServletRequest request) {
-        return this.pLanguageService
-                .findSubmissionsOfLanguageByUser(Arrays.stream(ids).collect(Collectors.toSet()), this.headerService.getUserFromHeader(request));
-    }
-
-    @GetMapping("/user")
-    public Set<PLanguage> getLangaugesByUser(HttpServletRequest request) {
-        return this.headerService.getUserFromHeader(request).getUsedPLanguages();
+    @GetMapping("/userData")
+    public List<PLanguage> getLangaugesByUserData(HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getHeader("userDataId"));
+        return this.pLanguageService.getUsedPLanguagesByUserId(userDataId);
     }
 }

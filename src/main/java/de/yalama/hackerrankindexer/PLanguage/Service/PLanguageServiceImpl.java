@@ -2,18 +2,14 @@ package de.yalama.hackerrankindexer.PLanguage.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
-import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
-import de.yalama.hackerrankindexer.shared.services.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -62,16 +58,20 @@ public class PLanguageServiceImpl extends PLanguageService {
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        this.validator.throwIfNotExistsByID(id, 1);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
         this.findById(id).getSubmissions().forEach(submission -> submission.setLanguage(null));
         return this.serviceHandler.deleteById(id);
     }
 
     @Override
-    public Set<Submission> findSubmissionsOfLanguageByUser(Set<Long> ids, User user) {
-        return user.getSubmittedEntries()
-                .stream()
-                .filter(submission -> ids.contains(submission.getLanguage().getId()))
-                .collect(Collectors.toSet());
+    public List<PLanguage> getUsedPLanguagesByUserId(Long userDataId) {
+        return this.pLangaugeRepository.getLanguageByUserDataId(userDataId);
     }
+
+    @Override
+    public PLanguage findByName(String pLanguageName) {
+        return this.pLangaugeRepository.findByName(pLanguageName);
+    }
+
+
 }

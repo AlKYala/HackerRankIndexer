@@ -1,75 +1,123 @@
 package de.yalama.hackerrankindexer.GeneralPercentage.Service;
 
-import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
-import de.yalama.hackerrankindexer.User.Model.User;
-import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
+import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 @Service
 @Slf4j
-public class GeneralPercentageServiceImpl extends GeneralPercentageService{
+public class GeneralPercentageServiceImpl extends GeneralPercentageService {
 
-    private UserService userService;
+
     private GeneralPercentageRepository generalPercentageRepository;
-    private ChallengeService challengeService;
-    private SubmissionService submissionService;
+    private UserDataService             userDataService;
+    private EntityManager               em;
+    private Validator<GeneralPercentage, GeneralPercentageRepository> validator;
 
-    public GeneralPercentageServiceImpl(UserService userService,
+    public GeneralPercentageServiceImpl(UserDataService userDataService,
                                         GeneralPercentageRepository generalPercentageRepository,
-                                        SubmissionService submissionService, ChallengeService challengeService) {
-        this.userService = userService;
+                                        EntityManager entityManager) {
         this.generalPercentageRepository = generalPercentageRepository;
-        this.submissionService = submissionService;
-        this.challengeService = challengeService;
+        this.em = entityManager;
+        this.userDataService = userDataService;
+        this.validator = new Validator<>("GeneralPercentage", generalPercentageRepository);
     }
 
     @Override
-    public void calculateUsersGeneralPercentages(User user) {
-        if(user.getGeneralPercentage() != null
-                && user.getGeneralPercentage().isCalculated()
-                && user.getGeneralPercentage().getFavouriteLanguage() != null) {
+    public void calculatePercentageForUserData(UserData userData) {
+
+        GeneralPercentage found = userData.getGeneralPercentage();
+
+        if(found != null && found.isCalculated() && found.getFavouriteLanguage() != null) {
             return;
         }
-        double challengesSolvedPercentage = this.calculateChallengesSolvedPercentage(user) * 100;
-        double submissionsPassedPercentage = this.calculateSubmissionsSolvedPercentage(user) * 100;
 
-        PLanguage favoritePLanguage = this.userService.getFavouriteLanguage(user);
+        PLanguage favoritePLanguage = this.findFavouriteLanguageForUserData(userData);
 
         GeneralPercentage generalPercentage = new GeneralPercentage();
 
-        generalPercentage.setPercentageChallengesSolved(challengesSolvedPercentage);
+        generalPercentage.setUserData(userData);
+
+        Integer challengesPassedPercentage = this.getChallengesPassedPercentage(userData);
+        Integer submissionsPassedPercentage = this.getSubmissionsPassedPercentage(userData);
+
+        generalPercentage.setPercentageChallengesSolved(challengesPassedPercentage);
         generalPercentage.setPercentageSubmissionsPassed(submissionsPassedPercentage);
         generalPercentage.setCalculated(true);
         generalPercentage.setFavouriteLanguage(favoritePLanguage);
 
-        generalPercentage.setUser(user);
-
-        user.setGeneralPercentage(generalPercentage);
-
         this.generalPercentageRepository.save(generalPercentage);
-        this.userService.update(user.getId(), user);
+        this.userDataService.update(userData.getId(), userData);
     }
 
-    private Double calculateChallengesSolvedPercentage(User user) {
-        double challengesPassed = this.challengeService.getAllPassedChallenges(user).size();
-        double challengesAttempted = this.challengeService.getAllFailedChallenges(user).size() + challengesPassed;
-
-        return challengesPassed / challengesAttempted;
+    @Override
+    public PLanguage findFavouriteLanguageForUserData(UserData userData) {
+        return this.getMostUsedLanguage(userData.getId());
     }
 
-    private Double calculateSubmissionsSolvedPercentage(User user) {
-        double submissionsPassed = this.submissionService.getAllPassed(user).size();
-        double allSubmissions = user.getSubmittedEntries().size() + submissionsPassed;
+    @Override
+    public Integer getSubmissionsPassedPercentage(UserData userData) {
+        Long numberAllSubmissions       = this.generalPercentageRepository.countAllSubmissionsByUserData(userData.getId());
+        Long numberPassedSubmissions    = this.generalPercentageRepository.countPassedSubmissionsByUserData(userData.getId());
 
-        return submissionsPassed / allSubmissions;
+        return getPercentage(numberPassedSubmissions, numberAllSubmissions);
+    }
+
+    @Override
+    public Integer getChallengesPassedPercentage(UserData userData) {
+        Long numberAllChallenges        = this.generalPercentageRepository.countAllChallengesByUserDataId(userData.getId());
+        Long numberPassedChallenges     = this.generalPercentageRepository.countAllPassedChallengesByUserDataId(userData.getId());
+
+        return getPercentage(numberPassedChallenges, numberAllChallenges);
+    }
+
+    private Integer getPercentage(Long a, Long b) {
+        double percentage =  (double) a / (double) b;
+        percentage *= 100;
+        return Integer.valueOf((int) percentage);
+    }
+
+    public PLanguage getMostUsedLanguage(Long userDataId) {
+        TypedQuery<PLanguage> query =
+                em.createQuery("select p from PLanguage p inner join Submission s on s.language.id = p.id inner join UserData ud on ud.id = s.userData.id group by (p) order by count (p) DESC", PLanguage.class);
+        return query.getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public GeneralPercentage findById(Long id) throws HackerrankIndexerException {
+        return this.generalPercentageRepository.findById(id).get();
+    }
+
+    @Override
+    public List<GeneralPercentage> findAll() throws HackerrankIndexerException {
+        return this.generalPercentageRepository.findAll();
+    }
+
+    @Override
+    public GeneralPercentage save(GeneralPercentage instance) throws HackerrankIndexerException {
+        return this.generalPercentageRepository.save(instance);
+    }
+
+    @Override
+    public GeneralPercentage update(Long id, GeneralPercentage instance) throws HackerrankIndexerException {
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
+        return this.generalPercentageRepository.save(instance);
+    }
+
+    @Override
+    public Long deleteById(Long id) throws HackerrankIndexerException {
+        this.generalPercentageRepository.deleteById(id);
+        return id;
     }
 }

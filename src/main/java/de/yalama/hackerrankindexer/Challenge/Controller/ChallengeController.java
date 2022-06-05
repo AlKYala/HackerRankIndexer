@@ -55,23 +55,17 @@ public class ChallengeController implements BaseController<Challenge, Long> {
         return this.challengeService.deleteById(id);
     }
 
-    @GetMapping("/{id}/submissions")
-    public Set<Submission> findSubmissionsByChallengeId(@PathVariable Long id, HttpServletRequest request) {
-        return this.challengeService.getSubmissionsByChallengeId(id, this.headerService.getUserFromHeader(request));
-    }
-
-    @GetMapping("/{id}/ispassed")
-    public Boolean checkIsSubmissionPassed(@PathVariable Long id, HttpServletRequest request) {
-        return this.challengeService.checkIsChallengePassed(id, this.headerService.getUserFromHeader(request));
-    }
-
     @GetMapping("/passed")
     public List<Challenge> getPassedChallenges(HttpServletRequest request) {
-        return this.challengeService.getAllPassedChallenges(this.headerService.getUserFromHeader(request));
+        return this.challengeService.getAllFailedChallenges(this.getUserDataId(request));
     }
 
     @GetMapping("/failed")
     public List<Challenge> getFailedChallenges(HttpServletRequest request) {
-        return this.challengeService.getAllFailedChallenges(this.headerService.getUserFromHeader(request));
+        return this.challengeService.getAllFailedChallenges(this.getUserDataId(request));
+    }
+
+    private Long getUserDataId(HttpServletRequest request) {
+        return Long.parseLong(request.getHeader("userDataId"));
     }
 }

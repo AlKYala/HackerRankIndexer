@@ -1,6 +1,8 @@
 package de.yalama.hackerrankindexer.shared.services;
 
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -22,7 +24,7 @@ public class ServiceHandler<E extends BaseEntity,  G extends JpaRepository<E, Lo
     }
 
     public E findById(Long id) {
-        this.validator.throwIfNotExistsByID(id, 2);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.FIND_BY_ID);
         return this.repository.findById(id).get();
     }
 
@@ -32,14 +34,13 @@ public class ServiceHandler<E extends BaseEntity,  G extends JpaRepository<E, Lo
 
     public E save(E instance) {
         E saved = this.repository.save(instance);
-        this.validator.throwIfExistsByID(instance.getId());
         return saved;
     }
 
     public E update(Long id, E instance) {
         this.validator.throwIfIdInvalid(id);
         this.validator.throwIfIDSDiffer(id, instance.getId());
-        this.validator.throwIfNotExistsByID(id, 0);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
         return this.repository.save(instance);
     }
 

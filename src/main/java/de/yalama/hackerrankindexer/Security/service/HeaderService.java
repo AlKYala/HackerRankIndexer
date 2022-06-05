@@ -35,7 +35,6 @@ public class HeaderService {
 
     public User getUserFromHeader(HttpServletRequest request) {
         Long id = this.extractIdFromHeader(request);
-        System.out.printf("Userid: %d\n", id);
         User user = this.userService.findById(id);
         if(user.isVerified() == false) {
             throw new UserNotVerifiedException(String.format("User %s exists but is not verified", user.getEmail()));

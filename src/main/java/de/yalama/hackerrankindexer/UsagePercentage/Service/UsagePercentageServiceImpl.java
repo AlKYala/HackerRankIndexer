@@ -5,6 +5,11 @@ import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.UsagePercentage.Repository.UsagePercentageRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
+import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,19 +19,26 @@ import java.util.List;
 @Slf4j
 public class UsagePercentageServiceImpl extends UsagePercentageService{
 
-    private UserService userService;
+    private UserDataService userDataService;
     private UsagePercentageRepository usagePercentageRepository;
+    private Validator<UsagePercentage, UsagePercentageRepository> validator;
 
     public UsagePercentageServiceImpl(UsagePercentageRepository usagePercentageRepository,
-                                      UserService userService) {
-        this.userService = userService;
+                                      UserDataService userDataService) {
+        this.userDataService = userDataService;
         this.usagePercentageRepository = usagePercentageRepository;
+        this.validator = new Validator<>("UsagePercentage", usagePercentageRepository);
     }
 
-    public int createAll(User user) {
-        user.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
-        this.userService.update(user.getId(), user);
+    public int createAll(UserData userdata) {
+        userdata.getUsedPLanguages().stream().forEach(pLanguage -> this.create(userdata, pLanguage));
+        this.userDataService.update(userdata.getId(), userdata);
         return 1;
+    }
+
+    @Override
+    public UsagePercentage findById(Long id) throws HackerrankIndexerException {
+        return this.usagePercentageRepository.findById(id).get();
     }
 
     @Override
@@ -35,17 +47,45 @@ public class UsagePercentageServiceImpl extends UsagePercentageService{
     }
 
     @Override
-    public UsagePercentage create(User user, PLanguage pLanguage) {
+    public UsagePercentage save(UsagePercentage instance) throws HackerrankIndexerException {
+        return this.usagePercentageRepository.save(instance);
+    }
+
+    @Override
+    public UsagePercentage update(Long id, UsagePercentage instance) throws HackerrankIndexerException {
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
+        return this.usagePercentageRepository.save(instance);
+    }
+
+    @Override
+    public Long deleteById(Long id) throws HackerrankIndexerException {
+        this.usagePercentageRepository.deleteById(id);
+        return id;
+    }
+
+    @Override
+    public UsagePercentage create(UserData userData, PLanguage pLanguage) {
         UsagePercentage usagePercentage = new UsagePercentage();
-        long numAllSubmissions = user.getSubmittedEntries().size();
-        long numSubmissionsINLanguage = this.userService.findSubmissionsOfUserOfLanguage(user, pLanguage).size();
-        double percentage = ((double) numSubmissionsINLanguage) / ((double) numAllSubmissions);
-        usagePercentage.setUser(user);
+
+        long numAllSubmissions = this.usagePercentageRepository.findNumberSubmissionsOfUserData(userData.getId());
+        long numSubmissionsINLanguage = this.usagePercentageRepository.findNumberSubmissionsInLanguageOfUserData(userData.getId(), pLanguage.getId());
+
+        Integer percentageInt = this.getPercentage(numSubmissionsINLanguage, numAllSubmissions);
+
+        usagePercentage.setUserData(userData);
         usagePercentage.setPLanguage(pLanguage);
         usagePercentage.setTotal(numSubmissionsINLanguage);
-        usagePercentage.setPercentage(percentage);
-        UsagePercentage result = this.usagePercentageRepository.save(usagePercentage);
-        user.getUsagePercentages().add(usagePercentage);
-        return result;
+        usagePercentage.setPercentage((int) numAllSubmissions, (int) numSubmissionsINLanguage);
+
+        usagePercentage = this.usagePercentageRepository.save(usagePercentage);
+        usagePercentage.getUserData().getUsagePercentages().add(usagePercentage);
+        return usagePercentage;
+    }
+
+    private Integer getPercentage(Long a, Long b) {
+        double percentage = ((double) a) / ((double) b);
+        percentage *= 100;
+        Integer percentageInt = (int) percentage;
+        return percentageInt;
     }
 }

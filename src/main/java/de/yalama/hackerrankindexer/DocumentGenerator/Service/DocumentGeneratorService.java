@@ -2,6 +2,7 @@ package de.yalama.hackerrankindexer.DocumentGenerator.Service;
 
 import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 
@@ -26,7 +27,7 @@ public abstract class DocumentGeneratorService {
      * @param submissions A collection of Submission instances
      * @return A list of DownloadFile instances from the passed submissions
      */
-    public abstract List<DownloadFile> downloadSubmissionCollection(Collection<Submission> submissions);
+    public abstract List<DownloadFile> downloadSubmissionCollection(Collection<SubmissionFlat> submissions);
 
     /**
      * This is DocumentGeneratorService::downloadSubmissionCollection(Collection<Submission> submissions)
@@ -41,7 +42,7 @@ public abstract class DocumentGeneratorService {
      * @param submission The submission instance
      * @return A DownloadFile insntance from a submission instance
      */
-    public abstract DownloadFile getDownloadFileInstanceFromSubmission(Submission submission);
+    public abstract DownloadFile getDownloadFileInstanceFromSubmission(SubmissionFlat submissionFlat);
 
     /**
      * A method that generates a base64 from a submission

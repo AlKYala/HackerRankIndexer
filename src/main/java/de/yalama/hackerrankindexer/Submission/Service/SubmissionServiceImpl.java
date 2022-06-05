@@ -5,6 +5,8 @@ import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.Submission.Repository.SubmissionFlatRepository;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
@@ -22,6 +24,7 @@ import java.util.*;
 public class SubmissionServiceImpl extends SubmissionService {
 
     private SubmissionRepository submissionRepository;
+    private SubmissionFlatRepository submissionFlatRepository;
     private Validator<Submission, SubmissionRepository> validator;
     private ServiceHandler<Submission, SubmissionRepository> serviceHandler;
     private ContestRepository contestRepository;
@@ -33,7 +36,8 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, ContestRepository contestRepository,
                                  ChallengeRepository challengeRepository, PLanguageRepository pLanguageRepository,
-                                 UserRepository userRepository, ChallengeService challengeService) {
+                                 UserRepository userRepository, ChallengeService challengeService,
+                                 SubmissionFlatRepository submissionFlatRepository) {
         this.submissionRepository = submissionRepository;
         this.validator =
                 new Validator<Submission, SubmissionRepository>("Submission", this.submissionRepository);
@@ -45,6 +49,7 @@ public class SubmissionServiceImpl extends SubmissionService {
         this.contestRepository = contestRepository;
         this.challengeService = challengeService;
         this.submissionIdComparator = Comparator.comparing(Submission::getId);
+        this.submissionFlatRepository = submissionFlatRepository;
     }
 
     @Override
@@ -90,40 +95,40 @@ public class SubmissionServiceImpl extends SubmissionService {
     }
 
     @Override
-    public Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
-        return this.submissionRepository.getSubmissionsFromIDs(submissionIDs);
+    public Collection<SubmissionFlat> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
+        return this.submissionFlatRepository.getSubmissionsFromIDs(submissionIDs);
     }
 
     @Override
-    public List<Submission> getAllPassed(UserData userData) {
-        return this.submissionRepository.getAllPassed(userData.getId());
+    public List<SubmissionFlat> getAllPassed(UserData userData) {
+        return this.submissionFlatRepository.getAllPassed(userData.getId());
     }
 
     @Override
-    public List<Submission> findAllByUserDataId(Long userDataId) {
-        return this.submissionRepository.findAllByUserDataId(userDataId);
+    public List<SubmissionFlat> findAllByUserDataId(Long userDataId) {
+        return this.submissionFlatRepository.findAllByUserDataId(userDataId);
     }
 
     @Override
-    public List<Submission> getLastPassedFromAll(UserData userData) {
-        Map<Long, Submission> challengeIdToSubmission = new HashMap<Long, Submission>();
-        List<Submission> allPassed = this.getAllPassed(userData);
-        allPassed.forEach((submission -> challengeIdToSubmission.put(submission.getChallenge().getId(), submission)));
-        return new ArrayList<Submission>(challengeIdToSubmission.values());
+    public List<SubmissionFlat> getLastPassedFromAll(UserData userData) {
+        Map<Long, SubmissionFlat> challengeIdToSubmission = new HashMap<Long, SubmissionFlat>();
+        List<SubmissionFlat> allPassed = this.getAllPassed(userData);
+        allPassed.forEach((submissionFlat -> challengeIdToSubmission.put(submissionFlat.getChallenge().getId(), submissionFlat)));
+        return new ArrayList<SubmissionFlat>(challengeIdToSubmission.values());
     }
 
     @Override
-    public List<Submission> getAllFailed(UserData userData) {
-        return this.submissionRepository.getAllFailed(userData.getId());
+    public List<SubmissionFlat> getAllFailed(UserData userData) {
+        return this.submissionFlatRepository.getAllFailed(userData.getId());
     }
 
     @Override
-    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId) {
-        return this.submissionRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
+    public List<SubmissionFlat> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId) {
+        return this.submissionFlatRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
     }
 
     @Override
-    public Set<Submission> getSubmissionsByLanguagesAndUserDataId(List<Long> pLanguageIds, Long userDataId) {
+    public Set<SubmissionFlat> getSubmissionsByLanguagesAndUserDataId(List<Long> pLanguageIds, Long userDataId) {
         return null;
     }
 }

@@ -3,6 +3,7 @@ package de.yalama.hackerrankindexer.Submission.Controller;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.Submission.Model.FilterRequest;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
@@ -27,7 +28,7 @@ public class SubmissionController implements BaseController<Submission, Long> {
     private SubmissionService submissionService;
 
     @GetMapping
-    public Collection<Submission> findAllByUserData(HttpServletRequest request) {
+    public Collection<SubmissionFlat> findAllByUserData(HttpServletRequest request) {
         Long userDataId = Long.parseLong(request.getParameter("userDataId"));
         return this.submissionService.findAllByUserDataId(userDataId);
     }
@@ -61,13 +62,13 @@ public class SubmissionController implements BaseController<Submission, Long> {
     }
 
     @GetMapping("/pLanguage")
-    public Set<Submission> getSubmissionsByLanguagesAndUserDataId(@RequestBody List<Long> ids, HttpServletRequest request) {
+    public Set<SubmissionFlat> getSubmissionsByLanguagesAndUserDataId(@RequestBody List<Long> ids, HttpServletRequest request) {
         Long userDataId = Long.parseLong(request.getParameter("userDataId"));
         return this.submissionService.getSubmissionsByLanguagesAndUserDataId(ids, userDataId);
     }
 
     @GetMapping("/{challengeId}/submissions")
-    public List<Submission> findSubmissionsByChallengeId(@PathVariable Long challengeId, HttpServletRequest request) {
+    public List<SubmissionFlat> findSubmissionsByChallengeId(@PathVariable Long challengeId, HttpServletRequest request) {
         Long userDataId = Long.parseLong(request.getHeader("userDataId"));
         return this.submissionService.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
     }

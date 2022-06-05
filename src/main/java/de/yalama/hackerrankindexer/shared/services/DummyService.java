@@ -13,11 +13,12 @@ import java.util.Collections;
 public class DummyService {
 
     public Submission getDummySubmission() {
-        Submission submission = new Submission();
+        /*Submission submission = new Submission();
         submission.setCode("dummycode");
         submission.setId(0L);
         submission.setScore(0.0);
-        return submission;
+        return submission;*/
+        return null;
     }
 
     public Challenge getDummyChallenge(String challengeName) {

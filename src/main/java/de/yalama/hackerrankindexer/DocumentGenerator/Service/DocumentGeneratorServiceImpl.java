@@ -2,16 +2,15 @@ package de.yalama.hackerrankindexer.DocumentGenerator.Service;
 
 import de.yalama.hackerrankindexer.DocumentGenerator.Model.DownloadFile;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.Submission.Repository.SubmissionFlatRepository;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
-import de.yalama.hackerrankindexer.User.Model.User;
-import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.Util.Base64Util;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,9 +18,12 @@ import java.util.List;
 public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     private SubmissionService submissionService;
+    private SubmissionFlatRepository submissionFlatRepository;
 
-    public DocumentGeneratorServiceImpl(SubmissionService submissionService) {
+    public DocumentGeneratorServiceImpl(SubmissionService submissionService,
+                                        SubmissionFlatRepository submissionFlatRepository) {
         this.submissionService = submissionService;
+        this.submissionFlatRepository = submissionFlatRepository;
     }
 
     @Override
@@ -30,8 +32,9 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
     }
 
     private String generateInfo(Submission submission) {
+        SubmissionFlat submissionFlat = this.submissionFlatRepository.findById(submission.getId()).get();
         return String.format("/**\nPowered by HackerrankIndexer by Ali Yalama 2021-2022\nhttps://github.com/AlKYala/HackerRankIndexer\nFile created: %s\nChallenge name: %s\nAuthor: %s\n*/\n",
-                getCurrentDateAsString(), submission.getChallenge().getChallengeName(), submission.getUserData().getUser().getEmail());
+               getCurrentDateAsString(), submissionFlat.getChallenge().getChallengeName(), submissionFlat.getUserData().getUser().getEmail());
     }
 
     private String getCurrentDateAsString() {
@@ -41,7 +44,7 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
     }
 
     @Override
-    public List<DownloadFile> downloadSubmissionCollection(Collection<Submission> submissions) {
+    public List<DownloadFile> downloadSubmissionCollection(Collection<SubmissionFlat> submissions) {
         List<DownloadFile> submissionsAsDownloadFiles = new ArrayList<DownloadFile>();
         submissions
                 .forEach(submission -> submissionsAsDownloadFiles.add(this.getDownloadFileInstanceFromSubmission(submission)));
@@ -50,17 +53,18 @@ public class DocumentGeneratorServiceImpl extends DocumentGeneratorService {
 
     @Override
     public List<DownloadFile> downloadSubmissionsFromCollection(Collection<Long> submissionIDs) {
-        Collection <Submission> submissions = this.submissionService.getSubmissionsFromIDs(submissionIDs);
+        Collection <SubmissionFlat> submissions = this.submissionService.getSubmissionsFromIDs(submissionIDs);
         return this.downloadSubmissionCollection(submissions);
     }
 
     @Override
-    public DownloadFile getDownloadFileInstanceFromSubmission(Submission submission) {
+    public DownloadFile getDownloadFileInstanceFromSubmission(SubmissionFlat submissionFlat) {
+        Submission submission = this.submissionService.findById(submissionFlat.getId());
         DownloadFile downloadFile = new DownloadFile();
-        String fileName = String.format("%s.%s", submission.getChallenge().getChallengeName(), submission.getLanguage().getFileExtension());
+        String fileName = String.format("%s.%s", submissionFlat.getChallenge().getChallengeName(), submissionFlat.getLanguage().getFileExtension());
         String base64   = this.getSubmissionAsBase64(submission);
         downloadFile.setFileName(fileName);
-        downloadFile.setChallengeName(submission.getChallenge().getChallengeName());
+        downloadFile.setChallengeName(submissionFlat.getChallenge().getChallengeName());
         downloadFile.setBase64(base64);
         return downloadFile;
     }

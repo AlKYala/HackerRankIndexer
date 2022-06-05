@@ -1,23 +1,14 @@
 package de.yalama.hackerrankindexer.UserData.Service;
 
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;
 import de.yalama.hackerrankindexer.shared.services.BaseService;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public abstract class UserDataService implements BaseService<UserData> {
 
@@ -34,7 +25,7 @@ public abstract class UserDataService implements BaseService<UserData> {
      * @param language The wanted langauge
      * @return All submissions that of user that have specified language
      */
-    public abstract Collection<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage language);
+    public abstract Collection<SubmissionFlat> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage language);
 
     /**
      * Returns a userService Instance by token

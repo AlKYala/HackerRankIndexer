@@ -1,42 +1,33 @@
 package de.yalama.hackerrankindexer.UserData.Service;
 
-import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Security.service.EncodeDecodeService;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.Submission.Repository.SubmissionFlatRepository;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
-import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;
 import de.yalama.hackerrankindexer.UserData.Repository.UserDataRepository;
-import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserDataServiceImpl extends UserDataService {
 
     private UserDataRepository      userDataRepository;
     private SubmissionRepository    submissionRepository;
+    private SubmissionFlatRepository submissionFlatRepository;
 
     public UserDataServiceImpl(UserDataRepository userDataRepository,
-                               SubmissionRepository submissionRepository) {
+                               SubmissionRepository submissionRepository,
+                               SubmissionFlatRepository submissionFlatRepository) {
         this.userDataRepository     = userDataRepository;
         this.submissionRepository   = submissionRepository;
+        this.submissionFlatRepository = submissionFlatRepository;
     }
 
     @Override
@@ -80,8 +71,8 @@ public class UserDataServiceImpl extends UserDataService {
     }
 
     @Override
-    public List<Submission> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage pLanguage) {
-        return this.submissionRepository.getSubmissionsByPlanguageIdAndUserDataId(pLanguage.getId(), userData.getId());
+    public Collection<SubmissionFlat> findSubmissionsOfUserOfPlanguage(UserData userData, PLanguage pLanguage) {
+        return this.submissionFlatRepository.getSubmissionsByPlanguageIdAndUserDataId(pLanguage.getId(), userData.getId());
     }
 
     @Override

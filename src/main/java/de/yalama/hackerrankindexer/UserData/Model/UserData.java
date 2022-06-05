@@ -6,6 +6,7 @@ import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.Submission.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
@@ -29,7 +30,7 @@ import java.util.*;
 public class UserData extends BaseEntity {
 
     @OneToMany(mappedBy = "userData") //have to add how column where parent (this) is referenced to prevent creation of relation table
-    private List<Submission> submissionList = new ArrayList<Submission>();
+    private List<SubmissionFlat> submissionList = new ArrayList<SubmissionFlat>();
 
     @ManyToOne
     @EqualsAndHashCode.Exclude

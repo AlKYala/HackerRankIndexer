@@ -10,16 +10,16 @@ import java.util.List;
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
-    @Query("SELECT c from Challenge c inner join Submission s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where c.id in (:challengeId) and ud.id in (:userDataId)")
+    @Query("SELECT c from Challenge c inner join SubmissionFlat s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where c.id in (:challengeId) and ud.id in (:userDataId)")
     public Challenge getChallengeByIdAndUserDataId(Long challengeId, Long userDataId);
 
-    @Query("SELECT c from Challenge c inner join Submission s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where ud.id in (:userDataId)")
+    @Query("SELECT c from Challenge c inner join SubmissionFlat s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where ud.id in (:userDataId)")
     public List<Challenge> getAllChallengesByUserDataId(Long userDataId);
 
-    @Query("SELECT c from Challenge c inner join Submission s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where ud.id in (:userDataId) and s.score = 1")
+    @Query("SELECT c from Challenge c inner join SubmissionFlat s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where ud.id in (:userDataId) and s.score = 1")
     public List<Challenge> getPassedChallengesByUserDataId(Long userDataId);
 
-    @Query("SELECT c from Challenge c inner join Submission s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where ud.id in (:userDataId) and s.score < 1")
+    @Query("SELECT c from Challenge c inner join SubmissionFlat s on s.challenge.id = c.id inner join UserData ud on ud.id = s.id where ud.id in (:userDataId) and s.score < 1")
     public List<Challenge> getFailedChallengesByUserDataId(Long userDataId);
 
     @Query("SELECT c from Challenge c where c.challengeName in (:challengeName)")

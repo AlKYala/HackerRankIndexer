@@ -44,7 +44,7 @@ public class UserData extends BaseEntity {
     @OneToOne(mappedBy = "userData") //children have column that shows at parent - value is the name of column for parent
     private GeneralPercentage generalPercentage;
 
-    @OneToMany(mappedBy = "userData")
+    @OneToMany(mappedBy = "userData", cascade = CascadeType.DETACH)
     private Set<UsagePercentage> usagePercentages = new HashSet<UsagePercentage>();
 
     @OneToMany(mappedBy = "userData")

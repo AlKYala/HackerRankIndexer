@@ -1,9 +1,14 @@
 package de.yalama.hackerrankindexer.UserData.Service;
 
+import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
+import de.yalama.hackerrankindexer.PassPercentage.Repository.PassPercentageRepository;
 import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.SubmissionFlat.Repository.SubmissionFlatRepository;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
+import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
+import de.yalama.hackerrankindexer.UsagePercentage.Repository.UsagePercentageRepository;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.UserData.Model.UserDataFlat;
@@ -16,20 +21,33 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserDataServiceImpl extends UserDataService {
 
     private UserDataRepository      userDataRepository;
     private SubmissionFlatRepository submissionFlatRepository;
+    private SubmissionRepository submissionRepository;
+    private UsagePercentageRepository usagePercentageRepository;
     private Validator<UserData, UserDataRepository> validator;
+    private PassPercentageRepository passPercentageRepository;
+    private GeneralPercentageRepository generalPercentageRepository;
 
     public UserDataServiceImpl(UserDataRepository userDataRepository,
-                               SubmissionFlatRepository submissionFlatRepository) {
+                               SubmissionFlatRepository submissionFlatRepository,
+                               SubmissionRepository submissionRepository,
+                               UsagePercentageRepository usagePercentageRepository,
+                               GeneralPercentageRepository generalPercentageRepository,
+                               PassPercentageRepository passPercentageRepository) {
         this.userDataRepository     = userDataRepository;
+        this.usagePercentageRepository = usagePercentageRepository;
         this.submissionFlatRepository = submissionFlatRepository;
         this.validator =
                 new Validator<UserData, UserDataRepository>("UserData", userDataRepository);
+        this.passPercentageRepository = passPercentageRepository;
+        this.submissionRepository = submissionRepository;
+        this.generalPercentageRepository = generalPercentageRepository;
     }
 
     @Override
@@ -101,8 +119,42 @@ public class UserDataServiceImpl extends UserDataService {
         if(index >= elements.size())
             return null;
 
-        Long idToDelete = elements.get(index).getId();
-        this.deleteById(idToDelete);
+        UserData toDelete = elements.get(index);
+        this.detachChildren(toDelete);
+        this.deleteById(toDelete.getId());
         return this.getUserDataFlat(user);
+    }
+
+    private void detachChildren(UserData userData) {
+        this.detachUsagePercentages(userData);
+        this.detachPassPercentages(userData);
+        this.detachSubmissions(userData);
+        this.detachGeneralPercentage(userData);
+    }
+
+    private void detachUsagePercentages(UserData userData) {
+        Set<UsagePercentage> usagePercentages = userData.getUsagePercentages();
+        for(UsagePercentage usagePercentage : usagePercentages) {
+            this.usagePercentageRepository.deleteById(usagePercentage.getId());
+        }
+    }
+
+    private void detachPassPercentages(UserData userData) {
+        Set<PassPercentage> passPercentages = userData.getPassPercentages();
+        for(PassPercentage passPercentage: passPercentages) {
+            this.passPercentageRepository.deleteById(passPercentage.getId());
+        }
+    }
+
+    private void detachGeneralPercentage(UserData userData) {
+        this.generalPercentageRepository.deleteById(userData.getGeneralPercentage().getId());
+    }
+
+    private void detachSubmissions(UserData userData) {
+        List<SubmissionFlat> submissions = userData.getSubmissionList();
+        for(SubmissionFlat submissionFlat : submissions) {
+            this.submissionFlatRepository.deleteById(submissionFlat.getId());
+            this.submissionRepository.deleteById(submissionFlat.getId());
+        }
     }
 }

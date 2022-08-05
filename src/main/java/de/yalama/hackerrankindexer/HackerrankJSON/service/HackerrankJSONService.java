@@ -4,7 +4,6 @@ import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.Contest.Service.ContestService;
-import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
 import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.HackerrankJSON;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.SubmissionJSON;
@@ -14,7 +13,9 @@ import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.PassPercentage.Service.PassPercentageService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.SubmissionFlat.Service.SubmissionFlatService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.UsagePercentage.Service.UsagePercentageService;
 import de.yalama.hackerrankindexer.User.Model.User;
@@ -27,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -69,6 +69,9 @@ public class HackerrankJSONService {
 
     @Autowired
     private UserDataService userDataService;
+
+    @Autowired
+    private SubmissionFlatService submissionFlatService;
 
 
     public Integer parse(HackerrankJSON hackerrankJSON, User user) {
@@ -197,11 +200,15 @@ public class HackerrankJSONService {
 
             //Submission
 
-            Submission submission =
+            SubmissionFlat submissionFlat =
                     this.createSubmissionFromJSON(submissionJSON, tempChallenge, tempPLanguage, tempContest, userData);
+
+            Submission submission = new Submission();
+            submission.setCode(submissionJSON.getCode());
 
             userData.getUsedPLanguages().add(tempPLanguage);
             submission = this.submissionService.save(submission);
+
             submissions.add(submission);
         }
         this.createStatisticsData(userData, userData.getUsedPLanguages());
@@ -215,19 +222,21 @@ public class HackerrankJSONService {
      * @param json The Submssion JSON instance
      * @return a submission instance with all attributes filled
      */
-    private Submission createSubmissionFromJSON(SubmissionJSON json, Challenge challenge,
-                                                PLanguage pLanguage, Contest contest,
-                                                UserData userData) {
-        Submission submission = new Submission();
-        submission.setId(0L);
-        submission.setCode(json.getCode());
-        submission.setScore(json.getScore());
-        submission.setLanguage(pLanguage);
-        submission.setChallenge(challenge);
-        submission.setContest(contest);
+    private SubmissionFlat createSubmissionFromJSON(SubmissionJSON json, Challenge challenge,
+                                                    PLanguage pLanguage, Contest contest,
+                                                    UserData userData) {
+        SubmissionFlat submissionFlat = new SubmissionFlat();
 
-        submission.setUserData(userData);
-        return submission;
+        submissionFlat.setId(0L);
+        submissionFlat.setScore(json.getScore());
+        submissionFlat.setLanguage(pLanguage);
+        submissionFlat.setChallenge(challenge);
+        submissionFlat.setContest(contest);
+
+        submissionFlat.setUserData(userData);
+        submissionFlatService.save(submissionFlat);
+
+        return submissionFlat;
     }
 
     /**

@@ -5,6 +5,8 @@ import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
 import de.yalama.hackerrankindexer.Contest.Repository.ContestRepository;
 import de.yalama.hackerrankindexer.PLanguage.Repository.PLanguageRepository;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
+import de.yalama.hackerrankindexer.SubmissionFlat.Repository.SubmissionFlatRepository;
 import de.yalama.hackerrankindexer.Submission.Repository.SubmissionRepository;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.UserData.Model.UserData;
@@ -22,6 +24,7 @@ import java.util.*;
 public class SubmissionServiceImpl extends SubmissionService {
 
     private SubmissionRepository submissionRepository;
+    private SubmissionFlatRepository submissionFlatRepository;
     private Validator<Submission, SubmissionRepository> validator;
     private ServiceHandler<Submission, SubmissionRepository> serviceHandler;
     private ContestRepository contestRepository;
@@ -33,7 +36,8 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, ContestRepository contestRepository,
                                  ChallengeRepository challengeRepository, PLanguageRepository pLanguageRepository,
-                                 UserRepository userRepository, ChallengeService challengeService) {
+                                 UserRepository userRepository, ChallengeService challengeService,
+                                 SubmissionFlatRepository submissionFlatRepository) {
         this.submissionRepository = submissionRepository;
         this.validator =
                 new Validator<Submission, SubmissionRepository>("Submission", this.submissionRepository);
@@ -45,6 +49,7 @@ public class SubmissionServiceImpl extends SubmissionService {
         this.contestRepository = contestRepository;
         this.challengeService = challengeService;
         this.submissionIdComparator = Comparator.comparing(Submission::getId);
+        this.submissionFlatRepository = submissionFlatRepository;
     }
 
     @Override
@@ -87,43 +92,5 @@ public class SubmissionServiceImpl extends SubmissionService {
 
     private void removeSubmissionFromChallenge(Submission toDelete) {
         this.deleteById(toDelete.getId());
-    }
-
-    @Override
-    public Collection<Submission> getSubmissionsFromIDs(Collection<Long> submissionIDs) {
-        return this.submissionRepository.getSubmissionsFromIDs(submissionIDs);
-    }
-
-    @Override
-    public List<Submission> getAllPassed(UserData userData) {
-        return this.submissionRepository.getAllPassed(userData.getId());
-    }
-
-    @Override
-    public List<Submission> findAllByUserDataId(Long userDataId) {
-        return this.submissionRepository.findAllByUserDataId(userDataId);
-    }
-
-    @Override
-    public List<Submission> getLastPassedFromAll(UserData userData) {
-        Map<Long, Submission> challengeIdToSubmission = new HashMap<Long, Submission>();
-        List<Submission> allPassed = this.getAllPassed(userData);
-        allPassed.forEach((submission -> challengeIdToSubmission.put(submission.getChallenge().getId(), submission)));
-        return new ArrayList<Submission>(challengeIdToSubmission.values());
-    }
-
-    @Override
-    public List<Submission> getAllFailed(UserData userData) {
-        return this.submissionRepository.getAllFailed(userData.getId());
-    }
-
-    @Override
-    public List<Submission> getSubmissionsByChallengeIdAndUserDataId(Long challengeId, Long userDataId) {
-        return this.submissionRepository.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
-    }
-
-    @Override
-    public Set<Submission> getSubmissionsByLanguagesAndUserDataId(List<Long> pLanguageIds, Long userDataId) {
-        return null;
     }
 }

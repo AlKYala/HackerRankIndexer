@@ -2,7 +2,7 @@ package de.yalama.hackerrankindexer.PLanguage.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class PLanguage extends BaseEntity {
 
     @OneToMany(mappedBy = "language")
     @JsonIgnore
-    private Set<Submission> submissions;
+    private Set<SubmissionFlat> submissions;
 
     private String fileExtension;
 

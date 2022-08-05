@@ -1,7 +1,7 @@
 package de.yalama.hackerrankindexer.Challenge.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ public class Challenge extends BaseEntity {
 
     @OneToMany(mappedBy= "challenge")
     @JsonIgnore
-    private Set<Submission> submissions;
+    private Set<SubmissionFlat> submissions;
 
     private String challengeName;
 }

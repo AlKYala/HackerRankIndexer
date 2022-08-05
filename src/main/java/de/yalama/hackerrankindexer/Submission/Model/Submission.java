@@ -19,35 +19,8 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter
 @Setter
-public class Submission extends BaseEntity {
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    @JsonIgnore
-    private UserData userData;
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    private PLanguage language;
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    private Challenge challenge;
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    private Contest contest;
+public class Submission extends BaseEntity{
 
     @Column(columnDefinition = "TEXT")
     private String code;
-
-    private double score;
 }

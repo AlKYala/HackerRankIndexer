@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static de.yalama.hackerrankindexer.Security.SecurityConstants.SIGN_UP_ENDPOINT;
+import static de.yalama.hackerrankindexer.Security.service.SecurityConstants.SIGN_IN_ENDPOINT;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -27,14 +28,14 @@ public class LoginController {
      * if pass, checks if the email-password combination is ok
      * sends ok if data verified
      */
-    @PostMapping(SIGN_UP_ENDPOINT)
-    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(SIGN_IN_ENDPOINT)
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         return this.loginService.createAuthenticationToken(authenticationRequest);
     }
 
-    @GetMapping("isLoginValid")
-    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/isLoginValid")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> checkIsLoggedIn(HttpServletRequest httpServletRequest) {
         return this.loginService.checkisLoggedIn(httpServletRequest);
     }

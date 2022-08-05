@@ -1,6 +1,5 @@
 package de.yalama.hackerrankindexer.Security.service;
 
-import de.yalama.hackerrankindexer.Security.SecurityConstants;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;

@@ -27,7 +27,7 @@ import java.util.Set;
 @RequestMapping("analytics")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AnalyticsController {
 
     @Autowired

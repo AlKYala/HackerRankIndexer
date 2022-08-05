@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static de.yalama.hackerrankindexer.Security.SecurityConstants.*;
+import static de.yalama.hackerrankindexer.Security.service.SecurityConstants.*;
+
 
 @Slf4j
 @Service

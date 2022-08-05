@@ -1,6 +1,5 @@
 package de.yalama.hackerrankindexer.Security.service;
 
-import de.yalama.hackerrankindexer.Security.SecurityConstants;
 import de.yalama.hackerrankindexer.shared.HashingAlgorithms.HashingAlgorithm;
 import de.yalama.hackerrankindexer.shared.Util.Base64Util;
 import org.springframework.stereotype.Service;

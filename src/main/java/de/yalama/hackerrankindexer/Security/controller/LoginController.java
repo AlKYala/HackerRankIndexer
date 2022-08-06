@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Security.controller;
 
 import de.yalama.hackerrankindexer.Security.model.AuthenticationRequest;
+import de.yalama.hackerrankindexer.Security.model.LogInResponse;
 import de.yalama.hackerrankindexer.Security.service.JwtService;
 import de.yalama.hackerrankindexer.Security.service.LoginService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class LoginController {
     @GetMapping("/isLoginValid")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> checkIsLoggedIn(HttpServletRequest httpServletRequest) {
+        System.out.println(this.loginService.checkisLoggedIn(httpServletRequest).toString());
         return this.loginService.checkisLoggedIn(httpServletRequest);
     }
 }

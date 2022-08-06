@@ -89,7 +89,6 @@ public class UserServiceImpl extends UserService {
         instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
         instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
         this.emailSendService.sendConfirmationEmail(instance);
-
         return this.save(instance);
     }
 

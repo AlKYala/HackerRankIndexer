@@ -2,6 +2,9 @@ package de.yalama.hackerrankindexer.Security.service;
 
 import de.yalama.hackerrankindexer.Security.model.AuthenticationRequest;
 import de.yalama.hackerrankindexer.Security.model.AuthenticationResponse;
+import de.yalama.hackerrankindexer.Security.model.LogInResponse;
+import de.yalama.hackerrankindexer.Security.model.LoginValidResponse;
+import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -26,22 +29,27 @@ public class LoginService {
 
     private final JwtService jwtTokenUtil;
 
+    private final UserService userService;
+
     public ResponseEntity<?> createAuthenticationToken(AuthenticationRequest authenticationRequest) {
         this.checkIfPasswordIsCorrect(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        boolean isUserVerified = this.checkIsUserVerified(userDetails);
+        return ResponseEntity.ok(new LogInResponse(jwt, isUserVerified)); //you can put any object here, response will be json representation
     }
 
     public ResponseEntity<?> checkisLoggedIn(HttpServletRequest httpServletRequest) {
         String jwtToken = httpServletRequest.getHeader("Authorization");
         //catch so we dont get errors in console
+        boolean isValid = false;
         try {
-            this.jwtTokenUtil.isTokenExpired(jwtToken);
+            isValid = !this.jwtTokenUtil.isTokenExpired(jwtToken);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
-        return ResponseEntity.ok().build();
+        ResponseEntity<?> response = ResponseEntity.ok(new LoginValidResponse(isValid));
+        return response;
     }
 
     private void checkIfPasswordIsCorrect(String username, String password) {
@@ -51,5 +59,10 @@ public class LoginService {
         } catch (BadCredentialsException e){
             throw new RuntimeException("Incorrect email or password",e);
         }
+    }
+
+    private boolean checkIsUserVerified(UserDetails userDetails) {
+        User user = this.userService.findByEmail(userDetails.getUsername());
+        return user.isVerified();
     }
 }

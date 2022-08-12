@@ -10,5 +10,5 @@ import lombok.Setter;
 public class LogInResponse {
 
     private String jwt;
-    private boolean isConfirmedUser;
+    private boolean isVerifiedUser;
 }

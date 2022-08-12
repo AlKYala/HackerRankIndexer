@@ -42,12 +42,14 @@ public class LoginService {
     public ResponseEntity<?> checkisLoggedIn(HttpServletRequest httpServletRequest) {
         String jwtToken = httpServletRequest.getHeader("Authorization");
         //catch so we dont get errors in console
+
         boolean isValid = false;
         try {
             isValid = !this.jwtTokenUtil.isTokenExpired(jwtToken);
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+
         }
+
         ResponseEntity<?> response = ResponseEntity.ok(new LoginValidResponse(isValid));
         return response;
     }

@@ -30,13 +30,11 @@ public class LoginController {
      * sends ok if data verified
      */
     @PostMapping(SIGN_IN_ENDPOINT)
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         return this.loginService.createAuthenticationToken(authenticationRequest);
     }
 
     @GetMapping("/isLoginValid")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> checkIsLoggedIn(HttpServletRequest httpServletRequest) {
         System.out.println(this.loginService.checkisLoggedIn(httpServletRequest).toString());
         return this.loginService.checkisLoggedIn(httpServletRequest);

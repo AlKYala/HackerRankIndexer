@@ -3,16 +3,12 @@ package de.yalama.hackerrankindexer.Security.configuration;
 import de.yalama.hackerrankindexer.Security.filter.JwtRequestFilter;
 import de.yalama.hackerrankindexer.Security.service.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.Arrays;
 
@@ -54,7 +49,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * we configure our CORS
      * We say our state creation policy is stateless.
      *
-     * All Other requsts (not SIGN_IN_POINT) go through jwtRequestFilter
+     * All Other requsts (not SIGN_IN_POINT) go through jwtRequestFilter - becuase
+     * -> When ou log in you get a jwt token
+     * if you want to access the other endpoints - put it in header with key Authorization
      * - that one checks other requests that are not allowed before
      *
      */

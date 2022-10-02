@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/planguage")
-@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class PLanguageController implements BaseController<PLanguage, Long> {
 

@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("/submissionFlat")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class SubmissionFlatController implements BaseController<SubmissionFlat, Long> {
 
     @Autowired

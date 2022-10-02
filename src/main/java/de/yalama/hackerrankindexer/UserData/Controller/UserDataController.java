@@ -27,7 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/userdata")
-@CrossOrigin(origins = "http://localhost:3000")
+
 public class UserDataController implements BaseController<UserData, Long> {
 
     @Autowired

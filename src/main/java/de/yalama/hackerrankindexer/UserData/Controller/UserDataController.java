@@ -10,6 +10,7 @@ import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.exceptions.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/userdata")
-
+@Slf4j
 public class UserDataController implements BaseController<UserData, Long> {
 
     @Autowired

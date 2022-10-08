@@ -37,6 +37,7 @@ public class PLanguageInfoService {
     private void initFileExtensionsMap() {
         this.fileExtensionByLanguageName = new HashMap<String, String>();
         this.fileExtensionByLanguageName.put("java8", "java");
+        this.fileExtensionByLanguageName.put("java15", "java");
         this.fileExtensionByLanguageName.put("java", "java");
         this.fileExtensionByLanguageName.put("pypy", "py");
         this.fileExtensionByLanguageName.put("python3", "py3");
@@ -46,11 +47,13 @@ public class PLanguageInfoService {
         this.fileExtensionByLanguageName.put("tsql", "sql");
         this.fileExtensionByLanguageName.put("cpp", "cpp");
         this.fileExtensionByLanguageName.put("cpp14", "cpp");
+        this.fileExtensionByLanguageName.put("db2", "sql");
     }
 
     private void initDisplayNameMap() {
         this.displayNameMap = new HashMap<String, String>();
         this.displayNameMap.put("java8", "Java 8");
+        this.displayNameMap.put("java15", "Java 15");
         this.displayNameMap.put("java", "Java");
         this.displayNameMap.put("pypy", "Python 2");
         this.displayNameMap.put("python3", "Python 3");
@@ -60,5 +63,6 @@ public class PLanguageInfoService {
         this.displayNameMap.put("tsql", "T-SQL");
         this.displayNameMap.put("cpp", "C++");
         this.displayNameMap.put("cpp14", "C++ 14");
+        this.displayNameMap.put("db2", "IBM DB2");
     }
 }

@@ -8,7 +8,7 @@ import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 @Getter

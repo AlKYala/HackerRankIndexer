@@ -1,13 +1,14 @@
 package de.yalama.hackerrankindexer.Security.service;
 
 import de.yalama.hackerrankindexer.Security.model.AuthenticationRequest;
+import de.yalama.hackerrankindexer.Security.model.AuthenticationResponse;
 import de.yalama.hackerrankindexer.Security.model.LogInResponse;
 import de.yalama.hackerrankindexer.Security.model.LoginValidResponse;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,8 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class LoginService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -58,7 +58,6 @@ public class LoginService {
         try {
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
             this.authenticationManager.authenticate(token);
-            token.setAuthenticated(true);
         } catch (BadCredentialsException e){
             throw new RuntimeException("Incorrect email or password",e);
         }

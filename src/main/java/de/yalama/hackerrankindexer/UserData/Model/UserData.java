@@ -10,7 +10,7 @@ import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.*;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 

@@ -8,6 +8,7 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -75,8 +76,7 @@ public class EncodeDecodeService {
         MessageDigest messageDigest   = MessageDigest.getInstance(algorithm.getValue());
         byte[]          objByteArr      = this.castObjectToByteArray(obj);
         byte[]          digest          = messageDigest.digest(objByteArr);
-        //return DatatypeConverter.printHexBinary(digest);
-        return "";
+        return DatatypeConverter.printHexBinary(digest);
     }
 
     public byte[] castObjectToByteArray(Object obj) throws IOException {

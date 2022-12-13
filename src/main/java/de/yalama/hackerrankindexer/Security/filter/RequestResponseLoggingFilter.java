@@ -18,6 +18,11 @@ import java.util.Enumeration;
 public class RequestResponseLoggingFilter implements Filter {
 
     @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
     public void doFilter(
             ServletRequest request,
             ServletResponse response,
@@ -35,5 +40,10 @@ public class RequestResponseLoggingFilter implements Filter {
         log.info(
                 "Logging Response :{}",
                 res.getContentType());
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }

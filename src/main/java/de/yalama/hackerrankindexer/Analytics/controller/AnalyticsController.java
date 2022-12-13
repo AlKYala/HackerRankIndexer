@@ -8,6 +8,7 @@ import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.shared.models.UsageData;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.servlet.http.HttpServletRequest;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +41,7 @@ public class AnalyticsController {
      */
     @GetMapping("/exists")
     public boolean checkSubmissionsExist(HttpServletRequest request) {
-        User user = this.headerService.getUserFromHeader(request);
+        User user = this.headerService.getUserFromHeader((javax.servlet.http.HttpServletRequest) request);
         return this.analyticsService.checkSubmissionsExist(user);
     }
 

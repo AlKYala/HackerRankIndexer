@@ -12,7 +12,7 @@ import de.yalama.hackerrankindexer.shared.services.BaseService;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;

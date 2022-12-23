@@ -6,51 +6,99 @@ import de.yalama.hackerrankindexer.PassPercentage.Repository.PassPercentageRepos
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
+import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
 @Slf4j
-public class PassPercentageServiceImpl extends PassPercentageService{
+public class PassPercentageServiceImpl extends PassPercentageService {
 
     private PassPercentageRepository passPercentageRepository;
-
-    private UserService userService;
+    public UserDataService userDataService;
+    private Validator<PassPercentage, PassPercentageRepository> validator;
 
     public PassPercentageServiceImpl(PassPercentageRepository passPercentageRepository,
-                                     UserService userService) {
+                                     UserDataService userDataService) {
         this.passPercentageRepository = passPercentageRepository;
-        this.userService = userService;
+        this.userDataService = userDataService;
+        this.validator = new Validator<>("PassPercentage", passPercentageRepository);
     }
 
     @Override
-    public PassPercentage findById(long id) {
-        return passPercentageRepository.findById(id).get();
-    }
-
-    @Override
-    public int createAll(User user) {
-        user.getUsedPLanguages().stream().forEach(pLanguage -> this.create(user, pLanguage));
-        this.userService.update(user.getId(), user);
+    public int createAll(UserData userData) {
+        userData.getUsedPLanguages().stream().forEach(pLanguage -> this.create(userData, pLanguage));
+        this.userDataService.update(userData.getId(), userData);
         return 1;
     }
 
     @Override
-    public PassPercentage create(User user, PLanguage pLanguage) {
-        PassPercentage passPercentage = new PassPercentage();
-        passPercentage.setUser(user);
-        passPercentage.setPLanguage(pLanguage);
-        Set<Submission> submissions = this.userService.findSubmissionsOfUserOfLanguage(user, pLanguage);
-        long total = submissions.size();
-        long passed = submissions.stream().filter(submission -> submission.getScore() >= 1).count();
-        double percentage = ((double) passed) / ((double) total);
-        passPercentage.setTotal(total);
-        passPercentage.setPercentage(percentage);
-        PassPercentage result = this.passPercentageRepository.save(passPercentage);
-        user.getPassPercentages().add(result);
-        return passPercentage;
+    public PassPercentage create(UserData userData, PLanguage pLanguage) {
+        PassPercentage percentage = this.findByUserDataAndPLanguage(userData, pLanguage);
+
+        if(percentage != null)
+            return percentage;
+
+        percentage = new PassPercentage();
+        percentage.setUserData(userData);
+        percentage.setPLanguage(pLanguage);
+
+        long total = findNumberOfSubmissionsOfUserDataAndLanguage(userData, pLanguage);
+        long passed = findNumberOfPassedSubmissionsOfUserDataAndLanguage(userData, pLanguage);
+        percentage.setTotal(total);
+        percentage.setPassed(passed);
+
+        percentage = this.passPercentageRepository.save(percentage);
+        userData.getPassPercentages().add(percentage);
+        return percentage;
+    }
+
+    private PassPercentage findByUserDataAndPLanguage(UserData ud, PLanguage pLanguage) {
+        return this.passPercentageRepository.findByUserAndLanguage(ud.getId(), pLanguage.getId());
+    }
+
+    private long findNumberOfPassedSubmissionsOfUserDataAndLanguage(UserData ud, PLanguage pLanguage) {
+        return this.passPercentageRepository
+                .findNumberOfPassedSubmissionsOfUserDataAndLanguage(ud.getId(), pLanguage.getId());
+    }
+
+    private long findNumberOfSubmissionsOfUserDataAndLanguage(UserData ud, PLanguage pLanguage) {
+        return this.passPercentageRepository
+                .findNumberOfSubmissionsOfUserDataAndLanguage(ud.getId(), pLanguage.getId());
+    }
+
+    @Override
+    public PassPercentage findById(Long id) throws HackerrankIndexerException {
+        return this.passPercentageRepository.findById(id).get();
+    }
+
+    @Override
+    public List<PassPercentage> findAll() throws HackerrankIndexerException {
+        return this.passPercentageRepository.findAll();
+    }
+
+    @Override
+    public PassPercentage save(PassPercentage instance) throws HackerrankIndexerException {
+        return this.passPercentageRepository.save(instance);
+    }
+
+    @Override
+    public PassPercentage update(Long id, PassPercentage instance) throws HackerrankIndexerException {
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.SAVE);
+        return this.passPercentageRepository.save(instance);
+    }
+
+    @Override
+    public Long deleteById(Long id) throws HackerrankIndexerException {
+        this.passPercentageRepository.deleteById(id);
+        return id;
     }
 }

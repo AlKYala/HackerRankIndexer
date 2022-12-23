@@ -2,26 +2,30 @@ package de.yalama.hackerrankindexer.Security.configuration;
 
 import de.yalama.hackerrankindexer.Security.filter.JwtRequestFilter;
 import de.yalama.hackerrankindexer.Security.service.UserDetailsServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 
-import static de.yalama.hackerrankindexer.Security.SecurityConstants.SIGN_UP_ENDPOINT;
+import static de.yalama.hackerrankindexer.Security.service.SecurityConstants.SIGN_IN_ENDPOINT;
+
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -38,26 +42,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService);
     }
 
-    @Override
     /**
-     * To ignore security checks on selected endpoints
-     */
-    public void configure(WebSecurity webSecurity) {
-        webSecurity.ignoring().antMatchers("/user/register", "/users/*/isTaken/*", "/ad", "/marke", "/category",
-                "/ad/filter",  "/ad/featured", "/category/*", "/marke/*", "/picture", "/ad/*",
-                "/picture/advertisement/*", "/authenticate", "/*");
-    }
-
-    /**
-     * used to allow non-logged in users to reach the lgon-mask
+     * We configure access to our api:
+     * CSRF disabled
+     * We ALLOW ALL REQUESTS that go to our SIGN_IN_POINT
+     * we configure our CORS
+     * We say our state creation policy is stateless.
+     *
+     * All Other requsts (not SIGN_IN_POINT) go through jwtRequestFilter - becuase
+     * -> When ou log in you get a jwt token
+     * if you want to access the other endpoints - put it in header with key Authorization
+     * - that one checks other requests that are not allowed before
+     *
      */
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests().antMatchers(SIGN_UP_ENDPOINT).permitAll()
-                .anyRequest().authenticated().and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    public void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeRequests().antMatchers(SIGN_IN_ENDPOINT).permitAll()
+                .and()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     /**
@@ -68,4 +76,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
+

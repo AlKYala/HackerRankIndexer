@@ -7,25 +7,28 @@ import de.yalama.hackerrankindexer.Contest.Service.ContestService;
 import de.yalama.hackerrankindexer.GeneralPercentage.Service.GeneralPercentageService;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.HackerrankJSON;
 import de.yalama.hackerrankindexer.HackerrankJSON.model.SubmissionJSON;
+import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageInfoService;
 import de.yalama.hackerrankindexer.PLanguage.Service.PLanguageService;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
 import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
 import de.yalama.hackerrankindexer.PassPercentage.Service.PassPercentageService;
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.SubmissionFlat.Service.SubmissionFlatService;
 import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
 import de.yalama.hackerrankindexer.UsagePercentage.Service.UsagePercentageService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
+import de.yalama.hackerrankindexer.shared.services.ColorPickerUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -61,105 +64,196 @@ public class HackerrankJSONService {
     @Autowired
     private PassPercentageService passPercentageService;
 
-    public Integer parse(HackerrankJSON hackerrankJSON, User user) {
-        //debug
-        System.out.println("start");
-        Map<String, PLanguage> foundPLanguages = new HashMap<String, PLanguage>();
-        Map<String, Challenge> foundChallenges = new HashMap<String, Challenge>();
-        Map<String, Contest> foundContests = new HashMap<String, Contest>();
-        this.createMapData(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
-        this.gatherInfoFromSubmissions(hackerrankJSON.getSubmissions(), foundPLanguages, foundChallenges, foundContests);
-        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), foundChallenges, foundPLanguages, foundContests,
-                user);
-        this.usagePercentageService.createAll(user);
-        //debug
+    @Autowired
+    private PLanguageInfoService pLanguageInfoService;
 
-        for(UsagePercentage usagePercentage: user.getUsagePercentages()) {
-            log.info("{}", usagePercentage.getId());
+    @Autowired
+    private UserDataService userDataService;
+
+    @Autowired
+    private SubmissionFlatService submissionFlatService;
+
+
+    public Integer parse(HackerrankJSON hackerrankJSON, User user) {
+
+        if(user.getUserData().size() > 2) {
+            return 0;
         }
 
-        this.generalPercentageService.create(user);
-
-        this.passPercentageService.createAll(user);
-
+        UserData userData = new UserData();
+        userData.setUser(user);
+        userData = this.userDataService.save(userData);
+        this.createSubmissionsFromData(hackerrankJSON.getSubmissions(), userData);
 
         this.userService.update(user.getId(), user);
-        log.info("Parsing complete, user now has {} submissions", user.getSubmittedEntries().size());
+        this.userDataService.update(userData.getId(), userData);
         return 1;
     }
 
-    private void gatherInfoFromSubmissions(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
-                                           Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
-        this.createMapData(submissionJSONS, pLanguageMap, challengeMap, contestMap);
+    /**
+     * Gets a pLanguage-Instnace from DB
+     * If it does not exist, instantiate Instance, give it needed attributes and persist
+     * @param pLanguageName the name to search by in pLanguage table
+     * @return The found or persisted instance of DB
+     */
+    private PLanguage getPlanguageFromDB(String pLanguageName) {
+        PLanguage pLanguage = this.pLanguageService.findByName(pLanguageName);
 
+        if(pLanguage != null)
+            return pLanguage;
+
+        pLanguage = new PLanguage();
+        pLanguage.setLanguage(pLanguageName);
+        String fileExtension = this.pLanguageInfoService.getFileExtension(pLanguage);
+        String displayName = this.pLanguageInfoService.getPLanguageDisplayName(pLanguageName);
+        pLanguage.setColor(ColorPickerUtil.getNextColor());
+        pLanguage.setDisplayName(displayName);
+        pLanguage.setFileExtension(fileExtension);
+
+        return this.pLanguageService.save(pLanguage);
     }
 
-    private void createMapData(SubmissionJSON[] submissionJSONS, Map<String, PLanguage> pLanguageMap,
-                               Map<String, Challenge> challengeMap, Map<String, Contest> contestMap) {
-        for(SubmissionJSON submission: submissionJSONS) {
-            this.addLanguageIfNeeded(submission.getLanguage(), pLanguageMap);
-            this.addChallengeIfNeeded(submission.getChallenge(), challengeMap);
-            this.addContestIfNeeded(submission.getContest(), contestMap);
+    /**
+     * Gets a challenge-Instnace from DB
+     * If it does not exist, instantiate Instance, give it needed attributes and persist
+     * @param challengeName the name to search by in challenge table
+     * @return The found or persisted instance of DB
+     */
+    private Challenge getChallengeFromDB(String challengeName) {
+
+        Challenge challenge = this.challengeService.findByChallengeName(challengeName);
+
+        if(challenge != null) {
+            return challenge;
         }
+
+        challenge = new Challenge();
+        challenge.setChallengeName(challengeName);
+        return this.challengeService.save(challenge);
     }
 
-    private void addLanguageIfNeeded(String language, Map<String, PLanguage> pLanguageMap) {
-        if(!pLanguageMap.containsKey(language)) {
-            PLanguage found = new PLanguage();
-            found.setId(0L);
-            found.setLanguage(language);
-            found.setSubmissions(Collections.emptySet());
-            found = this.pLanguageService.save(found);
-            pLanguageMap.put(language, found);
+    /**
+     * Gets a contest-Instnace from DB
+     * If it does not exist, instantiate Instance, give it needed attributes and persist
+     * @param contestName the name to search by in contest table
+     * @return The found or persisted instance of DB
+     */
+    private Contest getContestFromDB(String contestName) {
+        Contest contest = this.contestService.findByName(contestName);
+
+        if(contest != null) {
+            return contest;
         }
+
+        contest = new Contest();
+        contest.setName(contestName);
+
+        return this.contestService.save(contest);
     }
 
-    private void addChallengeIfNeeded(String challenge, Map<String, Challenge> challengeMap) {
-        if(!challengeMap.containsKey(challenge)) {
-            Challenge found = new Challenge();
-            found.setChallengeName(challenge);
-            found.setId(0L);
-            found.setSubmissions(Collections.emptySet());
-            found = this.challengeService.save(found);
-            challengeMap.put(challenge, found);
+    /**
+     * Creates Submissions and persists them in DB from given SubmissionJSON instances
+     * Assigns or creates challenges, pLanguages and contests not found in DB
+     * After creating submissions, creates percentage data
+     *
+     * All Data assigned to userdata
+     * @param submissionJSONS The Array of submissionJSON instances
+     * @param userData The User data to link the results
+     */
+    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, UserData userData) {
+
+        //MAPS for faster access - so is not always called from DB
+        Map<String, Challenge> seenChallenges   = new HashMap<String, Challenge>();
+        Map<String, PLanguage> seenPlanguages   = new HashMap<String, PLanguage>();
+        Map<String, Contest> seenContests       = new HashMap<String, Contest>();
+
+        List<Submission> submissions = new ArrayList<Submission>();
+
+        for(SubmissionJSON submissionJSON : submissionJSONS) {
+
+            //Challenge
+            String tempChallengeName    = submissionJSON.getChallenge();
+
+            boolean isChallengeMapped   = seenChallenges.containsKey(tempChallengeName);
+
+            Challenge tempChallenge = (isChallengeMapped)
+                    ? seenChallenges.get(tempChallengeName)
+                    : this.getChallengeFromDB(tempChallengeName);
+
+            //PLanguage
+            String tempPlanguageName     = submissionJSON.getLanguage();
+
+            boolean isPlanguageMapped   = seenPlanguages.containsKey(tempPlanguageName);
+
+            PLanguage tempPLanguage = (isPlanguageMapped)
+                    ? seenPlanguages.get(tempPlanguageName)
+                    : this.getPlanguageFromDB(tempPlanguageName);
+
+            //Contest
+            String tempContestName      = submissionJSON.getContest();
+
+            boolean isContestMapped     = seenContests.containsKey(tempContestName);
+
+            Contest tempContest     = (isContestMapped)
+                    ? seenContests.get(tempContestName)
+                    : this.getContestFromDB(submissionJSON.getContest());
+
+            //Submission
+
+            SubmissionFlat submissionFlat =
+                    this.createSubmissionFromJSON(submissionJSON, tempChallenge, tempPLanguage, tempContest, userData);
+
+            Submission submission = new Submission();
+            submission.setCode(submissionJSON.getCode());
+
+            userData.getUsedPLanguages().add(tempPLanguage);
+            submission = this.submissionService.save(submission);
+
+            submissions.add(submission);
         }
+        this.createStatisticsData(userData, userData.getUsedPLanguages());
+        userData.setDateCreated(new Date());
     }
 
-    private void addContestIfNeeded(String contest, Map<String, Contest> contestMap) {
-        if(!contestMap.containsKey(contest)) {
-            Contest found = new Contest();
-            found.setName(contest);
-            found.setId(0L);
-            found.setSubmissions(Collections.emptySet());
-            found = this.contestService.save(found);
-            contestMap.put(contest, found);
+    /**
+     * Creates a Submission instance from a submissionJSON
+     * All attributes from the sumbissionJson are used for attributes in the submission insntance
+     * Challenges, PLanguages, Contests and the UserData instance are set for submission
+     * @param json The Submssion JSON instance
+     * @return a submission instance with all attributes filled
+     */
+    private SubmissionFlat createSubmissionFromJSON(SubmissionJSON json, Challenge challenge,
+                                                    PLanguage pLanguage, Contest contest,
+                                                    UserData userData) {
+        SubmissionFlat submissionFlat = new SubmissionFlat();
+
+        submissionFlat.setId(0L);
+        submissionFlat.setScore(json.getScore());
+        submissionFlat.setLanguage(pLanguage);
+        submissionFlat.setChallenge(challenge);
+        submissionFlat.setContest(contest);
+
+        submissionFlat.setUserData(userData);
+        submissionFlatService.save(submissionFlat);
+
+        return submissionFlat;
+    }
+
+    /**
+     * Creates statistics based on passed UserData and the languages from userData (collected in createSubmissions)
+     * Creates a PassPercentage, UsagePercentage and GeneralPercentage instance for UserData
+     * @param userData      The userData to associate the Percentages to
+     * @param languagesUsed The languages used in the submitted json
+     */
+    private void createStatisticsData(UserData userData,
+                                      Collection<PLanguage> languagesUsed) {
+        for(PLanguage pLanguage : languagesUsed) {
+            UsagePercentage usagePercentage = this.usagePercentageService.create(userData, pLanguage);
+            PassPercentage passPercentage = this.passPercentageService.create(userData, pLanguage);
+            this.passPercentageService.save(passPercentage);
+            this.usagePercentageService.save(usagePercentage);
         }
-    }
-
-    private void createSubmissionsFromData(SubmissionJSON[] submissionJSONS, Map<String, Challenge> challengeMap,
-                                                   Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                                   User user) {
-        Submission[] submissions = new Submission[submissionJSONS.length];
-        for(int i = 0; i < submissions.length; i++) {
-            Submission submission =
-                    this.createSubmissionFromJSON(submissionJSONS[i], challengeMap, pLanguageMap, contestMap, user);
-            this.submissionService.save(submission);
-        }
-    }
-
-    private Submission createSubmissionFromJSON(SubmissionJSON json, Map<String, Challenge> challengeMap,
-                                                Map<String, PLanguage> pLanguageMap, Map<String, Contest> contestMap,
-                                                User user) {
-        Submission submission = new Submission();
-        submission.setId(0L);
-        submission.setCode(json.getCode());
-        submission.setScore(json.getScore());
-        submission.setWriter(user);
-        submission.setLanguage(pLanguageMap.get(json.getLanguage()));
-        submission.setChallenge(challengeMap.get(json.getChallenge()));
-        submission.setContest(contestMap.get(json.getContest()));
-
-        this.userService.findById(user.getId()).getUsedPLanguages().add(pLanguageMap.get(json.getLanguage()));
-        return submission;
+        this.generalPercentageService.calculatePercentageForUserData(userData);
+        this.userDataService.update(userData.getId(), userData);
     }
 }

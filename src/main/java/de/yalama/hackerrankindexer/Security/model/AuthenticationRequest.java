@@ -6,13 +6,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthenticationRequest {
-    private String username;
+    private String email;
     private String password;
 
     public AuthenticationRequest() {}
 
-    public AuthenticationRequest(String username, String password) {
-        this.setUsername(username);
+    public AuthenticationRequest(String email, String password) {
+        this.setEmail(email);
         this.setPassword(password);
     }
 }

@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static de.yalama.hackerrankindexer.Security.SecurityConstants.TOKEN_PREFIX;
+import static de.yalama.hackerrankindexer.Security.service.SecurityConstants.TOKEN_PREFIX;
+
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {

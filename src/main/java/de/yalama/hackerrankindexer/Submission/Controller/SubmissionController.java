@@ -1,13 +1,17 @@
 package de.yalama.hackerrankindexer.Submission.Controller;
 
 import de.yalama.hackerrankindexer.Submission.Model.Submission;
+import de.yalama.hackerrankindexer.SubmissionFlat.Model.SubmissionFlat;
 import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
+import de.yalama.hackerrankindexer.SubmissionFlat.Service.SubmissionFlatService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -17,18 +21,24 @@ import java.util.Set;
 public class SubmissionController implements BaseController<Submission, Long> {
 
     @Autowired
-
     private SubmissionService submissionService;
 
-    @Override
+    @Autowired
+    private SubmissionFlatService submissionFlatService;
+
     @GetMapping
+    public Collection<SubmissionFlat> findAllByUserData(HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getParameter("userDataId"));
+        return this.submissionFlatService.findAllByUserDataId(userDataId);
+    }
+
+    @Override
     public List<Submission> findAll() {
         return this.submissionService.findAll();
     }
 
     @Override
-    @GetMapping("/{id}")
-    public Submission findById(@PathVariable Long id) throws HackerrankIndexerException {
+    public Submission findById(Long id) throws HackerrankIndexerException {
         return this.submissionService.findById(id);
     }
 
@@ -50,18 +60,15 @@ public class SubmissionController implements BaseController<Submission, Long> {
         return this.submissionService.deleteById(id);
     }
 
-    @GetMapping("/passed")
-    public List<Submission> getPassedSubmissions() {
-        return this.submissionService.getAllPassed();
+    @GetMapping("/pLanguage")
+    public Set<SubmissionFlat> getSubmissionsByLanguagesAndUserDataId(@RequestBody List<Long> ids, HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getParameter("userDataId"));
+        return this.submissionFlatService.getSubmissionsByLanguagesAndUserDataId(ids, userDataId);
     }
 
-    /**
-     * Returns the latest passed submission of each challenge
-     * @return a List of Submission instances where only the latest passed Submission
-     * of each challenge is
-     */
-    @GetMapping("/passed/latest")
-    public List<Submission> getLatestPassedSubmissions() {
-        return this.submissionService.getLastPassedFromAll();
+    @GetMapping("/{challengeId}/submissions")
+    public List<SubmissionFlat> findSubmissionsByChallengeId(@PathVariable Long challengeId, HttpServletRequest request) {
+        Long userDataId = Long.parseLong(request.getHeader("userDataId"));
+        return this.submissionFlatService.getSubmissionsByChallengeIdAndUserDataId(challengeId, userDataId);
     }
 }

@@ -1,13 +1,25 @@
 package de.yalama.hackerrankindexer.User.Controller;
 
+import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
+import de.yalama.hackerrankindexer.Security.service.HeaderService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Service.UserService;
 import de.yalama.hackerrankindexer.shared.controllers.BaseController;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.validation.ValidationException;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 @RequestMapping("/user")
@@ -18,6 +30,8 @@ public class UserController implements BaseController<User, Long> {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private HeaderService headerService; //use here to prevent cyclic dependency
 
     @Override
     @GetMapping
@@ -31,10 +45,18 @@ public class UserController implements BaseController<User, Long> {
         return this.userService.findById(id);
     }
 
+    //BLOCKED ENDPOINT
     @Override
-    @PostMapping("/register")
+    //@PostMapping("/register")
     public User create(@RequestBody User user) throws HackerrankIndexerException {
         return this.userService.save(user);
+    }
+
+    @PostMapping("/register")
+    public User register(@RequestBody User user) throws HackerrankIndexerException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,
+            InvalidKeySpecException, BadPaddingException, IOException, InvalidKeyException {
+        return this.userService.register(user);
     }
 
     @Override
@@ -45,5 +67,26 @@ public class UserController implements BaseController<User, Long> {
     @Override
     public Long delete(@PathVariable Long id) throws HackerrankIndexerException {
         return this.userService.deleteById(id);
+    }
+
+    @PostMapping("/resetPassword")
+    public String triggerPasswordReset(@RequestBody String email) {
+        return this.userService.triggerPasswordReset(email);
+    }
+
+    /**
+     * Idea: User instance is sent as payload, jwt token is put as parameter
+     * @param passwordResetModel A helper class that contains all the needed information
+     * @return The updated user instance
+     * @throws ValidationException
+     */
+    @PostMapping("/updatePassword")
+    public User updatePassword(@RequestBody PasswordResetModel passwordResetModel) throws ValidationException {
+        return this.userService.setNewPassword(passwordResetModel);
+    }
+
+    @PostMapping("/verify")
+    public ResponseString verifyUser(@RequestBody String token) {
+        return this.userService.verifyUser(token);
     }
 }

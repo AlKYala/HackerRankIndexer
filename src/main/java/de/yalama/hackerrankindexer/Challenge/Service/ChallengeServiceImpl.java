@@ -2,16 +2,14 @@ package de.yalama.hackerrankindexer.Challenge.Service;
 
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Challenge.Repository.ChallengeRepository;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
-import de.yalama.hackerrankindexer.shared.services.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,39 +48,23 @@ public class ChallengeServiceImpl extends ChallengeService {
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        this.validator.throwIfNotExistsByID(id, 1);
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
         this.findById(id).getSubmissions().forEach(submission -> submission.setChallenge(null));
         return this.serviceHandler.deleteById(id);
     }
 
     @Override
-    public Set<Submission> getSubmissionsByChallengeId(Long challengeId) {
-        return this.findById(challengeId).getSubmissions();
+    public List<Challenge> getAllPassedChallenges(Long userDataId) {
+        return this.challengeRepository.getPassedChallengesByUserDataId(userDataId);
     }
 
     @Override
-    public Boolean checkIsChallengePassed(Long challengeId) {
-        for(Submission submission : this.findById(challengeId).getSubmissions()) {
-            if(submission.getScore() == 1) {
-                return true;
-            }
-        }
-        return false;
+    public List<Challenge> getAllFailedChallenges(Long userDataId) {
+        return this.challengeRepository.getFailedChallengesByUserDataId(userDataId);
     }
 
     @Override
-    public List<Challenge> getAllPassedChallenges() {
-        return this.findAll()
-                .stream()
-                .filter(challenge -> this.checkIsChallengePassed(challenge.getId()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Challenge> getAllFailedChallenges() {
-        return this.findAll()
-                .stream()
-                .filter(challenge -> !this.checkIsChallengePassed(challenge.getId()))
-                .collect(Collectors.toList());
+    public Challenge findByChallengeName(String challengeName) {
+        return this.challengeRepository.findByName(challengeName);
     }
 }

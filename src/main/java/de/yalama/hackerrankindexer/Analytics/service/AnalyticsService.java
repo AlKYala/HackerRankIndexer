@@ -1,62 +1,30 @@
 package de.yalama.hackerrankindexer.Analytics.service;
 
-import de.yalama.hackerrankindexer.Analytics.SupportModels.PassPercentages;
-import de.yalama.hackerrankindexer.Analytics.SupportModels.UsageStatistics;
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
+import de.yalama.hackerrankindexer.GeneralPercentage.Model.GeneralPercentage;
+import de.yalama.hackerrankindexer.PassPercentage.Model.PassPercentage;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.shared.models.UsageData;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Set;
 
 public abstract class AnalyticsService {
 
     /**
-     * @return The percentage of (passed submissions) / (all submissions)
+     * Checks if a user has existing user data.
+     * @param user The user instance to check for
+     * @return If a user has existing user data
      */
-    //public abstract Double getPercentagePassedSubmissions();
+    public abstract boolean checkSubmissionsExist(User user);
 
-    /**
-     *
-     * @return The percentage of (passed challenges) / (all attempted challenges)
-     */
-    //public abstract Double getPercentagePassedChallenges();
+    public abstract Long getNumberOfUsers();
 
-    /**
-     * Returns the percentage of passed submissions by language
-     * @param languageId the ID of the language in question
-     * @return the percentage of passed submissions of language with ID languageId
-     */
-    //public abstract Double getPercentagePassedByLanguage(Long languageId);
-
-    /**
-     * Returns the percentage of passed submissions per challenge
-     * @param challengeId
-     * @return the percentage of passed submissions per challenge with ID challengeId
-     */
-    //public abstract Double getPercentagePassedByChallenge(Long challengeId);
-
-    /**
-     * From all submissions give the share of submissions of each language in percent
-     * @return two arrays with the percentage of submissions (total) for each language (Indices match)
-     */
-    //public abstract UsageStatistics getUsagePercentages();
-
-    /**
-     * From all submissions give the suuccess rate of submissions of each language in percent
-     * @return two arrays with the percentage of submissions (total) for each language (Indices match)
-     */
-    //public abstract PassPercentages getPassPercentages();
-
-    /**
-     * returns the most used Language
-     * @return
-     */
-    //public abstract PLanguage getFavouriteLanguage();
-
-    /**
-     * A method to clear all cached statistics
-     * Fired when Dataset is manipulated
-     */
-    public abstract void clear();
-
-    /**
-     * A method to check if submissions exist
-     */
-    public abstract boolean checkSubmissionsExist();
+    public abstract Long getNumberOfSubmissions();
 }

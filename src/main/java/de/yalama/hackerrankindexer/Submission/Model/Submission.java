@@ -1,10 +1,11 @@
 package de.yalama.hackerrankindexer.Submission.Model;
 
-import com.sun.istack.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.validation.constraints.NotNull;
 import de.yalama.hackerrankindexer.Challenge.Model.Challenge;
 import de.yalama.hackerrankindexer.Contest.Model.Contest;
 import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.User.Model.User;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
 import de.yalama.hackerrankindexer.shared.models.BaseEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,34 +19,8 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter
 @Setter
-public class Submission extends BaseEntity {
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    private User writer;
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    private PLanguage language;
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    private Challenge challenge;
-
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @JoinColumn
-    private Contest contest;
+public class Submission extends BaseEntity{
 
     @Column(columnDefinition = "TEXT")
     private String code;
-
-    private double score;
 }

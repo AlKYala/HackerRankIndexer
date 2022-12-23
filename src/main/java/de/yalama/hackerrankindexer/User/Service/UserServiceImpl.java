@@ -1,21 +1,37 @@
 package de.yalama.hackerrankindexer.User.Service;
 
-import de.yalama.hackerrankindexer.PLanguage.model.PLanguage;
-import de.yalama.hackerrankindexer.Submission.Model.Submission;
-import de.yalama.hackerrankindexer.UsagePercentage.Model.UsagePercentage;
+import de.yalama.hackerrankindexer.Challenge.Service.ChallengeService;
+import de.yalama.hackerrankindexer.GeneralPercentage.Repository.GeneralPercentageRepository;
+import de.yalama.hackerrankindexer.UserData.Model.UserData;
+import de.yalama.hackerrankindexer.UserData.Service.UserDataService;
+import de.yalama.hackerrankindexer.Security.model.PasswordResetModel;
+import de.yalama.hackerrankindexer.Security.service.JwtService;
+import de.yalama.hackerrankindexer.Security.service.TokenGenerationService;
+import de.yalama.hackerrankindexer.Submission.Service.SubmissionService;
 import de.yalama.hackerrankindexer.User.Model.User;
 import de.yalama.hackerrankindexer.User.Repository.UserRepository;
 import de.yalama.hackerrankindexer.shared.exceptions.HackerrankIndexerException;
+import de.yalama.hackerrankindexer.shared.Email.EmailSendService;
+import de.yalama.hackerrankindexer.shared.exceptions.VerificationFailedException;
+import de.yalama.hackerrankindexer.shared.models.ResponseString;
 import de.yalama.hackerrankindexer.shared.services.ServiceHandler;
-import de.yalama.hackerrankindexer.shared.services.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.Validator;
+import de.yalama.hackerrankindexer.shared.services.validator.ValidatorOperations;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.validation.ValidationException;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,12 +41,30 @@ public class UserServiceImpl extends UserService {
     private Validator<User, UserRepository> validator;
     private ServiceHandler<User, UserRepository> serviceHandler;
     private PasswordEncoder passwordEncoder;
+    private EmailSendService emailSendService;
+    private TokenGenerationService tokenGenerationService;
+    private JwtService jwtService;
+    private SubmissionService submissionService;
+    private ChallengeService challengeService;
+    private GeneralPercentageRepository generalPercentageRepository;
+    private UserDataService userDataService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                           EmailSendService emailSendService, TokenGenerationService tokenGenerationService,
+                           JwtService jwtService, SubmissionService submissionService,
+                           ChallengeService challengeService, GeneralPercentageRepository generalPercentageRepository,
+                           UserDataService userDataService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.validator = new Validator<User, UserRepository>("User", this.userRepository);
         this.serviceHandler = new ServiceHandler<User, UserRepository>(this.userRepository, this.validator);
+        this.emailSendService = emailSendService;
+        this.tokenGenerationService = tokenGenerationService;
+        this.jwtService = jwtService;
+        this.submissionService = submissionService;
+        this.challengeService = challengeService;
+        this.generalPercentageRepository = generalPercentageRepository;
+        this.userDataService = userDataService;
     }
 
     @Override
@@ -45,8 +79,92 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public User save(User instance) throws HackerrankIndexerException {
-        instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
         return this.serviceHandler.save(instance);
+    }
+
+    @Override
+    public User register(User instance) throws HackerrankIndexerException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException,
+            InvalidKeySpecException, BadPaddingException, IOException, InvalidKeyException {
+        instance.setPasswordHashed(this.passwordEncoder.encode(instance.getPasswordHashed()));
+        instance.setToken(this.tokenGenerationService.generateVerificationToken(instance));
+        this.emailSendService.sendConfirmationEmail(instance);
+        return this.save(instance);
+    }
+
+    @Override
+    public User setNewPassword(PasswordResetModel passwordResetModel) throws ValidationException {
+
+        String emailFromToken = this.jwtService.extractAnyHeaderFromToken(passwordResetModel.getToken(), "email");
+
+        if(!emailFromToken.equals(passwordResetModel.getEmail())) {
+            throw new ValidationException("Email Token mismatch");
+        }
+
+        if(jwtService.isTokenExpired(passwordResetModel.getToken())) {
+            throw new ValidationException("User Token is Expired, cannot set New Password!");
+        }
+
+        String passwordHashed = this.passwordEncoder.encode(passwordResetModel.getPassword());
+
+        User user = this.findByEmail(passwordResetModel.getEmail());
+        user.setPasswordHashed(passwordHashed);
+
+        return this.update(user.getId(), user);
+    }
+
+    @Override
+    public String triggerPasswordReset(String email) {
+
+        User user = null;
+        try {
+           user = this.findByEmail(email);
+        }
+        catch (UsernameNotFoundException e) {
+            return "Email not found, terminating";
+        }
+
+        String resetToken = this.generatePasswordResetToken(user);
+
+        this.emailSendService.sendPasswordResetMail(user, resetToken);
+
+        return "Email reset password sent. Check your inbox";
+    }
+
+    @Override
+    public ResponseString verifyUser(String token) {
+        User userToVerify = this.findAll().stream()
+                .filter(user -> user.getToken().equals(token))
+                .findFirst()
+                .orElse(null);
+        if(userToVerify == null) {
+            String formattedMessage = String.format("User with token %s not found", token);
+            log.error(formattedMessage, new VerificationFailedException(formattedMessage));
+        }
+
+        userToVerify.setVerified(true);
+
+        this.update(userToVerify.getId(), userToVerify);
+
+        return new ResponseString(String.format("User %s verified successfully", userToVerify.getEmail()));
+    }
+
+    @Override
+    public List<UserData> getUserData(User user) throws InvalidAlgorithmParameterException, NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException,
+            BadPaddingException, InvalidKeyException {
+        return user.getUserData();
+    }
+
+    private String generatePasswordResetToken(User user) {
+
+        Map<String, Object> claims = new HashMap<String, Object>();
+
+        claims.put("email", user.getEmail());
+        claims.put("id", user.getId());
+        claims.put("isPasswordReset", true);
+
+        return this.jwtService.createCustomToken(claims);
     }
 
     @Override
@@ -56,55 +174,27 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public Long deleteById(Long id) throws HackerrankIndexerException {
-        this.validator.throwIfNotExistsByID(id, 1);
-        this.findById(id).getSubmittedEntries().forEach(submission -> submission.setWriter(null));
+        this.validator.throwIfNotExistsByID(id, ValidatorOperations.DELETE);
+        this.userDataService.deleteById(id);
         return this.serviceHandler.deleteById(id);
     }
 
     @Override
-    public PLanguage getFavouriteLanguage(User user) {
-        long max = -1;
-        PLanguage favourite = null;
-        log.info("looking for favouriote");
-        for(UsagePercentage usagePercentage: user.getUsagePercentages()) {
-            log.info("user {}: {} . {}", user.getId(), usagePercentage.getPLanguage().toString(), usagePercentage.getTotal());
-            if(usagePercentage.getTotal() > max) {
-                max = usagePercentage.getTotal();
-                favourite = usagePercentage.getPLanguage();
-            }
-        }
-        return favourite;
-    }
-
-    @Override
-    public double getGeneralSubmissionPassPercentage(User user) {
-        return user.getGeneralPercentage().getPercentageSubmissionsPassed();
-    }
-
-    @Override
-    public double getGeneralChallengePassPercentage(User user) {
-        return user.getGeneralPercentage().getPercentageChallengesSolved();
-    }
-
-    @Override
-    public User findByUsername(String username) {
-        log.info("search: {}", username);
+    public User findByEmail(String email) {
+        log.info("search: {}", email);
         User found = this.findAll()
                 .stream()
-                .filter(user -> user.getUsername().equals(username))
+                .filter(user -> user.getEmail().equals(email))
                 .findAny()
-                .get();
+                .orElse(null);
         if(found == null) {
             throw new UsernameNotFoundException("Username not found");
         }
         return found;
     }
 
-    @Override
-    public Set<Submission> findSubmissionsOfUserOfLanguage(User user, PLanguage language) {
-        return user.getSubmittedEntries()
-                .stream()
-                .filter(submission -> submission.getLanguage().getId() == language.getId())
-                .collect(Collectors.toSet());
+    private String resolvePermalinkToken(String permalink) {
+        String[] pathNodes = permalink.split("/");
+        return pathNodes[pathNodes.length-1];
     }
 }

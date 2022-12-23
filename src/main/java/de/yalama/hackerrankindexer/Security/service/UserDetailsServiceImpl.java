@@ -1,6 +1,7 @@
 package de.yalama.hackerrankindexer.Security.service;
 
 import de.yalama.hackerrankindexer.User.Service.UserService;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +19,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        de.yalama.hackerrankindexer.User.Model.User user = this.userService.findByUsername(username);
+        de.yalama.hackerrankindexer.User.Model.User user = this.userService.findByEmail(username);
         return new org.springframework.security.core.userdetails.User
-                (user.getUsername(), user.getPasswordHashed(), Collections.emptyList());
+                (user.getEmail(), user.getPasswordHashed(), Collections.emptyList());
     }
 }
